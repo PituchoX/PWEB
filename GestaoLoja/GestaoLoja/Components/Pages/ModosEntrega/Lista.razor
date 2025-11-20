@@ -1,0 +1,55 @@
+﻿@page "/modosentrega"
+@using GestaoLoja.Data
+@inject ApplicationDbContext db
+@inject NavigationManager nav
+@using GestaoLoja.Entities
+
+<h3>Modos de Entrega</h3>
+
+<button class="btn btn-primary mb-3" @onclick='() => nav.NavigateTo(" /modosentrega/criar")'>
+    Novo Modo de Entrega
+</button>
+
+@if (modos == null)
+{
+    <p>A carregar...</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Tipo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var m in modos)
+            {
+                <tr>
+                    <td>@m.Id</td>
+                    <td>@m.Tipo</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning"
+                                @onclick='() => nav.NavigateTo($" /modosentrega/editar/{m.Id}")'>
+                            Editar
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<ModoEntrega>? modos;
+
+    protected override void OnInitialized()
+    {
+        modos = db.ModosEntrega
+            .OrderBy(m => m.Tipo)
+            .ToList();
+    }
+}
+

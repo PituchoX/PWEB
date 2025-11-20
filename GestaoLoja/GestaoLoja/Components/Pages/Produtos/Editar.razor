@@ -1,0 +1,68 @@
+﻿@page "/produtos/editar/{id:int}"
+
+@inject ApplicationDbContext db
+@inject NavigationManager nav
+
+<h3>Editar Produto</h3>
+
+@if (produto == null)
+{
+    <p>A carregar...</p>
+}
+else
+{
+    <div class="mb-3">
+        <label class="form-label">Nome</label>
+        <input class="form-control" @bind="produto.Nome" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Preço</label>
+        <input class="form-control" type="number" step="0.01" @bind="produto.Preco" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Categoria</label>
+        <select class="form-select" @bind="produto.CategoriaId">
+            @foreach (var c in categorias)
+            {
+                <option value="@c.Id">@c.Nome</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Modo de Entrega</label>
+        <select class="form-select" @bind="produto.ModoEntregaId">
+            @foreach (var m in modos)
+            {
+                <option value="@m.Id">@m.Tipo</option>
+            }
+        </select>
+    </div>
+
+    <button class="btn btn-success" @onclick="Guardar">Guardar</button>
+    <button class="btn btn-secondary" @onclick='() => nav.NavigateTo("/produtos")'>Cancelar</button>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    Produtos produto;
+    List<Categorias> categorias;
+    List<ModoEntrega> modos;
+
+    protected override void OnInitialized()
+    {
+        produto = db.Produtos.FirstOrDefault(p => p.Id == id);
+        categorias = db.Categorias.OrderBy(c => c.Nome).ToList();
+        modos = db.ModosEntrega.OrderBy(m => m.Tipo).ToList();
+    }
+
+    void Guardar()
+    {
+        db.SaveChanges();
+        nav.NavigateTo("/produtos");
+    }
+}
+

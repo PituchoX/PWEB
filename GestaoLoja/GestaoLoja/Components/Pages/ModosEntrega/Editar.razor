@@ -1,0 +1,39 @@
+﻿@page "/modosentrega/editar/{id:int}"
+@using GestaoLoja.Data
+@inject ApplicationDbContext db
+@inject NavigationManager nav
+@using GestaoLoja.Entities
+
+<h3>Editar Modo de Entrega</h3>
+
+@if (modoEntrega == null)
+{
+    <p>A carregar...</p>
+}
+else
+{
+    <div class="mb-3">
+        <label>Tipo</label>
+        <input class="form-control" @bind="modoEntrega.Tipo" />
+    </div>
+
+    <button class="btn btn-success" @onclick="Guardar">Guardar</button>
+    <button class="btn btn-secondary" @onclick='() => nav.NavigateTo(" /modosentrega")'>Cancelar</button>
+}
+
+@code {
+    [Parameter] public int id { get; set; }
+    ModoEntrega? modoEntrega;
+
+    protected override void OnInitialized()
+    {
+        modoEntrega = db.ModosEntrega.Find(id);
+    }
+
+    void Guardar()
+    {
+        db.SaveChanges();
+        nav.NavigateTo("/modosentrega");
+    }
+}
+

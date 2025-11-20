@@ -1,0 +1,30 @@
+﻿@page "/categorias/criar"
+@using GestaoLoja.Data
+@inject ApplicationDbContext db
+@inject NavigationManager nav
+@using GestaoLoja.Entities
+
+<h3>Criar Categoria</h3>
+
+<div class="mb-3">
+    <label>Nome</label>
+    <input class="form-control" @bind="categoria.Nome" />
+</div>
+
+<button class="btn btn-success" @onclick="Guardar">Guardar</button>
+<button class="btn btn-secondary" @onclick='() => nav.NavigateTo("/categorias")'>Cancelar</button>
+
+@code {
+    Categorias categoria = new();
+
+    void Guardar()
+    {
+        if (!string.IsNullOrWhiteSpace(categoria.Nome))
+        {
+            db.Categorias.Add(categoria);
+            db.SaveChanges();
+            nav.NavigateTo("/categorias");
+        }
+    }
+}
+
