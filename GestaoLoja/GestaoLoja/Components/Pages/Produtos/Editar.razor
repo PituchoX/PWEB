@@ -17,8 +17,27 @@ else
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Preço</label>
-        <input class="form-control" type="number" step="0.01" @bind="produto.Preco" />
+        <label class="form-label">Preço Base</label>
+        <input class="form-control" type="number" step="0.01" @bind="produto.PrecoBase" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Percentagem</label>
+        <input class="form-control" type="number" step="0.01" @bind="produto.Percentagem" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Stock</label>
+        <input class="form-control" type="number" @bind="produto.Stock" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Estado</label>
+        <select class="form-select" @bind="produto.Estado">
+            <option value="Pendente">Pendente</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+        </select>
     </div>
 
     <div class="mb-3">
@@ -54,15 +73,16 @@ else
 
     protected override void OnInitialized()
     {
-        produto = db.Produtos.FirstOrDefault(p => p.Id == id);
+        produto = db.Produtos.First(p => p.Id == id);
         categorias = db.Categorias.OrderBy(c => c.Nome).ToList();
         modos = db.ModosEntrega.OrderBy(m => m.Tipo).ToList();
     }
 
     void Guardar()
     {
+        produto.PrecoFinal = produto.PrecoBase + (produto.PrecoBase * produto.Percentagem / 100);
+
         db.SaveChanges();
         nav.NavigateTo("/produtos");
     }
 }
-

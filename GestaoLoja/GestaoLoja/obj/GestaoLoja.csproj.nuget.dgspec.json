@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\joaop\\Desktop\\ISEC\\PWEB\\GestaoLoja\\GestaoLoja\\GestaoLoja.csproj": {}
+    "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\GestaoLoja.csproj": {}
   },
   "projects": {
-    "C:\\Users\\joaop\\Desktop\\ISEC\\PWEB\\GestaoLoja\\GestaoLoja\\GestaoLoja.csproj": {
+    "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\GestaoLoja.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\joaop\\Desktop\\ISEC\\PWEB\\GestaoLoja\\GestaoLoja\\GestaoLoja.csproj",
+        "projectUniqueName": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\GestaoLoja.csproj",
         "projectName": "GestaoLoja",
-        "projectPath": "C:\\Users\\joaop\\Desktop\\ISEC\\PWEB\\GestaoLoja\\GestaoLoja\\GestaoLoja.csproj",
+        "projectPath": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\GestaoLoja.csproj",
         "packagesPath": "C:\\Users\\joaop\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\joaop\\Desktop\\ISEC\\PWEB\\GestaoLoja\\GestaoLoja\\obj\\",
+        "outputPath": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

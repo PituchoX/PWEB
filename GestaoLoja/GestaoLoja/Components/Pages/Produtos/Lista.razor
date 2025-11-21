@@ -18,28 +18,54 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Nome</th>
-                <th>Preço</th>
+                <th>Preço Base</th>
+                <th>Percentagem</th>
+                <th>Preço Final</th>
+                <th>Stock</th>
+                <th>Estado</th>
                 <th>Categoria</th>
                 <th>Modo de Entrega</th>
-                <th></th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var p in produtos)
             {
                 <tr>
-                    <td>@p.Id</td>
                     <td>@p.Nome</td>
-                    <td>@p.Preco €</td>
+                    <td>@p.PrecoBase €</td>
+                    <td>@p.Percentagem %</td>
+                    <td>@p.PrecoFinal €</td>
+                    <td>@p.Stock</td>
+                    <td>@p.Estado</td>
                     <td>@p.Categoria?.Nome</td>
                     <td>@p.ModoEntrega?.Tipo</td>
+
                     <td>
-                        <button class="btn btn-warning btn-sm"
+                        <!-- Botão Editar -->
+                        <button class="btn btn-warning btn-sm me-1"
                                 @onclick='() => nav.NavigateTo($"/produtos/editar/{p.Id}")'>
                             Editar
                         </button>
+
+                        <!-- Botão Aprovar -->
+                        @if (p.Estado == "Pendente")
+                        {
+                            <button class="btn btn-success btn-sm me-1"
+                                    @onclick='() => Aprovar(p.Id)'>
+                                Aprovar
+                            </button>
+                        }
+
+                        <!-- Botão Desativar -->
+                        @if (p.Estado == "Activo")
+                        {
+                            <button class="btn btn-danger btn-sm me-1"
+                                    @onclick='() => Desativar(p.Id)'>
+                                Desativar
+                            </button>
+                        }
                     </td>
                 </tr>
             }
@@ -57,5 +83,29 @@ else
             .Include(p => p.ModoEntrega)
             .OrderBy(p => p.Nome)
             .ToList();
+    }
+
+    void Aprovar(int id)
+    {
+        var prod = db.Produtos.FirstOrDefault(p => p.Id == id);
+
+        if (prod != null)
+        {
+            prod.Estado = "Activo";
+            db.SaveChanges();
+            nav.NavigateTo("/produtos", forceLoad: true);
+        }
+    }
+
+    void Desativar(int id)
+    {
+        var prod = db.Produtos.FirstOrDefault(p => p.Id == id);
+
+        if (prod != null)
+        {
+            prod.Estado = "Inactivo";
+            db.SaveChanges();
+            nav.NavigateTo("/produtos", forceLoad: true);
+        }
     }
 }
