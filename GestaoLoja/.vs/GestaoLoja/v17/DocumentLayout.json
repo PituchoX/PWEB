@@ -3,16 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\produtos\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\produtos\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\produtos\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\produtos\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\produtos\\criar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\produtos\\criar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\produtos\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\produtos\\editar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\_imports.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\produtos\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\produtos\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\entities\\produtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -34,11 +38,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 2,
+              "Title": "_Imports.razor",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\_Imports.razor",
+              "RelativeDocumentMoniker": "GestaoLoja\\Components\\_Imports.razor",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\_Imports.razor",
+              "RelativeToolTip": "GestaoLoja\\Components\\_Imports.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-21T17:16:34.968Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "20251121161743_ProdutoCompleto.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251121161743_ProdutoCompleto.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Data\\Migrations\\20251121161743_ProdutoCompleto.cs",
@@ -50,15 +67,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "Editar.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Produtos\\Editar.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Produtos\\Editar.razor",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Produtos\\Editar.razor",
               "RelativeToolTip": "GestaoLoja\\Components\\Pages\\Produtos\\Editar.razor",
-              "ViewState": "AgIAADgAAAAAAAAAAAAcwEUAAAAVAAAAAAAAAA==",
+              "ViewState": "AgIAAD0AAAAAAAAAAAAEwEEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-21T16:17:17.119Z"
+              "WhenOpened": "2025-11-21T16:17:17.119Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -68,13 +86,14 @@
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Produtos\\Criar.razor",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Produtos\\Criar.razor",
               "RelativeToolTip": "GestaoLoja\\Components\\Pages\\Produtos\\Criar.razor",
-              "ViewState": "AgIAADEAAAAAAAAAAAAMwEUAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAACsAAAAAAAAAAAAIwCYAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-21T16:17:04.164Z"
+              "WhenOpened": "2025-11-21T16:17:04.164Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "Lista.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Produtos\\Lista.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Produtos\\Lista.razor",
@@ -87,7 +106,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Produtos.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Entities\\Produtos.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Entities\\Produtos.cs",
@@ -99,7 +118,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Program.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Program.cs",
