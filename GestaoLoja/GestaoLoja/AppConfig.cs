@@ -21,14 +21,10 @@ namespace GestaoLoja.Data
             {
                 options.SignIn.RequireConfirmedAccount = false;
             })
-.AddRoles<IdentityRole>()
-.AddEntityFrameworkStores<ApplicationDbContext>()
-.AddSignInManager()
-.AddDefaultTokenProviders();
-
-
-            builder.Services.AddRazorComponents()
-                .AddInteractiveServerComponents();
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddSignInManager()
+            .AddDefaultTokenProviders();
         }
 
         public static void ConfigurePipeline(WebApplication app)
@@ -47,14 +43,13 @@ namespace GestaoLoja.Data
             app.UseStaticFiles();
             app.UseAntiforgery();
 
+            // SEED DA BD (agora na ordem correta)
+            Inicializacao.SeedDatabase(app.Services);
+
             app.MapRazorComponents<App>()
                .AddInteractiveServerRenderMode();
 
             app.MapAdditionalIdentityEndpoints();
-
-            // Chama o seed da BD
-            Inicializacao.SeedDatabase(app.Services);
         }
     }
 }
-

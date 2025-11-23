@@ -1,12 +1,10 @@
 ﻿@page "/modosentrega/editar/{id:int}"
-@using GestaoLoja.Data
 @inject ApplicationDbContext db
 @inject NavigationManager nav
-@using GestaoLoja.Entities
 
 <h3>Editar Modo de Entrega</h3>
 
-@if (modoEntrega == null)
+@if (modo is null)
 {
     <p>A carregar...</p>
 }
@@ -14,26 +12,30 @@ else
 {
     <div class="mb-3">
         <label>Tipo</label>
-        <input class="form-control" @bind="modoEntrega.Tipo" />
+        <input class="form-control" @bind="modo.Tipo" />
     </div>
 
     <button class="btn btn-success" @onclick="Guardar">Guardar</button>
-    <button class="btn btn-secondary" @onclick='() => nav.NavigateTo(" /modosentrega")'>Cancelar</button>
+    <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
 }
 
 @code {
     [Parameter] public int id { get; set; }
-    ModoEntrega? modoEntrega;
+    ModoEntrega? modo;
 
     protected override void OnInitialized()
     {
-        modoEntrega = db.ModosEntrega.Find(id);
+        modo = db.ModosEntrega.FirstOrDefault(m => m.Id == id);
     }
 
     void Guardar()
     {
+        if (modo is null) return;
+
+        db.ModosEntrega.Update(modo);
         db.SaveChanges();
         nav.NavigateTo("/modosentrega");
     }
-}
 
+    void Cancelar() => nav.NavigateTo("/modosentrega");
+}

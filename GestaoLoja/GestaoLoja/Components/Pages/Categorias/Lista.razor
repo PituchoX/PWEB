@@ -1,17 +1,14 @@
 ﻿@page "/categorias"
-@using GestaoLoja.Data
 @inject ApplicationDbContext db
 @inject NavigationManager nav
-@using GestaoLoja.Entities
-
 
 <h3>Categorias</h3>
 
-<button class="btn btn-primary mb-3" @onclick='() => nav.NavigateTo(" /categorias/criar")'>
+<button class="btn btn-primary mb-3" @onclick="Criar">
     Nova Categoria
 </button>
 
-@if (categorias == null)
+@if (categorias is null)
 {
     <p>A carregar...</p>
 }
@@ -32,8 +29,7 @@ else
                     <td>@c.Id</td>
                     <td>@c.Nome</td>
                     <td>
-                        <button class="btn btn-sm btn-warning"
-                                @onclick='() => nav.NavigateTo($" /categorias/editar/{c.Id}")''>
+                        <button class="btn btn-sm btn-warning" @onclick="() => Editar(c.Id)">
                             Editar
                         </button>
                     </td>
@@ -52,4 +48,7 @@ else
             .OrderBy(c => c.Nome)
             .ToList();
     }
+
+    void Criar() => nav.NavigateTo("/categorias/criar");
+    void Editar(int id) => nav.NavigateTo($"/categorias/editar/{id}");
 }

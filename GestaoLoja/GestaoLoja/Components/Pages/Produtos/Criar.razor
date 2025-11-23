@@ -1,57 +1,57 @@
 ﻿@page "/produtos/criar"
-
 @inject ApplicationDbContext db
 @inject NavigationManager nav
 
-<h3>Novo Produto</h3>
+<h3>Criar Produto</h3>
 
-<div class="mb-3">
-    <label class="form-label">Nome</label>
-    <input class="form-control" @bind="produto.Nome" />
-</div>
+<EditForm Model="produto" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
-<div class="mb-3">
-    <label class="form-label">Preço Base</label>
-    <input class="form-control" type="number" step="0.01" @bind="produto.PrecoBase" />
-</div>
+    <div class="mb-3">
+        <label>Nome</label>
+        <InputText class="form-control" @bind-Value="produto.Nome" />
+    </div>
 
-<div class="mb-3">
-    <label class="form-label">Percentagem</label>
-    <input class="form-control" type="number" step="0.01" @bind="produto.Percentagem" />
-</div>
+    <div class="mb-3">
+        <label>Preço Base (€)</label>
+        <InputNumber class="form-control" @bind-Value="produto.PrecoBase" />
+    </div>
 
-<div class="mb-3">
-    <label class="form-label">Stock</label>
-    <input class="form-control" type="number" @bind="produto.Stock" />
-</div>
+    <div class="mb-3">
+        <label>Percentagem (%)</label>
+        <InputNumber class="form-control" @bind-Value="produto.Percentagem" />
+    </div>
 
-<div class="mb-3">
-    <label class="form-label">Categoria</label>
-    <select class="form-select" @bind="produto.CategoriaId">
-        <option value="">-- selecione --</option>
-        @foreach (var c in categorias)
-        {
-            <option value="@c.Id">@c.Nome</option>
-        }
-    </select>
-</div>
+    <div class="mb-3">
+        <label>Categoria</label>
+        <InputSelect class="form-select" @bind-Value="produto.CategoriaId">
+            <option value="">(Selecionar)</option>
+            @foreach (var cat in categorias)
+            {
+                <option value="@cat.Id">@cat.Nome</option>
+            }
+        </InputSelect>
+    </div>
 
-<div class="mb-3">
-    <label class="form-label">Modo de Entrega</label>
-    <select class="form-select" @bind="produto.ModoEntregaId">
-        <option value="">-- selecione --</option>
-        @foreach (var m in modos)
-        {
-            <option value="@m.Id">@m.Tipo</option>
-        }
-    </select>
-</div>
+    <div class="mb-3">
+        <label>Modo de Entrega</label>
+        <InputSelect class="form-select" @bind-Value="produto.ModoEntregaId">
+            <option value="">(Selecionar)</option>
+            @foreach (var m in modos)
+            {
+                <option value="@m.Id">@m.Tipo</option>
+            }
+        </InputSelect>
+    </div>
 
-<button class="btn btn-success" @onclick="Guardar">Guardar</button>
-<button class="btn btn-secondary" @onclick='() => nav.NavigateTo("/produtos")'>Cancelar</button>
+    <button class="btn btn-success">Guardar</button>
+    <button class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
+</EditForm>
 
 @code {
     Produtos produto = new();
+
     List<Categorias> categorias = new();
     List<ModoEntrega> modos = new();
 
@@ -63,12 +63,11 @@
 
     void Guardar()
     {
-        produto.PrecoFinal = produto.PrecoBase + (produto.PrecoBase * produto.Percentagem / 100);
-        produto.Estado = "Pendente";
-
+        produto.PrecoFinal = produto.PrecoBase - (produto.PrecoBase * (produto.Percentagem / 100));
         db.Produtos.Add(produto);
         db.SaveChanges();
-
         nav.NavigateTo("/produtos");
     }
+
+    void Cancelar() => nav.NavigateTo("/produtos");
 }

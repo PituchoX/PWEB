@@ -3,7 +3,7 @@
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">GestaoLoja</a>
+        <a class="navbar-brand" href="">FrutiLândia</a>
     </div>
 </div>
 
@@ -15,71 +15,16 @@
         <!-- HOME -->
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                <span class="bi bi-house-door-fill-nav-menu"></span> Gestão de Loja
             </NavLink>
         </div>
 
-        <!-- COUNTER -->
+        <!-- CRUD ITEMS -->
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link" href="/produtos">
+                <span class="bi bi-box-seam"></span> Produtos
             </NavLink>
         </div>
-
-        <!-- WEATHER -->
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-
-        <!-- AUTH REQUIRED -->
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/auth">
-                <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
-            </NavLink>
-        </div>
-
-        <!-- LOGIN / LOGOUT / REGISTER -->
-        <AuthorizeView>
-
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/Account/Manage">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span>
-                        @context.User.Identity?.Name
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <form action="Account/Logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                        </button>
-                    </form>
-                </div>
-            </Authorized>
-
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/Account/Register">
-                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/Account/Login">
-                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
-                    </NavLink>
-                </div>
-            </NotAuthorized>
-
-        </AuthorizeView>
-
-        <!-- OUR MENU ITEMS (ALWAYS VISIBLE) -->
-        <hr />
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/categorias">
@@ -92,12 +37,41 @@
                 <span class="bi bi-truck"></span> Modos de Entrega
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/produtos">
-                <span class="bi bi-box-seam"></span> Produtos
-            </NavLink>
-        </div>
 
+        <hr />
+
+        <!-- LOGIN / REGISTER -->
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Account/Manage">
+                        <span class="bi bi-person-fill-nav-menu"></span>
+                        @context.User.Identity?.Name
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <button type="submit" class="nav-link">
+                            <span class="bi bi-arrow-bar-left-nav-menu"></span> Logout
+                        </button>
+                    </form>
+                </div>
+            </Authorized>
+
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Account/Register">
+                        <span class="bi bi-person-plus"></span> Register
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/Account/Login">
+                        <span class="bi bi-box-arrow-in-right"></span> Login
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
 
     </nav>
 </div>

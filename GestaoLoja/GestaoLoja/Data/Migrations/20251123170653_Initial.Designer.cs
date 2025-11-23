@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GestaoLoja.Migrations
+namespace GestaoLoja.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251121161743_ProdutoCompleto")]
-    partial class ProdutoCompleto
+    [Migration("20251123170653_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,7 +51,6 @@ namespace GestaoLoja.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NomeCompleto")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")

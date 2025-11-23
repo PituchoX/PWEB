@@ -1,8 +1,6 @@
 ﻿@page "/categorias/criar"
-@using GestaoLoja.Data
 @inject ApplicationDbContext db
 @inject NavigationManager nav
-@using GestaoLoja.Entities
 
 <h3>Criar Categoria</h3>
 
@@ -12,19 +10,20 @@
 </div>
 
 <button class="btn btn-success" @onclick="Guardar">Guardar</button>
-<button class="btn btn-secondary" @onclick='() => nav.NavigateTo("/categorias")'>Cancelar</button>
+<button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
 
 @code {
     Categorias categoria = new();
 
     void Guardar()
     {
-        if (!string.IsNullOrWhiteSpace(categoria.Nome))
-        {
-            db.Categorias.Add(categoria);
-            db.SaveChanges();
-            nav.NavigateTo("/categorias");
-        }
-    }
-}
+        if (string.IsNullOrWhiteSpace(categoria.Nome))
+            return;
 
+        db.Categorias.Add(categoria);
+        db.SaveChanges();
+        nav.NavigateTo("/categorias");
+    }
+
+    void Cancelar() => nav.NavigateTo("/categorias");
+}

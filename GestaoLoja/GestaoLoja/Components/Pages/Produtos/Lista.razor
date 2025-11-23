@@ -1,17 +1,22 @@
 ﻿@page "/produtos"
 
+@using Microsoft.EntityFrameworkCore
 @inject ApplicationDbContext db
 @inject NavigationManager nav
 
 <h3>Produtos</h3>
 
-<button class="btn btn-primary mb-3" @onclick='() => nav.NavigateTo("/produtos/criar")'>
+<button class="btn btn-primary mb-3" @onclick="Criar">
     Novo Produto
 </button>
 
-@if (produtos == null)
+@if (produtos is null)
 {
     <p>A carregar...</p>
+}
+else if (!produtos.Any())
+{
+    <div class="alert alert-warning">Nenhum produto encontrado.</div>
 }
 else
 {
@@ -19,14 +24,12 @@ else
         <thead>
             <tr>
                 <th>Nome</th>
+                <th>Categoria</th>
                 <th>Preço Base</th>
                 <th>Percentagem</th>
                 <th>Preço Final</th>
-                <th>Stock</th>
-                <th>Estado</th>
-                <th>Categoria</th>
                 <th>Modo de Entrega</th>
-                <th>Ações</th>
+                <th style="width: 120px;">Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -34,38 +37,20 @@ else
             {
                 <tr>
                     <td>@p.Nome</td>
+                    <td>@p.Categoria?.Nome</td>
                     <td>@p.PrecoBase €</td>
                     <td>@p.Percentagem %</td>
                     <td>@p.PrecoFinal €</td>
-                    <td>@p.Stock</td>
-                    <td>@p.Estado</td>
-                    <td>@p.Categoria?.Nome</td>
                     <td>@p.ModoEntrega?.Tipo</td>
-
                     <td>
-                        <!-- Botão Editar -->
-                        <button class="btn btn-warning btn-sm me-1"
-                                @onclick='() => nav.NavigateTo($"/produtos/editar/{p.Id}")'>
+                        <button class="btn btn-warning btn-sm"
+                                @onclick="() => Editar(p.Id)">
                             Editar
                         </button>
-
-                        <!-- Botão Aprovar -->
-                        @if (p.Estado == "Pendente")
-                        {
-                            <button class="btn btn-success btn-sm me-1"
-                                    @onclick='() => Aprovar(p.Id)'>
-                                Aprovar
-                            </button>
-                        }
-
-                        <!-- Botão Desativar -->
-                        @if (p.Estado == "Activo")
-                        {
-                            <button class="btn btn-danger btn-sm me-1"
-                                    @onclick='() => Desativar(p.Id)'>
-                                Desativar
-                            </button>
-                        }
+                        <button class="btn btn-danger btn-sm ms-1"
+                                @onclick="() => Apagar(p.Id)">
+                            X
+                        </button>
                     </td>
                 </tr>
             }
@@ -74,38 +59,35 @@ else
 }
 
 @code {
-    List<Produtos> produtos;
+    List<Produtos>? produtos;
 
     protected override void OnInitialized()
     {
         produtos = db.Produtos
-            .Include(p => p.Categoria)
-            .Include(p => p.ModoEntrega)
-            .OrderBy(p => p.Nome)
-            .ToList();
+                     .Include(p => p.Categoria)
+                     .Include(p => p.ModoEntrega)
+                     .OrderBy(p => p.Nome)
+                     .ToList();
     }
 
-    void Aprovar(int id)
+    void Criar()
     {
-        var prod = db.Produtos.FirstOrDefault(p => p.Id == id);
-
-        if (prod != null)
-        {
-            prod.Estado = "Activo";
-            db.SaveChanges();
-            nav.NavigateTo("/produtos", forceLoad: true);
-        }
+        nav.NavigateTo("/produtos/criar");
     }
 
-    void Desativar(int id)
+    void Editar(int id)
     {
-        var prod = db.Produtos.FirstOrDefault(p => p.Id == id);
+        nav.NavigateTo($"/produtos/editar/{id}");
+    }
 
-        if (prod != null)
-        {
-            prod.Estado = "Inactivo";
-            db.SaveChanges();
-            nav.NavigateTo("/produtos", forceLoad: true);
-        }
+    void Apagar(int id)
+    {
+        var p = db.Produtos.Find(id);
+        if (p is null) return;
+
+        db.Produtos.Remove(p);
+        db.SaveChanges();
+
+        produtos!.Remove(p);
     }
 }

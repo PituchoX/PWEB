@@ -1,12 +1,10 @@
 ﻿@page "/categorias/editar/{id:int}"
-@using GestaoLoja.Data
 @inject ApplicationDbContext db
 @inject NavigationManager nav
-@using GestaoLoja.Entities
 
 <h3>Editar Categoria</h3>
 
-@if (categoria == null)
+@if (categoria is null)
 {
     <p>A carregar...</p>
 }
@@ -18,7 +16,7 @@ else
     </div>
 
     <button class="btn btn-success" @onclick="Guardar">Guardar</button>
-    <button class="btn btn-secondary" @onclick='() => nav.NavigateTo(" /categorias")'>Cancelar</button>
+    <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
 }
 
 @code {
@@ -27,12 +25,17 @@ else
 
     protected override void OnInitialized()
     {
-        categoria = db.Categorias.Find(id);
+        categoria = db.Categorias.FirstOrDefault(c => c.Id == id);
     }
 
     void Guardar()
     {
+        if (categoria is null) return;
+
+        db.Categorias.Update(categoria);
         db.SaveChanges();
         nav.NavigateTo("/categorias");
     }
+
+    void Cancelar() => nav.NavigateTo("/categorias");
 }

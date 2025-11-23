@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GestaoLoja.Migrations
+namespace GestaoLoja.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -48,7 +48,6 @@ namespace GestaoLoja.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NomeCompleto")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
