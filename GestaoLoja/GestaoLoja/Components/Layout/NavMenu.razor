@@ -1,14 +1,10 @@
 ﻿@implements IDisposable
 @inject NavigationManager NavigationManager
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">FrutiLândia</a>
-    </div>
-</div>
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
+<!-- SIDE MENU -->
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
 
@@ -40,7 +36,7 @@
 
         <hr />
 
-        <!-- LOGIN / REGISTER -->
+        <!-- LOGIN / LOGOUT / REGISTER DENTRO DO MENU (APÓS LOGIN) -->
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
@@ -50,13 +46,17 @@
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <form action="Account/Logout" method="post">
+                    <form method="post" action="/Account/Logout?returnUrl=/">
                         <AntiforgeryToken />
-                        <button type="submit" class="nav-link">
+                        <button type="submit" class="nav-link btn btn-link p-0">
                             <span class="bi bi-arrow-bar-left-nav-menu"></span> Logout
                         </button>
                     </form>
+
+
+
                 </div>
+
             </Authorized>
 
             <NotAuthorized>
@@ -65,6 +65,7 @@
                         <span class="bi bi-person-plus"></span> Register
                     </NavLink>
                 </div>
+
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="/Account/Login">
                         <span class="bi bi-box-arrow-in-right"></span> Login

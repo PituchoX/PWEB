@@ -9,8 +9,14 @@
     <input class="form-control" @bind="categoria.Nome" />
 </div>
 
+<div class="mb-3">
+    <label>Imagem (nome do ficheiro)</label>
+    <input class="form-control" @bind="categoria.Imagem" />
+    <small class="text-muted">Exemplo: maca.png</small>
+</div>
+
 <button class="btn btn-success" @onclick="Guardar">Guardar</button>
-<button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
+<button class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
 
 @code {
     Categorias categoria = new();

@@ -23,6 +23,8 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Id</th>
+                <th>Imagem</th>
                 <th>Nome</th>
                 <th>Categoria</th>
                 <th>Preço Base</th>
@@ -36,6 +38,11 @@ else
             @foreach (var p in produtos)
             {
                 <tr>
+                    <td>@p.Id</td>
+
+                    <td>
+                        <img src="img/@p.Imagem" width="60" class="img-thumbnail" />
+                    </td>
                     <td>@p.Nome</td>
                     <td>@p.Categoria?.Nome</td>
                     <td>@p.PrecoBase €</td>
