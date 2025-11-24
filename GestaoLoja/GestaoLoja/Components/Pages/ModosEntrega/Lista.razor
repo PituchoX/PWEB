@@ -1,59 +1,48 @@
 ﻿@page "/modosentrega"
-
 @inject ApplicationDbContext db
-@inject NavigationManager nav
 
 <h3>Modos de Entrega</h3>
 
-<button class="btn btn-primary mb-3" @onclick="Criar">
-    Novo Modo de Entrega
-</button>
+<a class="btn btn-primary mb-3" href="/modosentrega/criar">
+    <img src="/img/btn_novo.png" width="25" />
+</a>
 
-@if (modos is null)
-{
-    <p>A carregar...</p>
-}
-else if (!modos.Any())
-{
-    <div class="alert alert-warning">Nenhum modo de entrega encontrado.</div>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Detalhe</th>
+            <th style="width:120px">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in modos)
+        {
             <tr>
-                <th>Id</th>
-                <th>Tipo</th>
-                <th style="width:120px;">Ações</th>
+                <td>@item.Nome</td>
+                <td>@item.Detalhe</td>
+
+                <td class="text-end">
+                    <a href="/modosentrega/editar/@item.Id">
+                        <img src="/img/editicon.png" width="28" />
+                    </a>
+
+                    <a href="/modosentrega/apagar/@item.Id">
+                        <img src="/img/botoes/deleteicon.png" width="28" />
+                    </a>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var m in modos)
-            {
-                <tr>
-                    <td>@m.Id</td>
-                    <td>@m.Tipo</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" @onclick="() => Editar(m.Id)">
-                            Editar
-                        </button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+        }
+    </tbody>
+</table>
 
 @code {
-    List<ModoEntrega>? modos;
+    List<ModoEntrega> modos = new();
 
     protected override void OnInitialized()
     {
         modos = db.ModosEntrega
-                  .OrderBy(m => m.Tipo)
-                  .ToList();
+            .OrderBy(m => m.Nome)
+            .ToList();
     }
-
-    void Criar() => nav.NavigateTo("/modosentrega/criar");
-    void Editar(int id) => nav.NavigateTo($"/modosentrega/editar/{id}");
 }

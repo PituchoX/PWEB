@@ -5,20 +5,34 @@
     <a class="navbar-brand text-dark fw-bold fs-4" href="/">FrutiLândia</a>
 
     <div class="d-flex align-items-center">
-
         <NavLink class="nav-link text-dark me-3" href="/sobre">
             Sobre
         </NavLink>
 
-        <NavLink class="nav-link text-dark me-3" href="/Account/Register">
-            Registar
-        </NavLink>
+        <AuthorizeView>
+            <Authorized>
+                <a href="Account/Manage" class="nav-link text-dark me-3">
+                    Olá, @context.User.Identity?.Name!
+                </a>
 
-        <NavLink class="nav-link text-dark" href="/Account/Login">
-            Login
-        </NavLink>
+                <form action="Account/Logout" method="post" class="d-inline">
+                    <AntiforgeryToken />
+                    <input type="hidden" name="ReturnUrl" value="/" />
+                    <button type="submit" class="nav-link btn btn-link text-dark border-0 p-0">
+                        Logout
+                    </button>
+                </form>
+            </Authorized>
+            <NotAuthorized>
+                <NavLink class="nav-link text-dark me-3" href="Account/Register">
+                    Registar
+                </NavLink>
+                <NavLink class="nav-link text-dark" href="Account/Login">
+                    Login
+                </NavLink>
+            </NotAuthorized>
+        </AuthorizeView>
     </div>
-
 </div>
 
 <div class="page">

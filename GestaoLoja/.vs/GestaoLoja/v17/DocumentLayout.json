@@ -3,40 +3,48 @@
   "WorkspaceRootPath": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\layout\\navmenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\layout\\navmenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\categorias\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\categorias\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\sobre.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\sobre.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\layout\\navmenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\layout\\navmenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\entities\\modoentrega.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\entities\\modoentrega.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\modosentrega\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\modosentrega\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\produtos\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\produtos\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\categorias\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\categorias\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\categorias\\criar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\categorias\\criar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\sobre.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\sobre.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\entities\\categorias.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\entities\\categorias.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251124153728_AddImagemToCategorias.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:GestaoLoja\\Data\\Migrations\\20251124153728_AddImagemToCategorias.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\categorias\\criar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\categorias\\criar.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\data\\migrations\\20251124153728_addimagemtocategorias.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\data\\migrations\\20251124153728_addimagemtocategorias.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,11 +54,36 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
+              "Title": "ModoEntrega.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Entities\\ModoEntrega.cs",
+              "RelativeDocumentMoniker": "GestaoLoja\\Entities\\ModoEntrega.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Entities\\ModoEntrega.cs",
+              "RelativeToolTip": "GestaoLoja\\Entities\\ModoEntrega.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-24T19:30:15.716Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Lista.razor",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\ModosEntrega\\Lista.razor",
+              "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\ModosEntrega\\Lista.razor",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\ModosEntrega\\Lista.razor",
+              "RelativeToolTip": "GestaoLoja\\Components\\Pages\\ModosEntrega\\Lista.razor",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAgwBwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-24T18:10:40.313Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "Sobre.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Sobre.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Sobre.razor",
@@ -58,8 +91,7 @@
               "RelativeToolTip": "GestaoLoja\\Components\\Pages\\Sobre.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-24T16:26:33.732Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-24T16:26:33.732Z"
             },
             {
               "$type": "Document",
@@ -69,27 +101,27 @@
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Layout\\MainLayout.razor",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Layout\\MainLayout.razor",
               "RelativeToolTip": "GestaoLoja\\Components\\Layout\\MainLayout.razor",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAqwCEAAAAGAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-11-24T16:17:36.751Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "NavMenu.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Layout\\NavMenu.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Layout\\NavMenu.razor",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Layout\\NavMenu.razor",
               "RelativeToolTip": "GestaoLoja\\Components\\Layout\\NavMenu.razor",
-              "ViewState": "AgIAABsAAAAAAAAAAAAuwDMAAABWAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-11-24T16:09:46.896Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 8,
               "Title": "Home.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Home.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Home.razor",
@@ -97,25 +129,23 @@
               "RelativeToolTip": "GestaoLoja\\Components\\Pages\\Home.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-24T16:06:25.903Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-24T16:06:25.903Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Lista.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Produtos\\Lista.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Produtos\\Lista.razor",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Produtos\\Lista.razor",
               "RelativeToolTip": "GestaoLoja\\Components\\Pages\\Produtos\\Lista.razor",
-              "ViewState": "AgIAABsAAAAAAAAAAAAuwCgAAAAiAAAAAAAAAA==",
+              "ViewState": "AgIAADcAAAAAAAAAAAAgwEMAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-24T15:58:18.464Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-24T15:58:18.464Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "20251124153728_AddImagemToCategorias.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251124153728_AddImagemToCategorias.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Data\\Migrations\\20251124153728_AddImagemToCategorias.cs",
@@ -123,25 +153,24 @@
               "RelativeToolTip": "GestaoLoja\\Data\\Migrations\\20251124153728_AddImagemToCategorias.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-24T15:37:28.197Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-24T15:37:28.197Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "Lista.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Categorias\\Lista.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Categorias\\Lista.razor",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Categorias\\Lista.razor",
               "RelativeToolTip": "GestaoLoja\\Components\\Pages\\Categorias\\Lista.razor",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAuwCUAAAAYAAAAAAAAAA==",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAWwEAAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-11-24T15:31:52.298Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
               "Title": "Categorias.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Entities\\Categorias.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Entities\\Categorias.cs",
@@ -149,21 +178,19 @@
               "RelativeToolTip": "GestaoLoja\\Entities\\Categorias.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-24T15:26:27.652Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-24T15:26:27.652Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 6,
               "Title": "Criar.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Categorias\\Criar.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Categorias\\Criar.razor",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Categorias\\Criar.razor",
               "RelativeToolTip": "GestaoLoja\\Components\\Pages\\Categorias\\Criar.razor",
-              "ViewState": "AgIAAAIAAAAAAAAAAAAqwBMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAmwBMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-23T17:55:23.332Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-23T17:55:23.332Z"
             }
           ]
         }

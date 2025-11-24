@@ -1,85 +1,39 @@
 ﻿@implements IDisposable
 @inject NavigationManager NavigationManager
 
-
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
-<!-- SIDE MENU -->
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
 
-        <!-- HOME -->
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu"></span> Gestão de Loja
-            </NavLink>
-        </div>
-
-        <!-- CRUD ITEMS -->
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/produtos">
-                <span class="bi bi-box-seam"></span> Produtos
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Gestão de Loja
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/categorias">
-                <span class="bi bi-folder-fill"></span> Categorias
+            <NavLink class="nav-link" href="produtos">
+                <span class="bi bi-box-seam-nav-menu" aria-hidden="true"></span> Produtos
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/modosentrega">
-                <span class="bi bi-truck"></span> Modos de Entrega
+            <NavLink class="nav-link" href="categorias">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Categorias
             </NavLink>
         </div>
 
-        <hr />
-
-        <!-- LOGIN / LOGOUT / REGISTER DENTRO DO MENU (APÓS LOGIN) -->
-        <AuthorizeView>
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/Account/Manage">
-                        <span class="bi bi-person-fill-nav-menu"></span>
-                        @context.User.Identity?.Name
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <form method="post" action="/Account/Logout?returnUrl=/">
-                        <AntiforgeryToken />
-                        <button type="submit" class="nav-link btn btn-link p-0">
-                            <span class="bi bi-arrow-bar-left-nav-menu"></span> Logout
-                        </button>
-                    </form>
-
-
-
-                </div>
-
-            </Authorized>
-
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/Account/Register">
-                        <span class="bi bi-person-plus"></span> Register
-                    </NavLink>
-                </div>
-
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/Account/Login">
-                        <span class="bi bi-box-arrow-in-right"></span> Login
-                    </NavLink>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
-
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="modosentrega">
+                <span class="bi bi-truck-nav-menu" aria-hidden="true"></span> Modos de Entrega
+            </NavLink>
+        </div>
     </nav>
 </div>
 
 @code {
     private string? currentUrl;
-
     protected override void OnInitialized()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);

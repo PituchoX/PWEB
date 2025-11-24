@@ -1,7 +1,7 @@
 wwwroot\app.css
 wwwroot\bootstrap\bootstrap.min.css
 wwwroot\bootstrap\bootstrap.min.css.map
-wwwroot\favicon.png
+wwwroot\img\botoes\favicon.png
 wwwroot\img\acai.png
 wwwroot\img\amendoastransp220x120.png
 wwwroot\img\amendoinstransp220x120.png
@@ -153,3 +153,15 @@ wwwroot\img\user2.jpg
 wwwroot\img\uvatransp220x120.png
 wwwroot\img\waffles.png
 wwwroot\img\wafflestransp220x120.png
+wwwroot\img\botoes\saveicon.png
+wwwroot\img\botoes\backicon.png
+wwwroot\img\botoes\deleteicon.png
+wwwroot\img\botoes\detailsicon.png
+wwwroot\img\botoes\editicon.png
+wwwroot\img\botoes\frutaria.jpg
+wwwroot\img\botoes\headicon.png
+wwwroot\img\botoes\icoperfil.png
+wwwroot\img\botoes\noproductstrans.png
+wwwroot\img\botoes\novo.png
+wwwroot\img\botoes\register.png
+wwwroot\img\botoes\about.png

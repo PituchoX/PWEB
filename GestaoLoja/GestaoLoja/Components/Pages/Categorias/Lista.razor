@@ -1,6 +1,8 @@
 ﻿@page "/categorias"
 @inject ApplicationDbContext db
 @inject NavigationManager nav
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
 
 <h3>Categorias</h3>
 
@@ -14,7 +16,7 @@
 }
 else
 {
-    <table class="table table-striped">
+    <table class="table table-striped align-middle">
         <thead>
             <tr>
                 <th>Id</th>
@@ -26,18 +28,21 @@ else
         <tbody>
             @foreach (var c in categorias)
             {
-
                 <tr>
-
                     <td>@c.Id</td>
                     <td>
-                        <img src="img/@c.Imagem" width="80" />
+                        @if (!string.IsNullOrEmpty(c.Imagem))
+                        {
+                            <img src="img/@c.Imagem" width="50" height="50" style="object-fit:cover" />
+                        }
                     </td>
                     <td>@c.Nome</td>
-
                     <td>
-                        <button class="btn btn-sm btn-warning" @onclick="() => Editar(c.Id)">
-                            Editar
+                        <button class="btn btn-sm btn-warning me-1" @onclick="() => Editar(c.Id)">
+                            <i class="bi bi-pencil"></i> Editar
+                        </button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => Apagar(c)">
+                            <i class="bi bi-trash"></i> Apagar
                         </button>
                     </td>
                 </tr>
@@ -51,11 +56,25 @@ else
 
     protected override void OnInitialized()
     {
-        categorias = db.Categorias
-            .OrderBy(c => c.Nome)
-            .ToList();
+        CarregarDados();
+    }
+
+    void CarregarDados()
+    {
+        categorias = db.Categorias.OrderBy(c => c.Nome).ToList();
     }
 
     void Criar() => nav.NavigateTo("/categorias/criar");
+
     void Editar(int id) => nav.NavigateTo($"/categorias/editar/{id}");
+
+    private void Apagar(Categorias categoria)
+    {
+        // Remove do contexto e grava na BD
+        db.Categorias.Remove(categoria);
+        db.SaveChanges();
+
+        // Atualiza a lista na interface
+        CarregarDados();
+    }
 }
