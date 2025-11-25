@@ -1,6 +1,9 @@
 ﻿@page "/categorias/criar"
 @inject ApplicationDbContext db
 @inject NavigationManager nav
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrador")]
+
 
 <h3>Criar Categoria</h3>
 

@@ -4,11 +4,14 @@
 @inject ApplicationDbContext db
 @inject NavigationManager nav
 
+
 <h3>Produtos</h3>
 
-<button class="btn btn-primary mb-3" @onclick="Criar">
-    Novo Produto
-</button>
+<AuthorizeView Roles="Administrador">
+    <button class="btn btn-link p-0 mb-2" title="Novo modo de entrega" @onclick="Criar">
+        <img src="img/novo.png" alt="Novo" style="width:32px;height:32px;" />
+    </button>
+</AuthorizeView>
 
 @if (produtos is null)
 {
@@ -50,6 +53,7 @@ else
                     <td>@p.PrecoFinal €</td>
                     <td>@p.ModoEntrega?.Tipo</td>
                     <td>
+                        <AuthorizeView Roles="Administrador">
                         <button class="btn btn-warning btn-sm"
                                 @onclick="() => Editar(p.Id)">
                             Editar
@@ -58,6 +62,8 @@ else
                                 @onclick="() => Apagar(p.Id)">
                             X
                         </button>
+						</AuthorizeView>
+
                     </td>
                 </tr>
             }

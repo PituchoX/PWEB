@@ -1,6 +1,8 @@
 ﻿@page "/produtos/editar/{id:int}"
 @inject ApplicationDbContext db
 @inject NavigationManager nav
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrador")]
 
 <h3>Editar Produto</h3>
 

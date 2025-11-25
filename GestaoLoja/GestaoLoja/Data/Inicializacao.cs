@@ -51,22 +51,25 @@ namespace GestaoLoja.Data
             }
 
             // Categorias iniciais
-            if (!context.Categorias.Any())
-            {
-                context.Categorias.AddRange(
-                    new Categorias { Nome = "Fruta" },
-                    new Categorias { Nome = "Legumes" }
-                );
-            }
-
             // Modos de entrega iniciais
             if (!context.ModosEntrega.Any())
             {
                 context.ModosEntrega.AddRange(
-                    new ModoEntrega { Tipo = "Levantamento em loja" },
-                    new ModoEntrega { Tipo = "Entrega ao domicílio" }
+                    new ModoEntrega
+                    {
+                        Nome = "Levantamento em loja",
+                        Tipo = "Levantamento em loja",
+                        Detalhe = ""
+                    },
+                    new ModoEntrega
+                    {
+                        Nome = "Entrega ao domicílio",
+                        Tipo = "Entrega ao domicílio",
+                        Detalhe = ""
+                    }
                 );
             }
+
 
             context.SaveChanges();
         }

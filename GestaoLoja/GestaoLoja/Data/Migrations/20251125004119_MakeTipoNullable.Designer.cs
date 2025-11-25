@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestaoLoja.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251124153728_AddImagemToCategorias")]
-    partial class AddImagemToCategorias
+    [Migration("20251125004119_MakeTipoNullable")]
+    partial class MakeTipoNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,8 +121,15 @@ namespace GestaoLoja.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Tipo")
+                    b.Property<string>("Detalhe")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tipo")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -319,7 +326,7 @@ namespace GestaoLoja.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("GestaoLoja.Entities.ModoEntrega", "ModoEntrega")
-                        .WithMany("Produtos")
+                        .WithMany()
                         .HasForeignKey("ModoEntregaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -381,11 +388,6 @@ namespace GestaoLoja.Data.Migrations
                 });
 
             modelBuilder.Entity("GestaoLoja.Entities.Categorias", b =>
-                {
-                    b.Navigation("Produtos");
-                });
-
-            modelBuilder.Entity("GestaoLoja.Entities.ModoEntrega", b =>
                 {
                     b.Navigation("Produtos");
                 });

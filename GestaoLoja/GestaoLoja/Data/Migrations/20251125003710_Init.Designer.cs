@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestaoLoja.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251123170653_Initial")]
-    partial class Initial
+    [Migration("20251125003710_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,6 +101,9 @@ namespace GestaoLoja.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Imagem")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -117,6 +120,14 @@ namespace GestaoLoja.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Detalhe")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Tipo")
                         .IsRequired()
@@ -316,7 +327,7 @@ namespace GestaoLoja.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("GestaoLoja.Entities.ModoEntrega", "ModoEntrega")
-                        .WithMany("Produtos")
+                        .WithMany()
                         .HasForeignKey("ModoEntregaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -378,11 +389,6 @@ namespace GestaoLoja.Data.Migrations
                 });
 
             modelBuilder.Entity("GestaoLoja.Entities.Categorias", b =>
-                {
-                    b.Navigation("Produtos");
-                });
-
-            modelBuilder.Entity("GestaoLoja.Entities.ModoEntrega", b =>
                 {
                     b.Navigation("Produtos");
                 });

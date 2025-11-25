@@ -4,11 +4,14 @@
 @using Microsoft.EntityFrameworkCore
 @rendermode InteractiveServer
 
+
 <h3>Categorias</h3>
 
-<button class="btn btn-primary mb-3" @onclick="Criar">
-    Nova Categoria
+<AuthorizeView Roles="Administrador">
+    <button class="btn btn-link p-0 mb-2" title="Novo modo de entrega" @onclick="Criar">
+        <img src="img/novo.png" alt="Novo" style="width:32px;height:32px;" />
 </button>
+</AuthorizeView>
 
 @if (categorias is null)
 {
@@ -38,12 +41,14 @@ else
                     </td>
                     <td>@c.Nome</td>
                     <td>
+                        <AuthorizeView Roles="Administrador">
                         <button class="btn btn-sm btn-warning me-1" @onclick="() => Editar(c.Id)">
                             <i class="bi bi-pencil"></i> Editar
                         </button>
                         <button class="btn btn-sm btn-danger" @onclick="() => Apagar(c)">
                             <i class="bi bi-trash"></i> Apagar
                         </button>
+						</AuthorizeView>
                     </td>
                 </tr>
             }

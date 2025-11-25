@@ -1,0 +1,13 @@
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\about.png
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\backicon.png
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\deleteicon.png
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\detailsicon.png
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\editicon.png
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\favicon.png
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\frutaria.jpg
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\headicon.png
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\icoperfil.png
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\noproductstrans.png
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\novo.png
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\register.png
+C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\img\botoes\saveicon.png

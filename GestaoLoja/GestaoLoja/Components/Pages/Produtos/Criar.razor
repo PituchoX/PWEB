@@ -1,6 +1,8 @@
 ﻿@page "/produtos/criar"
 @inject ApplicationDbContext db
 @inject NavigationManager nav
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrador")]
 
 <h3>Criar Produto</h3>
 
@@ -45,8 +47,9 @@
         </InputSelect>
     </div>
 
-    <button class="btn btn-success">Guardar</button>
-    <button class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
+    <!-- BOTÕES CORRIGIDOS -->
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
 </EditForm>
 
 @code {
@@ -63,7 +66,9 @@
 
     void Guardar()
     {
+        // Calcula Preço Final
         produto.PrecoFinal = produto.PrecoBase - (produto.PrecoBase * (produto.Percentagem / 100));
+
         db.Produtos.Add(produto);
         db.SaveChanges();
         nav.NavigateTo("/produtos");

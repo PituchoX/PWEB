@@ -1,38 +1,45 @@
-﻿@page "/modosentrega/editar/{id:int}"
+﻿@page "/modosentrega/editar/{Id:int}"
 @inject ApplicationDbContext db
 @inject NavigationManager nav
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrador")]
 
 <h3>Editar Modo de Entrega</h3>
 
 @if (modo is null)
 {
-    <p>A carregar...</p>
+    <p><em>A carregar...</em></p>
 }
 else
 {
     <div class="mb-3">
-        <label>Tipo</label>
-        <input class="form-control" @bind="modo.Tipo" />
+        <label class="form-label">Nome</label>
+        <input class="form-control" @bind="modo.Nome" />
     </div>
 
-    <button class="btn btn-success" @onclick="Guardar">Guardar</button>
+    <div class="mb-3">
+        <label class="form-label">Detalhe</label>
+        <input class="form-control" @bind="modo.Detalhe" />
+    </div>
+
+    <button class="btn btn-primary me-2" @onclick="Guardar">Guardar</button>
     <button class="btn btn-secondary" @onclick="Cancelar">Cancelar</button>
 }
 
 @code {
-    [Parameter] public int id { get; set; }
+    [Parameter] public int Id { get; set; }
+
     ModoEntrega? modo;
 
     protected override void OnInitialized()
     {
-        modo = db.ModosEntrega.FirstOrDefault(m => m.Id == id);
+        modo = db.ModosEntrega.Find(Id);
     }
 
     void Guardar()
     {
         if (modo is null) return;
 
-        db.ModosEntrega.Update(modo);
         db.SaveChanges();
         nav.NavigateTo("/modosentrega");
     }

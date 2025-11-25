@@ -118,8 +118,15 @@ namespace GestaoLoja.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Tipo")
+                    b.Property<string>("Detalhe")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tipo")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -316,7 +323,7 @@ namespace GestaoLoja.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("GestaoLoja.Entities.ModoEntrega", "ModoEntrega")
-                        .WithMany("Produtos")
+                        .WithMany()
                         .HasForeignKey("ModoEntregaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -378,11 +385,6 @@ namespace GestaoLoja.Data.Migrations
                 });
 
             modelBuilder.Entity("GestaoLoja.Entities.Categorias", b =>
-                {
-                    b.Navigation("Produtos");
-                });
-
-            modelBuilder.Entity("GestaoLoja.Entities.ModoEntrega", b =>
                 {
                     b.Navigation("Produtos");
                 });
