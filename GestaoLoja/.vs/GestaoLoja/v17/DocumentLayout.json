@@ -3,6 +3,74 @@
   "WorkspaceRootPath": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\controllers\\modosentregacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\controllers\\modosentregacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\controllers\\produtoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\controllers\\produtoscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\controllers\\categoriascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\controllers\\categoriascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\restfulapipweb.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\restfulapipweb.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\entities\\produto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\entities\\produto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\entities\\modoentrega.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\entities\\modoentrega.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\repositories\\services\\modoentregarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\repositories\\services\\modoentregarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\repositories\\services\\produtorepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\repositories\\services\\produtorepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\repositories\\services\\categoriarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\repositories\\services\\categoriarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\repositories\\interfaces\\imodoentregarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\repositories\\interfaces\\imodoentregarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\repositories\\interfaces\\iprodutorepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\repositories\\interfaces\\iprodutorepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\repositories\\interfaces\\icategoriarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\repositories\\interfaces\\icategoriarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\data\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\data\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\restfulapipweb\\entities\\categoria.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3C2576C2-FB46-4F5D-BCF9-87A8D3E4C6BB}|RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj|solutionrelative:restfulapipweb\\entities\\categoria.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\categorias\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\categorias\\lista.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -71,14 +139,6 @@
       "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\entities\\modoentrega.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251125004119_MakeTipoNullable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:GestaoLoja\\Data\\Migrations\\20251125004119_MakeTipoNullable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251125003710_Init.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:GestaoLoja\\Data\\Migrations\\20251125003710_Init.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\data\\inicializacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\data\\inicializacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -109,6 +169,14 @@
     {
       "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\components\\pages\\sobre.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\components\\pages\\sobre.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\data\\migrations\\20251125004119_maketiponullable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\data\\migrations\\20251125004119_maketiponullable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|c:\\users\\joaop\\source\\repos\\pituchox\\pweb\\gestaoloja\\gestaoloja\\data\\migrations\\20251125003710_init.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4D6D66D4-2B87-402A-A91A-042118F3D883}|GestaoLoja\\GestaoLoja.csproj|solutionrelative:gestaoloja\\data\\migrations\\20251125003710_init.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -118,11 +186,232 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ModosEntregaController.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Controllers\\ModosEntregaController.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Controllers\\ModosEntregaController.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Controllers\\ModosEntregaController.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Controllers\\ModosEntregaController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-28T22:28:15.053Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ProdutosController.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Controllers\\ProdutosController.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Controllers\\ProdutosController.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Controllers\\ProdutosController.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Controllers\\ProdutosController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-28T22:27:33.206Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CategoriasController.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Controllers\\CategoriasController.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Controllers\\CategoriasController.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Controllers\\CategoriasController.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Controllers\\CategoriasController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-28T22:26:53.43Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Program.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Program.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Program.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Program.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAqwEYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-28T22:13:31.033Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\appsettings.json",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\appsettings.json",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\appsettings.json",
+              "RelativeToolTip": "RESTfulAPIPWeb\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-28T22:11:42.69Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ProdutoRepository.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Services\\ProdutoRepository.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Repositories\\Services\\ProdutoRepository.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Services\\ProdutoRepository.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Repositories\\Services\\ProdutoRepository.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAAAqwCAAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T19:31:00.42Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ModoEntregaRepository.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Services\\ModoEntregaRepository.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Repositories\\Services\\ModoEntregaRepository.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Services\\ModoEntregaRepository.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Repositories\\Services\\ModoEntregaRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T19:31:16.469Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "RESTfulAPIPWeb.csproj",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj",
+              "RelativeToolTip": "RESTfulAPIPWeb\\RESTfulAPIPWeb.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-26T19:25:23.488Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Data\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T19:27:47.072Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Produto.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Entities\\Produto.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Entities\\Produto.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Entities\\Produto.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Entities\\Produto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T19:28:23.599Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 8,
+              "Title": "ModoEntrega.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Entities\\ModoEntrega.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Entities\\ModoEntrega.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Entities\\ModoEntrega.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Entities\\ModoEntrega.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T19:28:35.389Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "CategoriaRepository.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Services\\CategoriaRepository.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Repositories\\Services\\CategoriaRepository.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Services\\CategoriaRepository.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Repositories\\Services\\CategoriaRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T19:30:44.899Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "IModoEntregaRepository.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Interfaces\\IModoEntregaRepository.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Repositories\\Interfaces\\IModoEntregaRepository.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Interfaces\\IModoEntregaRepository.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Repositories\\Interfaces\\IModoEntregaRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T19:30:14.771Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "IProdutoRepository.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Interfaces\\IProdutoRepository.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Repositories\\Interfaces\\IProdutoRepository.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Interfaces\\IProdutoRepository.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Repositories\\Interfaces\\IProdutoRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T19:29:59.475Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ICategoriaRepository.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Interfaces\\ICategoriaRepository.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Repositories\\Interfaces\\ICategoriaRepository.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Repositories\\Interfaces\\ICategoriaRepository.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Repositories\\Interfaces\\ICategoriaRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T19:29:44.47Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ApplicationUser.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Data\\ApplicationUser.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Data\\ApplicationUser.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Data\\ApplicationUser.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Data\\ApplicationUser.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T19:28:00.901Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Categoria.cs",
+              "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Entities\\Categoria.cs",
+              "RelativeDocumentMoniker": "RESTfulAPIPWeb\\Entities\\Categoria.cs",
+              "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\RESTfulAPIPWeb\\Entities\\Categoria.cs",
+              "RelativeToolTip": "RESTfulAPIPWeb\\Entities\\Categoria.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T19:28:14.821Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
               "Title": "Criar.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\ModosEntrega\\Criar.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\ModosEntrega\\Criar.razor",
@@ -135,7 +424,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 20,
               "Title": "NavMenu.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Layout\\NavMenu.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Layout\\NavMenu.razor",
@@ -148,7 +437,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 22,
               "Title": "App.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\App.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\App.razor",
@@ -161,20 +450,18 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 38,
               "Title": "20251125002556_AddCamposModoEntrega.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251125002556_AddCamposModoEntrega.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Data\\Migrations\\20251125002556_AddCamposModoEntrega.cs",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251125002556_AddCamposModoEntrega.cs",
               "RelativeToolTip": "GestaoLoja\\Data\\Migrations\\20251125002556_AddCamposModoEntrega.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-25T00:25:56.621Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-25T00:25:56.621Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 21,
               "Title": "Criar.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Categorias\\Criar.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Categorias\\Criar.razor",
@@ -187,20 +474,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 17,
               "Title": "Lista.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Categorias\\Lista.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Categorias\\Lista.razor",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Categorias\\Lista.razor",
               "RelativeToolTip": "GestaoLoja\\Components\\Pages\\Categorias\\Lista.razor",
-              "ViewState": "AgIAABsAAAAAAAAAAAAWwC4AAABHAAAAAAAAAA==",
+              "ViewState": "AgIAABsAAAAAAAAAAAAWwC4AAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-11-24T15:31:52.298Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 18,
               "Title": "Lista.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\ModosEntrega\\Lista.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\ModosEntrega\\Lista.razor",
@@ -213,7 +500,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 28,
               "Title": "Criar.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Produtos\\Criar.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Produtos\\Criar.razor",
@@ -226,7 +513,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 19,
               "Title": "Lista.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Produtos\\Lista.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Produtos\\Lista.razor",
@@ -239,7 +526,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 24,
               "Title": "MainLayout.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Layout\\MainLayout.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Layout\\MainLayout.razor",
@@ -252,7 +539,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 23,
               "Title": "Home.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Home.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Home.razor",
@@ -265,7 +552,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 29,
               "Title": "Editar.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\ModosEntrega\\Editar.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\ModosEntrega\\Editar.razor",
@@ -278,7 +565,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 26,
               "Title": "Editar.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Categorias\\Editar.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Categorias\\Editar.razor",
@@ -291,7 +578,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 27,
               "Title": "Editar.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Produtos\\Editar.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Produtos\\Editar.razor",
@@ -304,7 +591,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 33,
               "Title": "ModoEntrega.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Entities\\ModoEntrega.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Entities\\ModoEntrega.cs",
@@ -317,7 +604,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 39,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Data\\ApplicationDbContext.cs",
@@ -330,7 +617,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 31,
               "Title": "Categorias.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Entities\\Categorias.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Entities\\Categorias.cs",
@@ -343,7 +630,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 30,
               "Title": "Auth.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Auth.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Auth.razor",
@@ -356,20 +643,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 32,
               "Title": "MainLayout.razor.css",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Layout\\MainLayout.razor.css",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Layout\\MainLayout.razor.css",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Layout\\MainLayout.razor.css",
               "RelativeToolTip": "GestaoLoja\\Components\\Layout\\MainLayout.razor.css",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAgAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
               "WhenOpened": "2025-11-25T01:06:46.474Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 42,
               "Title": "20251125004119_MakeTipoNullable.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251125004119_MakeTipoNullable.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Data\\Migrations\\20251125004119_MakeTipoNullable.cs",
@@ -382,20 +669,18 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 37,
               "Title": "20251125002830_MakeDetalheNullable.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251125002830_MakeDetalheNullable.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Data\\Migrations\\20251125002830_MakeDetalheNullable.cs",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251125002830_MakeDetalheNullable.cs",
               "RelativeToolTip": "GestaoLoja\\Data\\Migrations\\20251125002830_MakeDetalheNullable.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-25T00:28:30.624Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-25T00:28:30.624Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 36,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\appsettings.json",
               "RelativeDocumentMoniker": "GestaoLoja\\appsettings.json",
@@ -408,33 +693,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 35,
               "Title": "20251125003228_Init.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251125003228_Init.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Data\\Migrations\\20251125003228_Init.cs",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251125003228_Init.cs",
               "RelativeToolTip": "GestaoLoja\\Data\\Migrations\\20251125003228_Init.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-25T00:32:29.166Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-25T00:32:29.166Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 34,
               "Title": "Inicializacao.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Inicializacao.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Data\\Inicializacao.cs",
               "ToolTip": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Inicializacao.cs",
               "RelativeToolTip": "GestaoLoja\\Data\\Inicializacao.cs",
-              "ViewState": "AgIAADkAAAAAAAAAAAAAADgAAAAuAAAAAAAAAA==",
+              "ViewState": "AgIAADYAAAAAAAAAAIBJwDgAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-25T00:32:51.13Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 43,
               "Title": "20251125003710_Init.cs",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Data\\Migrations\\20251125003710_Init.cs",
               "RelativeDocumentMoniker": "GestaoLoja\\Data\\Migrations\\20251125003710_Init.cs",
@@ -447,7 +730,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 40,
               "Title": "_Imports.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\_Imports.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\_Imports.razor",
@@ -460,7 +743,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 41,
               "Title": "Sobre.razor",
               "DocumentMoniker": "C:\\Users\\joaop\\source\\repos\\PituchoX\\PWEB\\GestaoLoja\\GestaoLoja\\Components\\Pages\\Sobre.razor",
               "RelativeDocumentMoniker": "GestaoLoja\\Components\\Pages\\Sobre.razor",
@@ -468,7 +751,8 @@
               "RelativeToolTip": "GestaoLoja\\Components\\Pages\\Sobre.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-11-24T16:26:33.732Z"
+              "WhenOpened": "2025-11-24T16:26:33.732Z",
+              "EditorCaption": ""
             }
           ]
         }
