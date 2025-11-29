@@ -1,11 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using RESTfulAPI.Data;
+using Microsoft.IdentityModel.Tokens;
+using RESTfulAPIPWeb.Data;
 using RESTfulAPI.Repositories.Services;
 using RESTfulAPIPWeb.Entities;
 using RESTfulAPIPWeb.Repositories.Interfaces;
 using RESTfulAPIPWeb.Repositories.Services;
+using System.Text;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +57,31 @@ builder.Services.AddCors(options =>
         );
 });
 
+
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidateAudience = true,
+        ValidAudience = jwtSettings["Audience"],
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateLifetime = true
+    };
+});
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // ----------------------------------------------------
@@ -67,6 +97,10 @@ if (app.Environment.IsDevelopment())
 // 8. Middleware HTTP
 // ----------------------------------------------------
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.UseCors("allowAll");
 

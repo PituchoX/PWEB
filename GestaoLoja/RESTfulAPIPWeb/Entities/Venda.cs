@@ -4,15 +4,15 @@
     {
         public int Id { get; set; }
 
-        public DateTime Data { get; set; } = DateTime.Now;
+        public DateTime Data { get; set; }
 
+        public string Estado { get; set; } = "Pendente";
+
+        // Ligação ao Cliente
         public int ClienteId { get; set; }
         public Cliente? Cliente { get; set; }
 
-        // depois o funcionário/admin confirma
-        public string Estado { get; set; } = "Pendente";
-        // Pendente, Confirmada, Rejeitada, Expedida
-
-        public ICollection<LinhaVenda>? Linhas { get; set; }
+        // Linhas da Venda (OBRIGATÓRIO)
+        public ICollection<LinhaVenda>? LinhasVenda { get; set; }
     }
 }

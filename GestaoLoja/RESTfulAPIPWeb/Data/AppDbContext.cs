@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RESTfulAPIPWeb.Entities;
-using RESTfulAPIPWeb.Entities;
-using System.Collections.Generic;
 
-namespace RESTfulAPI.Data
+namespace RESTfulAPIPWeb.Data
 {
     public class AppDbContext : IdentityDbContext<ApplicationUser>
     {

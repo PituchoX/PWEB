@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RESTfulAPI.Data;
+using RESTfulAPIPWeb.Data;
 using RESTfulAPIPWeb.Entities;
 using RESTfulAPIPWeb.Repositories.Interfaces;
 

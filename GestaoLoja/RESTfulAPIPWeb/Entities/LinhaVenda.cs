@@ -1,6 +1,4 @@
-﻿using RESTfulAPIPWeb.Entities;
-
-namespace RESTfulAPIPWeb.Entities
+﻿namespace RESTfulAPIPWeb.Entities
 {
     public class LinhaVenda
     {
@@ -13,6 +11,8 @@ namespace RESTfulAPIPWeb.Entities
         public Produto? Produto { get; set; }
 
         public int Quantidade { get; set; }
-        public decimal PrecoUnitario { get; set; }
+
+        // Preço aplicado no momento da compra (obrigatório no enunciado)
+        public decimal Preco { get; set; }
     }
 }
