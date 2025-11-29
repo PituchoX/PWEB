@@ -1,0 +1,109 @@
+﻿@page "/gestao/clientes"
+@inject HttpClient Http
+@using GestaoLoja.Models
+
+<h3>Gestão de Clientes</h3>
+
+@if (carregando)
+{
+    <p>A carregar clientes...</p>
+}
+else if (clientes is null || clientes.Count == 0)
+{
+    <p>Não existem clientes registados.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>NIF</th>
+                <th>Estado</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in clientes)
+            {
+                <tr>
+                    <td>@c.Nome</td>
+                    <td>@c.Email</td>
+                    <td>@c.NIF</td>
+                    <td>
+                        @if (c.Estado == "Ativo")
+                        {
+                            <span class="badge bg-success">Ativo</span>
+                        }
+                        else if (c.Estado == "Pendente")
+                        {
+                            <span class="badge bg-warning">Pendente</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@c.Estado</span>
+                        }
+                    </td>
+                    <td>
+                        @if (c.Estado != "Ativo")
+                        {
+                            <button class="btn btn-sm btn-success" @onclick="() => AlterarEstado(c.Id, estadoAtivo)">
+                                Ativar
+                            </button>
+                        }
+
+                        @if (c.Estado == "Ativo")
+                        {
+                            <button class="btn btn-sm btn-danger" @onclick="() => AlterarEstado(c.Id, estadoInativo)">
+                                Desativar
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    string estadoAtivo = "Ativo";
+    string estadoInativo = "Inativo";
+
+    private List<ClienteViewModel>? clientes;
+    private bool carregando = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarClientes();
+    }
+
+    private async Task CarregarClientes()
+    {
+        carregando = true;
+
+        clientes = await Http.GetFromJsonAsync<List<ClienteViewModel>>(
+            "https://localhost:7070/api/clientes"
+        );
+
+        carregando = false;
+    }
+
+    private async Task AlterarEstado(string id, string novoEstado)
+    {
+        var response = await Http.PutAsJsonAsync(
+            $"https://localhost:7070/api/clientes/{id}/estado",
+            novoEstado
+        );
+
+        if (response.IsSuccessStatusCode)
+        {
+            await CarregarClientes();
+        }
+        else
+        {
+            Console.WriteLine("Erro ao alterar estado.");
+        }
+    }
+}

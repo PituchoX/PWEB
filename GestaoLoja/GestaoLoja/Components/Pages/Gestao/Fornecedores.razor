@@ -1,0 +1,106 @@
+﻿@page "/gestao/fornecedores"
+@using GestaoLoja.Models
+@inject HttpClient Http
+
+<h3>Gestão de Fornecedores</h3>
+
+@if (carregando)
+{
+    <p>A carregar fornecedores...</p>
+}
+else if (fornecedores is null || fornecedores.Count == 0)
+{
+    <p>Não existem fornecedores registados.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nome Empresa</th>
+                <th>Email</th>
+                <th>NIF</th>
+                <th>Estado</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var f in fornecedores)
+            {
+                <tr>
+                    <td>@f.NomeEmpresa</td>
+                    <td>@f.Email</td>
+                    <td>@f.NIF</td>
+                    <td>
+                        @if (f.Estado == "Ativo")
+                        {
+                            <span class="badge bg-success">Ativo</span>
+                        }
+                        else if (f.Estado == "Pendente")
+                        {
+                            <span class="badge bg-warning">Pendente</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@f.Estado</span>
+                        }
+                    </td>
+                    <td>
+                        @if (f.Estado != "Ativo")
+                        {
+                            <button class="btn btn-sm btn-success"
+                                    @onclick="() => AlterarEstado(f.Id, estadoAtivo)">
+                                Ativar
+                            </button>
+                        }
+
+                        @if (f.Estado == "Ativo")
+                        {
+                            <button class="btn btn-sm btn-danger"
+                                    @onclick="() => AlterarEstado(f.Id, estadoInativo)">
+                                Desativar
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<FornecedorViewModel>? fornecedores;
+    bool carregando = true;
+
+    string estadoAtivo = "Ativo";
+    string estadoInativo = "Inativo";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarFornecedores();
+    }
+
+    private async Task CarregarFornecedores()
+    {
+        carregando = true;
+
+        fornecedores = await Http.GetFromJsonAsync<List<FornecedorViewModel>>(
+            "https://localhost:7070/api/fornecedores"
+        );
+
+        carregando = false;
+    }
+
+    private async Task AlterarEstado(string id, string novoEstado)
+    {
+        var resp = await Http.PutAsJsonAsync(
+            $"https://localhost:7070/api/fornecedores/{id}/estado",
+            novoEstado
+        );
+
+        if (resp.IsSuccessStatusCode)
+            await CarregarFornecedores();
+        else
+            Console.WriteLine("Erro ao alterar estado.");
+    }
+}

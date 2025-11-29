@@ -17,7 +17,7 @@
         <!-- Produtos -->
         <div class="nav-item px-3">
             <NavLink class="nav-link d-flex align-items-center" href="produtos">
-                <span class="bi bi-list-ul me-2"></span>
+                <span class="bi bi-box-seam me-2"></span>
                 Produtos
             </NavLink>
         </div>
@@ -25,7 +25,7 @@
         <!-- Categorias -->
         <div class="nav-item px-3">
             <NavLink class="nav-link d-flex align-items-center" href="categorias">
-                <span class="bi bi-list-ul me-2"></span>
+                <span class="bi bi-tags-fill me-2"></span>
                 Categorias
             </NavLink>
         </div>
@@ -33,29 +33,36 @@
         <!-- Modos de Entrega -->
         <div class="nav-item px-3">
             <NavLink class="nav-link d-flex align-items-center" href="modosentrega">
-                <span class="bi bi-list-ul me-2"></span>
+                <span class="bi bi-truck me-2"></span>
                 Modos de Entrega
             </NavLink>
         </div>
 
-        <!-- Menu especial apenas para Administrador -->
-        <AuthorizeView Roles="Administrador">
-            <hr class="text-light mx-3" />
+        <hr class="text-light mx-3" />
 
-            <div class="nav-item px-3 mt-2">
-                <NavLink class="nav-link d-flex align-items-center" href="/admin/users">
-                    <span class="bi bi-people-fill me-2"></span>
-                    Gerir Utilizadores
-                </NavLink>
-            </div>
+        <!-- Clientes -->
+        <div class="nav-item px-3">
+            <NavLink class="nav-link d-flex align-items-center" href="gestao/clientes">
+                <span class="bi bi-people-fill me-2"></span>
+                Clientes
+            </NavLink>
+        </div>
 
-            <div class="nav-item px-3">
-                <NavLink class="nav-link d-flex align-items-center" href="/admin/roles">
-                    <span class="bi bi-shield-lock-fill me-2"></span>
-                    Gerir Roles
-                </NavLink>
-            </div>
-        </AuthorizeView>
+        <!-- Fornecedores -->
+        <div class="nav-item px-3">
+            <NavLink class="nav-link d-flex align-items-center" href="gestao/fornecedores">
+                <span class="bi bi-building me-2"></span>
+                Fornecedores
+            </NavLink>
+        </div>
+
+        <!-- Vendas -->
+        <div class="nav-item px-3">
+            <NavLink class="nav-link d-flex align-items-center" href="gestao/vendas">
+                <span class="bi bi-cash-coin me-2"></span>
+                Vendas
+            </NavLink>
+        </div>
 
     </nav>
 </div>

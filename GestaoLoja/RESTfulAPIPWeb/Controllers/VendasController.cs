@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RESTfulAPIPWeb.Data;
+using RESTfulAPIPWeb.Dtos;
 using RESTfulAPIPWeb.Entities;
 
 namespace RESTfulAPIPWeb.Controllers
@@ -137,31 +138,61 @@ namespace RESTfulAPIPWeb.Controllers
                 .Where(v => v.Estado == "Pendente")
                 .Include(v => v.Cliente)
                 .Include(v => v.LinhasVenda!)
-                .ThenInclude(l => l.Produto)
+                    .ThenInclude(l => l.Produto)
                 .ToListAsync();
 
-            return Ok(vendas);
+            var lista = vendas.Select(v => new VendaViewDto
+            {
+                Id = v.Id,
+                ClienteNome = v.Cliente!.ApplicationUser!.Nome,
+                Data = v.Data,
+                Estado = v.Estado,
+                Total = v.LinhasVenda!.Sum(l => l.Preco * l.Quantidade),
+                Linhas = v.LinhasVenda!.Select(l => new LinhaVendaViewDto
+                {
+                    ProdutoNome = l.Produto!.Nome,
+                    Quantidade = l.Quantidade,
+                    PrecoUnitario = l.Preco
+                }).ToList()
+            });
+
+            return Ok(lista);
         }
+
 
         // ================================================================
         // PUT: api/vendas/{id}/confirmar
         // Funcionário/Admin confirma venda
         // ================================================================
-        [HttpPut("{id}/confirmar")]
+        [HttpGet("confirmadas")]
         [Authorize(Roles = "Administrador,Funcionário")]
-        public async Task<IActionResult> ConfirmarVenda(int id)
+        public async Task<IActionResult> VendasConfirmadas()
         {
-            var venda = await _context.Vendas.FindAsync(id);
+            var vendas = await _context.Vendas
+                .Where(v => v.Estado == "Confirmada")
+                .Include(v => v.Cliente)
+                .Include(v => v.LinhasVenda!)
+                    .ThenInclude(l => l.Produto)
+                .ToListAsync();
 
-            if (venda == null)
-                return NotFound();
+            var lista = vendas.Select(v => new VendaViewDto
+            {
+                Id = v.Id,
+                ClienteNome = v.Cliente!.ApplicationUser!.Nome,
+                Data = v.Data,
+                Estado = v.Estado,
+                Total = v.LinhasVenda!.Sum(l => l.Preco * l.Quantidade),
+                Linhas = v.LinhasVenda!.Select(l => new LinhaVendaViewDto
+                {
+                    ProdutoNome = l.Produto!.Nome,
+                    Quantidade = l.Quantidade,
+                    PrecoUnitario = l.Preco
+                }).ToList()
+            });
 
-            venda.Estado = "Confirmada";
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Message = "Venda confirmada." });
+            return Ok(lista);
         }
+
 
         // ================================================================
         // PUT: api/vendas/{id}/rejeitar
@@ -187,36 +218,35 @@ namespace RESTfulAPIPWeb.Controllers
         // PUT: api/vendas/{id}/expedir
         // Funcionário/Admin expede venda + atualiza stocks
         // ================================================================
-        [HttpPut("{id}/expedir")]
+        [HttpGet("expedidas")]
         [Authorize(Roles = "Administrador,Funcionário")]
-        public async Task<IActionResult> ExpedirVenda(int id)
+        public async Task<IActionResult> VendasExpedidas()
         {
-            var venda = await _context.Vendas
+            var vendas = await _context.Vendas
+                .Where(v => v.Estado == "Expedida")
+                .Include(v => v.Cliente)
                 .Include(v => v.LinhasVenda!)
-                .FirstOrDefaultAsync(v => v.Id == id);
+                    .ThenInclude(l => l.Produto)
+                .ToListAsync();
 
-            if (venda == null)
-                return NotFound();
-
-            if (venda.Estado != "Confirmada")
-                return BadRequest("Só é possível expedir vendas confirmadas.");
-
-            foreach (var linha in venda.LinhasVenda!)
+            var lista = vendas.Select(v => new VendaViewDto
             {
-                var produto = await _context.Produtos.FindAsync(linha.ProdutoId);
+                Id = v.Id,
+                ClienteNome = v.Cliente!.ApplicationUser!.Nome,
+                Data = v.Data,
+                Estado = v.Estado,
+                Total = v.LinhasVenda!.Sum(l => l.Preco * l.Quantidade),
+                Linhas = v.LinhasVenda!.Select(l => new LinhaVendaViewDto
+                {
+                    ProdutoNome = l.Produto!.Nome,
+                    Quantidade = l.Quantidade,
+                    PrecoUnitario = l.Preco
+                }).ToList()
+            });
 
-                if (produto == null)
-                    continue;
-
-                produto.Stock -= linha.Quantidade;
-            }
-
-            venda.Estado = "Expedida";
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Message = "Venda expedida e stock atualizado." });
+            return Ok(lista);
         }
+
     }
 
     // DTO usado ao criar venda (carrinho)

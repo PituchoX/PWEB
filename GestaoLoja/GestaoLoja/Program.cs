@@ -48,6 +48,8 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // Pipeline
@@ -73,5 +75,8 @@ app.MapRazorComponents<App>()
 
 // Endpoints Identity (/Account/Login, Register, etc.)
 app.MapAdditionalIdentityEndpoints();
+
+
+
 
 app.Run();

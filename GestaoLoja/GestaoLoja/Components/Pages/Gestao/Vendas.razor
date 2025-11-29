@@ -1,0 +1,164 @@
+﻿@page "/gestao/vendas"
+@inject HttpClient Http
+@using GestaoLoja.Models
+
+<h3>Gestão de Vendas</h3>
+
+@if (carregando)
+{
+    <p>A carregar vendas...</p>
+}
+else
+{
+    <!-- ================================ -->
+    <!-- VENDAS PENDENTES -->
+    <!-- ================================ -->
+    <h4 class="mt-4">Vendas Pendentes</h4>
+
+    @if (vendasPendentes.Count == 0)
+    {
+        <p>Não existem vendas pendentes.</p>
+    }
+    else
+    {
+        @RenderTabela(vendasPendentes, mostrarConfirmar: true, mostrarRejeitar: true, mostrarExpedir: false)
+    }
+
+    <!-- ================================ -->
+    <!-- VENDAS CONFIRMADAS -->
+    <!-- ================================ -->
+    <h4 class="mt-4">Vendas Confirmadas</h4>
+
+    @if (vendasConfirmadas.Count == 0)
+    {
+        <p>Não existem vendas confirmadas.</p>
+    }
+    else
+    {
+        @RenderTabela(vendasConfirmadas, mostrarConfirmar: false, mostrarRejeitar: false, mostrarExpedir: true)
+    }
+
+    <!-- ================================ -->
+    <!-- VENDAS EXPEDIDAS -->
+    <!-- ================================ -->
+    <h4 class="mt-4">Vendas Expedidas</h4>
+
+    @if (vendasExpedidas.Count == 0)
+    {
+        <p>Não existem vendas expedidas.</p>
+    }
+    else
+    {
+        @RenderTabela(vendasExpedidas, mostrarConfirmar: false, mostrarRejeitar: false, mostrarExpedir: false)
+    }
+}
+
+@code {
+    private bool carregando = true;
+
+    private List<VendaViewModel> vendasPendentes = new();
+    private List<VendaViewModel> vendasConfirmadas = new();
+    private List<VendaViewModel> vendasExpedidas = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarVendas();
+    }
+
+    private async Task CarregarVendas()
+    {
+        carregando = true;
+
+        vendasPendentes = await Http.GetFromJsonAsync<List<VendaViewModel>>(
+            "https://localhost:7070/api/vendas/pendentes");
+
+        vendasConfirmadas = await Http.GetFromJsonAsync<List<VendaViewModel>>(
+            "https://localhost:7070/api/vendas/confirmadas");
+
+        vendasExpedidas = await Http.GetFromJsonAsync<List<VendaViewModel>>(
+            "https://localhost:7070/api/vendas/expedidas");
+
+        carregando = false;
+    }
+
+    private async Task Confirmar(int id)
+    {
+        await Http.PutAsync($"https://localhost:7070/api/vendas/{id}/confirmar", null);
+        await CarregarVendas();
+    }
+
+    private async Task Rejeitar(int id)
+    {
+        await Http.PutAsync($"https://localhost:7070/api/vendas/{id}/rejeitar", null);
+        await CarregarVendas();
+    }
+
+    private async Task Expedir(int id)
+    {
+        await Http.PutAsync($"https://localhost:7070/api/vendas/{id}/expedir", null);
+        await CarregarVendas();
+    }
+
+    // ============================================
+    // Função para desenhar a tabela
+    // ============================================
+    private RenderFragment RenderTabela(
+        List<VendaViewModel> vendas,
+        bool mostrarConfirmar,
+        bool mostrarRejeitar,
+        bool mostrarExpedir
+    ) => __builder =>
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Data</th>
+                    <th>Total</th>
+                    <th>Produtos</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var v in vendas)
+                {
+                    <tr>
+                        <td>@v.Id</td>
+                        <td>@v.ClienteNome</td>
+                        <td>@v.Data.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@v.Total €</td>
+                        <td>
+                            @foreach (var linha in v.Linhas)
+                            {
+                                <div>@linha.ProdutoNome (x@linha.Quantidade) – @linha.PrecoUnitario €</div>
+                            }
+                        </td>
+                        <td>
+                            @if (mostrarConfirmar)
+                            {
+                                <button class="btn btn-sm btn-success me-1" @onclick="() => Confirmar(v.Id)">
+                                    Confirmar
+                                </button>
+                            }
+                            @if (mostrarRejeitar)
+                            {
+                                <button class="btn btn-sm btn-danger me-1" @onclick="() => Rejeitar(v.Id)">
+                                    Rejeitar
+                                </button>
+                            }
+
+                            @if (mostrarExpedir)
+                            {
+                                <button class="btn btn-sm btn-primary" @onclick="() => Expedir(v.Id)">
+                                    Expedir
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+;
+    };
+}

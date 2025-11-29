@@ -192,6 +192,18 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDYXRlZ29yaWFzXExpc3RhLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/joaop/source/repos/PituchoX/PWEB/GestaoLoja/GestaoLoja/Components/Pages/Gestao/Clientes.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xHZXN0YW9cQ2xpZW50ZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/joaop/source/repos/PituchoX/PWEB/GestaoLoja/GestaoLoja/Components/Pages/Gestao/Fornecedores.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xHZXN0YW9cRm9ybmVjZWRvcmVzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/joaop/source/repos/PituchoX/PWEB/GestaoLoja/GestaoLoja/Components/Pages/Gestao/Vendas.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xHZXN0YW9cVmVuZGFzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/joaop/source/repos/PituchoX/PWEB/GestaoLoja/GestaoLoja/Components/Pages/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
