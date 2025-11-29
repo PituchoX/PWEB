@@ -1,4 +1,4 @@
-﻿namespace RESTfulAPI.Entities
+﻿namespace RESTfulAPIPWeb.Entities
 {
     public class ModoEntrega
     {

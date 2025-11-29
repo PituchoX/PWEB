@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RESTfulAPI.Data;
-using RESTfulAPI.Entities;
-using RESTfulAPI.Repositories.Interfaces;
+using RESTfulAPIPWeb.Entities;
+using RESTfulAPIPWeb.Repositories.Interfaces;
 
-namespace RESTfulAPI.Repositories.Services
+namespace RESTfulAPIPWeb.Repositories.Services
 {
     public class ModoEntregaRepository : IModoEntregaRepository
     {

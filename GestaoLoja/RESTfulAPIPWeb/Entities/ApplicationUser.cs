@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace RESTfulAPI.Data
+namespace RESTfulAPIPWeb.Entities
 {
     public class ApplicationUser : IdentityUser
     {

@@ -1,6 +1,6 @@
-﻿using RESTfulAPI.Entities;
+﻿using RESTfulAPIPWeb.Entities;
 
-namespace RESTfulAPI.Repositories.Interfaces
+namespace RESTfulAPIPWeb.Repositories.Interfaces
 {
     public interface IModoEntregaRepository
     {

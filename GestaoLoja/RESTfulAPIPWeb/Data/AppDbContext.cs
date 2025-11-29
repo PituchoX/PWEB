@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using RESTfulAPI.Entities;
+using RESTfulAPIPWeb.Entities;
+using RESTfulAPIPWeb.Entities;
 using System.Collections.Generic;
 
 namespace RESTfulAPI.Data
@@ -15,5 +16,11 @@ namespace RESTfulAPI.Data
         public DbSet<Categoria> Categorias => Set<Categoria>();
         public DbSet<Produto> Produtos => Set<Produto>();
         public DbSet<ModoEntrega> ModosEntrega => Set<ModoEntrega>();
+        public DbSet<Cliente> Clientes => Set<Cliente>();
+        public DbSet<Fornecedor> Fornecedores => Set<Fornecedor>();
+        public DbSet<Venda> Vendas => Set<Venda>();
+        public DbSet<LinhaVenda> LinhasVenda => Set<LinhaVenda>();
+     
+
     }
 }

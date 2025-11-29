@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RESTfulAPI.Repositories.Interfaces;
-using RESTfulAPI.Entities;
-using RESTfulAPI.Repositories.Interfaces;
+using RESTfulAPIPWeb.Repositories.Interfaces;
+using RESTfulAPIPWeb.Entities;
+using RESTfulAPIPWeb.Repositories.Interfaces;
 
 namespace RESTfulAPIWeb.Controllers
 {

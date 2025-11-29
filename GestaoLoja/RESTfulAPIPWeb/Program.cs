@@ -1,10 +1,11 @@
+Ôªøusing Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RESTfulAPI.Data;
-using RESTfulAPI.Repositories.Interfaces;
 using RESTfulAPI.Repositories.Services;
-using RESTfulAPI.Data;
-using RESTfulAPI.Repositories.Interfaces;
-using RESTfulAPI.Repositories.Services;
+using RESTfulAPIPWeb.Entities;
+using RESTfulAPIPWeb.Repositories.Interfaces;
+using RESTfulAPIPWeb.Repositories.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,25 +17,31 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 // ----------------------------------------------------
-// 2. Adicionar Controladores
+// 2. Configurar Identity (necess√°rio por causa do ApplicationUser)
+// ----------------------------------------------------
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
+// ----------------------------------------------------
+// 3. Adicionar Controladores
 // ----------------------------------------------------
 builder.Services.AddControllers();
 
 // ----------------------------------------------------
-// 3. Swagger (documentaÁ„o da API)
+// 4. Swagger (documenta√ß√£o da API)
 // ----------------------------------------------------
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // ----------------------------------------------------
-// 4. InjeÁ„o de DependÍncias dos RepositÛrios
+// 5. Inje√ß√£o de Depend√™ncias dos Reposit√≥rios
 // ----------------------------------------------------
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IModoEntregaRepository, ModoEntregaRepository>();
 
 // ----------------------------------------------------
-// 5. Ativar CORS (para permitir acesso externo, como Blazor, DevTunnel, etc.)
+// 6. Ativar CORS (para permitir acesso externo, como Blazor, DevTunnel, etc.)
 // ----------------------------------------------------
 builder.Services.AddCors(options =>
 {
@@ -48,7 +55,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // ----------------------------------------------------
-// 6. Swagger no modo Development
+// 7. Swagger no modo Development
 // ----------------------------------------------------
 if (app.Environment.IsDevelopment())
 {
@@ -57,12 +64,13 @@ if (app.Environment.IsDevelopment())
 }
 
 // ----------------------------------------------------
-// 7. Middleware HTTP
+// 8. Middleware HTTP
 // ----------------------------------------------------
 app.UseHttpsRedirection();
 
 app.UseCors("allowAll");
 
+app.UseAuthentication();  // ‚Üê obrigat√≥rio agora
 app.UseAuthorization();
 
 app.MapControllers();
