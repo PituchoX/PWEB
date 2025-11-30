@@ -482,3 +482,31 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Build folders
+bin/
+obj/
+
+# Cache files
+*.cache
+*.cache.json
+
+# Executables
+*.exe
+
+# Assemblies
+*.dll
+*.pdb
+
+# Razor cache
+*.rpswa.*
+*.vspscc
+*.dswacache.json
+
+# VS User files
+*.user
+*.userosscache
+*.suo
+
+# Logs
+*.log
