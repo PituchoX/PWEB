@@ -1,15 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using RESTfulAPIPWeb.Entities;
 using RESTfulAPIPWeb.Entities;
 using RESTfulAPIPWeb.Repositories.Interfaces;
-using RESTfulAPIPWeb.Entities;
 using RESTfulAPIPWeb.Repositories.Interfaces;
 
 namespace RESTfulAPIWeb.Controllers
 {
+    [Authorize(Roles = "Administrador,Funcionário")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProdutosController : ControllerBase
     {
+
         private readonly IProdutoRepository _repo;
 
         public ProdutosController(IProdutoRepository repo)

@@ -12,8 +12,8 @@ using RESTfulAPIPWeb.Data;
 namespace RESTfulAPIPWeb.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251129005310_AddBusinessEntities")]
-    partial class AddBusinessEntities
+    [Migration("20251129185810_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -177,11 +177,23 @@ namespace RESTfulAPIPWeb.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NIF")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -310,7 +322,7 @@ namespace RESTfulAPIPWeb.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("PrecoUnitario")
+                    b.Property<decimal>("Preco")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProdutoId")
@@ -367,7 +379,7 @@ namespace RESTfulAPIPWeb.Migrations
                     b.Property<int>("CategoriaId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("FornecedorId")
+                    b.Property<int>("FornecedorId")
                         .HasColumnType("int");
 
                     b.Property<int>("ModoEntregaId")
@@ -385,6 +397,9 @@ namespace RESTfulAPIPWeb.Migrations
 
                     b.Property<decimal>("PrecoFinal")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -509,7 +524,7 @@ namespace RESTfulAPIPWeb.Migrations
                         .IsRequired();
 
                     b.HasOne("RESTfulAPIPWeb.Entities.Venda", "Venda")
-                        .WithMany("Linhas")
+                        .WithMany("LinhasVenda")
                         .HasForeignKey("VendaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -527,9 +542,11 @@ namespace RESTfulAPIPWeb.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RESTfulAPIPWeb.Entities.Fornecedor", null)
+                    b.HasOne("RESTfulAPIPWeb.Entities.Fornecedor", "Fornecedor")
                         .WithMany("Produtos")
-                        .HasForeignKey("FornecedorId");
+                        .HasForeignKey("FornecedorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("RESTfulAPIPWeb.Entities.ModoEntrega", "ModoEntrega")
                         .WithMany()
@@ -538,6 +555,8 @@ namespace RESTfulAPIPWeb.Migrations
                         .IsRequired();
 
                     b.Navigation("Categoria");
+
+                    b.Navigation("Fornecedor");
 
                     b.Navigation("ModoEntrega");
                 });
@@ -571,7 +590,7 @@ namespace RESTfulAPIPWeb.Migrations
 
             modelBuilder.Entity("RESTfulAPIPWeb.Entities.Venda", b =>
                 {
-                    b.Navigation("Linhas");
+                    b.Navigation("LinhasVenda");
                 });
 #pragma warning restore 612, 618
         }

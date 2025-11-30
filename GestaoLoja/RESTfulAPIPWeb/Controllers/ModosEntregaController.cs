@@ -1,14 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RESTfulAPIPWeb.Repositories.Interfaces;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RESTfulAPIPWeb.Entities;
+using RESTfulAPIPWeb.Repositories.Interfaces;
 using RESTfulAPIPWeb.Repositories.Interfaces;
 
 namespace RESTfulAPIWeb.Controllers
 {
+    [Authorize(Roles = "Administrador,Funcionário")]
     [Route("api/[controller]")]
     [ApiController]
     public class ModosEntregaController : ControllerBase
     {
+
         private readonly IModoEntregaRepository _repo;
 
         public ModosEntregaController(IModoEntregaRepository repo)

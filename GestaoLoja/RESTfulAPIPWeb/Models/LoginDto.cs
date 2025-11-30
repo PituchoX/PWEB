@@ -1,4 +1,4 @@
-﻿namespace RESTfulAPIPWeb.Dtos
+﻿namespace RESTfulAPIPWeb.Models
 {
     public class LoginDto
     {

@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RESTfulAPIPWeb.Data;
-using RESTfulAPIPWeb.Dtos;
 using RESTfulAPIPWeb.Entities;
+using RESTfulAPIPWeb.Dtos;
 
 namespace RESTfulAPIPWeb.Controllers
 {
@@ -22,25 +22,23 @@ namespace RESTfulAPIPWeb.Controllers
         }
 
         // ================================================================
-        // POST: api/vendas
-        // Criar venda (CLIENTE)
+        // CLIENTE CRIA VENDA
         // ================================================================
         [HttpPost]
         [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> CriarVenda([FromBody] List<ItemVendaDto> itens)
         {
+            if (itens == null || !itens.Any())
+                return BadRequest("O carrinho está vazio.");
+
             var userId = User.FindFirst("nameidentifier")?.Value;
 
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+            var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
 
             if (cliente == null)
                 return Unauthorized("Cliente inválido.");
 
-            if (!itens.Any())
-                return BadRequest("Carrinho vazio.");
-
-            // Criar venda
+            // Criar nova venda
             var venda = new Venda
             {
                 ClienteId = cliente.Id,
@@ -51,16 +49,15 @@ namespace RESTfulAPIPWeb.Controllers
             _context.Vendas.Add(venda);
             await _context.SaveChangesAsync();
 
-            // Criar linhas da venda
             foreach (var item in itens)
             {
                 var produto = await _context.Produtos.FindAsync(item.ProdutoId);
 
                 if (produto == null)
-                    return BadRequest($"Produto {item.ProdutoId} não existe.");
+                    return BadRequest($"Produto com ID {item.ProdutoId} não existe.");
 
                 if (produto.Stock < item.Quantidade)
-                    return BadRequest($"Stock insuficiente para o produto {produto.Nome}.");
+                    return BadRequest($"Stock insuficiente para o produto '{produto.Nome}'.");
 
                 _context.LinhasVenda.Add(new LinhaVenda
                 {
@@ -73,12 +70,11 @@ namespace RESTfulAPIPWeb.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(new { Message = "Venda criada com sucesso.", venda.Id });
+            return Ok(new { Message = "Venda criada com sucesso!", venda.Id });
         }
 
         // ================================================================
-        // GET: api/vendas/minhas
-        // Histórico do cliente autenticado
+        // CLIENTE: HISTÓRICO DE VENDAS
         // ================================================================
         [HttpGet("minhas")]
         [Authorize(Roles = "Cliente")]
@@ -94,16 +90,15 @@ namespace RESTfulAPIPWeb.Controllers
 
             var vendas = await _context.Vendas
                 .Where(v => v.ClienteId == cliente.Id)
-                .Include(v => v.LinhasVenda!)
-                .ThenInclude(l => l.Produto)
+                .Include(v => v.LinhasVenda)
+                    .ThenInclude(l => l.Produto)
                 .ToListAsync();
 
             return Ok(vendas);
         }
 
         // ================================================================
-        // GET: api/vendas/fornecedor
-        // Vendas dos produtos do fornecedor autenticado
+        // FORNECEDOR: VENDAS DOS SEUS PRODUTOS
         // ================================================================
         [HttpGet("fornecedor")]
         [Authorize(Roles = "Fornecedor")]
@@ -127,55 +122,40 @@ namespace RESTfulAPIPWeb.Controllers
         }
 
         // ================================================================
-        // GET: api/vendas/pendentes
-        // Funcionário/Admin: lista vendas pendentes
+        // ADMIN/FUNCIONÁRIO: LISTAR VENDAS POR ESTADO
         // ================================================================
+        [Authorize(Roles = "Administrador,Funcionário")]
         [HttpGet("pendentes")]
-        [Authorize(Roles = "Administrador,Funcionário")]
-        public async Task<IActionResult> VendasPendentes()
+        public async Task<IActionResult> Pendentes()
         {
-            var vendas = await _context.Vendas
-                .Where(v => v.Estado == "Pendente")
-                .Include(v => v.Cliente)
-                .Include(v => v.LinhasVenda!)
-                    .ThenInclude(l => l.Produto)
-                .ToListAsync();
-
-            var lista = vendas.Select(v => new VendaViewDto
-            {
-                Id = v.Id,
-                ClienteNome = v.Cliente!.ApplicationUser!.Nome,
-                Data = v.Data,
-                Estado = v.Estado,
-                Total = v.LinhasVenda!.Sum(l => l.Preco * l.Quantidade),
-                Linhas = v.LinhasVenda!.Select(l => new LinhaVendaViewDto
-                {
-                    ProdutoNome = l.Produto!.Nome,
-                    Quantidade = l.Quantidade,
-                    PrecoUnitario = l.Preco
-                }).ToList()
-            });
-
-            return Ok(lista);
+            return Ok(await BuscarVendasPorEstado("Pendente"));
         }
 
-
-        // ================================================================
-        // PUT: api/vendas/{id}/confirmar
-        // Funcionário/Admin confirma venda
-        // ================================================================
+        [Authorize(Roles = "Administrador,Funcionário")]
         [HttpGet("confirmadas")]
+        public async Task<IActionResult> Confirmadas()
+        {
+            return Ok(await BuscarVendasPorEstado("Confirmada"));
+        }
+
         [Authorize(Roles = "Administrador,Funcionário")]
-        public async Task<IActionResult> VendasConfirmadas()
+        [HttpGet("expedidas")]
+        public async Task<IActionResult> Expedidas()
+        {
+            return Ok(await BuscarVendasPorEstado("Expedida"));
+        }
+
+        private async Task<IEnumerable<VendaViewDto>> BuscarVendasPorEstado(string estado)
         {
             var vendas = await _context.Vendas
-                .Where(v => v.Estado == "Confirmada")
+                .Where(v => v.Estado == estado)
                 .Include(v => v.Cliente)
+                    .ThenInclude(c => c.ApplicationUser)
                 .Include(v => v.LinhasVenda!)
                     .ThenInclude(l => l.Produto)
                 .ToListAsync();
 
-            var lista = vendas.Select(v => new VendaViewDto
+            return vendas.Select(v => new VendaViewDto
             {
                 Id = v.Id,
                 ClienteNome = v.Cliente!.ApplicationUser!.Nome,
@@ -189,67 +169,90 @@ namespace RESTfulAPIPWeb.Controllers
                     PrecoUnitario = l.Preco
                 }).ToList()
             });
-
-            return Ok(lista);
         }
 
-
         // ================================================================
-        // PUT: api/vendas/{id}/rejeitar
-        // Funcionário/Admin rejeita venda
+        // ADMIN/FUNCIONÁRIO: REJEITAR VENDA
         // ================================================================
         [HttpPut("{id}/rejeitar")]
         [Authorize(Roles = "Administrador,Funcionário")]
-        public async Task<IActionResult> RejeitarVenda(int id)
+        public async Task<IActionResult> Rejeitar(int id)
         {
             var venda = await _context.Vendas.FindAsync(id);
+            if (venda == null) return NotFound();
+
+            if (venda.Estado == "Expedida")
+                return BadRequest("Não é possível rejeitar uma venda já expedida.");
+
+            venda.Estado = "Rejeitada";
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Venda rejeitada com sucesso." });
+        }
+
+        // ================================================================
+        // ADMIN/FUNCIONÁRIO: CONFIRMAR VENDA
+        // ================================================================
+        [HttpPut("{id}/confirmar")]
+        [Authorize(Roles = "Administrador,Funcionário")]
+        public async Task<IActionResult> Confirmar(int id)
+        {
+            var venda = await _context.Vendas
+                .Include(v => v.LinhasVenda!)
+                    .ThenInclude(l => l.Produto)
+                .FirstOrDefaultAsync(v => v.Id == id);
 
             if (venda == null)
                 return NotFound();
 
-            venda.Estado = "Rejeitada";
+            if (venda.Estado != "Pendente")
+                return BadRequest("Apenas vendas pendentes podem ser confirmadas.");
 
+            // Validar stock de todos os produtos
+            foreach (var linha in venda.LinhasVenda!)
+            {
+                if (linha.Produto!.Stock < linha.Quantidade)
+                    return BadRequest($"Stock insuficiente para o produto '{linha.Produto.Nome}'.");
+            }
+
+            venda.Estado = "Confirmada";
             await _context.SaveChangesAsync();
 
-            return Ok(new { Message = "Venda rejeitada." });
+            return Ok(new { Message = "Venda confirmada." });
         }
 
         // ================================================================
-        // PUT: api/vendas/{id}/expedir
-        // Funcionário/Admin expede venda + atualiza stocks
+        // ADMIN/FUNCIONÁRIO: EXPEDIR VENDA
         // ================================================================
-        [HttpGet("expedidas")]
+        [HttpPut("{id}/expedir")]
         [Authorize(Roles = "Administrador,Funcionário")]
-        public async Task<IActionResult> VendasExpedidas()
+        public async Task<IActionResult> Expedir(int id)
         {
-            var vendas = await _context.Vendas
-                .Where(v => v.Estado == "Expedida")
-                .Include(v => v.Cliente)
+            var venda = await _context.Vendas
                 .Include(v => v.LinhasVenda!)
                     .ThenInclude(l => l.Produto)
-                .ToListAsync();
+                .FirstOrDefaultAsync(v => v.Id == id);
 
-            var lista = vendas.Select(v => new VendaViewDto
+            if (venda == null)
+                return NotFound();
+
+            if (venda.Estado != "Confirmada")
+                return BadRequest("Apenas vendas confirmadas podem ser expedidas.");
+
+            // Atualizar stock
+            foreach (var linha in venda.LinhasVenda!)
             {
-                Id = v.Id,
-                ClienteNome = v.Cliente!.ApplicationUser!.Nome,
-                Data = v.Data,
-                Estado = v.Estado,
-                Total = v.LinhasVenda!.Sum(l => l.Preco * l.Quantidade),
-                Linhas = v.LinhasVenda!.Select(l => new LinhaVendaViewDto
-                {
-                    ProdutoNome = l.Produto!.Nome,
-                    Quantidade = l.Quantidade,
-                    PrecoUnitario = l.Preco
-                }).ToList()
-            });
+                linha.Produto!.Stock -= linha.Quantidade;
+            }
 
-            return Ok(lista);
+            venda.Estado = "Expedida";
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Venda expedida com sucesso." });
         }
-
     }
 
-    // DTO usado ao criar venda (carrinho)
+    // DTOs usados
     public class ItemVendaDto
     {
         public int ProdutoId { get; set; }

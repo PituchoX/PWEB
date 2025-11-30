@@ -7,11 +7,12 @@ using RESTfulAPIPWeb.Entities;
 
 namespace RESTfulAPIPWeb.Controllers
 {
+    [Authorize(Roles = "Administrador,Funcionário")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Administrador,Funcionário")]
     public class ClientesController : ControllerBase
     {
+
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 

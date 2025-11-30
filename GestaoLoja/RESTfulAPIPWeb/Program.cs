@@ -25,7 +25,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // 2. Configurar Identity (necessário por causa do ApplicationUser)
 // ----------------------------------------------------
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>();
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
 
 // ----------------------------------------------------
 // 3. Adicionar Controladores
@@ -83,6 +85,46 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    string[] roles = new[] { "Administrador", "Funcionário", "Cliente", "Fornecedor" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    // Criar Administrador inicial se não existir
+    var adminEmail = "admin@pweb.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+    if (adminUser == null)
+    {
+        adminUser = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            Nome = "Administrador",
+            NIF = "000000000",
+            Estado = "Ativo"
+        };
+
+        var result = await userManager.CreateAsync(adminUser, "Admin123!");
+
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, "Administrador");
+        }
+    }
+}
+
 
 // ----------------------------------------------------
 // 7. Swagger no modo Development
