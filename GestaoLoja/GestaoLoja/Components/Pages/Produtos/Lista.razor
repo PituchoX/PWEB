@@ -1,17 +1,33 @@
 ﻿@page "/produtos"
 
 @using Microsoft.EntityFrameworkCore
+@using GestaoLoja.Entities
 @inject ApplicationDbContext db
 @inject NavigationManager nav
 
-
 <h3>Produtos</h3>
 
+@if (!string.IsNullOrEmpty(mensagemErro))
+{
+    <div class="alert alert-danger">@mensagemErro</div>
+}
+
+
 <AuthorizeView Roles="Administrador">
-    <button class="btn btn-link p-0 mb-2" title="Novo modo de entrega" @onclick="Criar">
+    <button class="btn btn-link p-0 mb-2" title="Novo Produto" @onclick="Criar">
         <img src="img/novo.png" alt="Novo" style="width:32px;height:32px;" />
     </button>
 </AuthorizeView>
+
+<div class="mb-3">
+    <label>Filtrar por Estado:</label>
+    <select class="form-select" style="width:200px;" @onchange="FiltrarEstado">
+        <option value="">Todos</option>
+        <option value="Pendente">Pendente</option>
+        <option value="Ativo">Ativo</option>
+        <option value="Inativo">Inativo</option>
+    </select>
+</div>
 
 @if (produtos is null)
 {
@@ -30,11 +46,14 @@ else
                 <th>Imagem</th>
                 <th>Nome</th>
                 <th>Categoria</th>
+                <th>Fornecedor</th>
                 <th>Preço Base</th>
                 <th>Percentagem</th>
                 <th>Preço Final</th>
+                <th>Stock</th>
+                <th>Estado</th>
                 <th>Modo de Entrega</th>
-                <th style="width: 120px;">Ações</th>
+                <th style="width: 220px;">Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -42,29 +61,73 @@ else
             {
                 <tr>
                     <td>@p.Id</td>
-
-                    <td>
-                        <img src="img/@p.Imagem" width="60" class="img-thumbnail" />
-                    </td>
+                    <td><img src="img/@p.Imagem" width="60" class="img-thumbnail" /></td>
                     <td>@p.Nome</td>
                     <td>@p.Categoria?.Nome</td>
+                    <td>@p.Fornecedor?.NomeEmpresa</td>
                     <td>@p.PrecoBase €</td>
                     <td>@p.Percentagem %</td>
                     <td>@p.PrecoFinal €</td>
+                    <td>@p.Stock</td>
+
+                    <td>
+                        @if (p.Estado == "Ativo")
+                        {
+                            <span class="badge bg-success">Ativo</span>
+                        }
+                        else if (p.Estado == "Pendente")
+                        {
+                            <span class="badge bg-warning">Pendente</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Inativo</span>
+                        }
+                    </td>
+
                     <td>@p.ModoEntrega?.Tipo</td>
+
                     <td>
                         <AuthorizeView Roles="Administrador">
-                        <button class="btn btn-warning btn-sm"
-                                @onclick="() => Editar(p.Id)">
-                            Editar
-                        </button>
-                        <button class="btn btn-danger btn-sm ms-1"
-                                @onclick="() => Apagar(p.Id)">
-                            X
-                        </button>
-						</AuthorizeView>
 
+                            @if (p.Estado == "Pendente")
+                            {
+                                <button class="btn btn-success btn-sm me-1"
+                                        @onclick="() => Aprovar(p)">
+                                    Aprovar
+                                </button>
+                            }
+
+                            @if (p.Estado == "Ativo")
+                            {
+                                <button class="btn btn-secondary btn-sm me-1"
+                                        @onclick="() => Inativar(p)">
+                                    Inativar
+                                </button>
+                            }
+
+                            @if (p.Estado == "Inativo")
+                            {
+                                <button class="btn btn-success btn-sm me-1"
+                                        @onclick="() => Ativar(p)">
+                                    Ativar
+                                </button>
+                            }
+
+                            <button class="btn btn-warning btn-sm"
+                                    @onclick="() => Editar(p.Id)">
+                                Editar
+                            </button>
+
+                            <button class="btn btn-danger btn-sm ms-1"
+                                    @onclick="() => Apagar(p)">
+                                Apagar
+                            </button>
+
+
+                        </AuthorizeView>
                     </td>
+
                 </tr>
             }
         </tbody>
@@ -72,15 +135,35 @@ else
 }
 
 @code {
+
     List<Produtos>? produtos;
+    string filtroEstado = "";
+
+    string? mensagemErro = null;
+
 
     protected override void OnInitialized()
     {
+        CarregarProdutos();
+    }
+
+    void CarregarProdutos()
+    {
         produtos = db.Produtos
                      .Include(p => p.Categoria)
+                     .Include(p => p.Fornecedor)
                      .Include(p => p.ModoEntrega)
                      .OrderBy(p => p.Nome)
                      .ToList();
+
+        if (!string.IsNullOrEmpty(filtroEstado))
+            produtos = produtos.Where(p => p.Estado == filtroEstado).ToList();
+    }
+
+    void FiltrarEstado(ChangeEventArgs e)
+    {
+        filtroEstado = e.Value?.ToString() ?? "";
+        CarregarProdutos();
     }
 
     void Criar()
@@ -93,14 +176,49 @@ else
         nav.NavigateTo($"/produtos/editar/{id}");
     }
 
-    void Apagar(int id)
+    async void Apagar(Produtos p)
     {
-        var p = db.Produtos.Find(id);
-        if (p is null) return;
+        // Verificar se o produto tem vendas associadas
+        bool temVendas = db.LinhasVenda.Any(l => l.ProdutoId == p.Id);
 
+        if (temVendas)
+        {
+            // Não pode apagar — mostrar mensagem
+            mensagemErro = "Não é possível apagar este produto porque existem vendas associadas.";
+            return;
+        }
+
+        // Caso não tenha vendas — apagar fisicamente
         db.Produtos.Remove(p);
         db.SaveChanges();
 
-        produtos!.Remove(p);
+        CarregarProdutos();
+    }
+
+
+    void AlterarEstado(Produtos p, string novoEstado)
+    {
+        p.Estado = novoEstado;
+
+        // recalcular preco final
+        p.PrecoFinal = p.PrecoBase + (p.PrecoBase * (p.Percentagem / 100));
+
+        db.SaveChanges();
+        CarregarProdutos();
+    }
+
+    void Aprovar(Produtos p)
+    {
+        AlterarEstado(p, "Ativo");
+    }
+
+    void Ativar(Produtos p)
+    {
+        AlterarEstado(p, "Ativo");
+    }
+
+    void Inativar(Produtos p)
+    {
+        AlterarEstado(p, "Inativo");
     }
 }

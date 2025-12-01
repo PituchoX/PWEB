@@ -1,6 +1,5 @@
 ﻿@page "/gestao/clientes"
-@inject HttpClient Http
-@using GestaoLoja.Models
+@inject GestaoLoja.Data.ApplicationDbContext _context
 
 <h3>Gestão de Clientes</h3>
 
@@ -20,7 +19,8 @@ else
                 <th>Nome</th>
                 <th>Email</th>
                 <th>NIF</th>
-                <th>Estado</th>
+                <th>Registo</th>
+                <th>Conta</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -28,35 +28,59 @@ else
             @foreach (var c in clientes)
             {
                 <tr>
-                    <td>@c.Nome</td>
-                    <td>@c.Email</td>
+                    <td>@c.ApplicationUser?.NomeCompleto</td>
+                    <td>@c.ApplicationUser?.Email</td>
                     <td>@c.NIF</td>
+
+                    <!-- Estado do Cliente -->
                     <td>
-                        @if (c.Estado == "Ativo")
-                        {
-                            <span class="badge bg-success">Ativo</span>
-                        }
-                        else if (c.Estado == "Pendente")
+                        @if (c.Estado == "Pendente")
                         {
                             <span class="badge bg-warning">Pendente</span>
                         }
                         else
                         {
-                            <span class="badge bg-secondary">@c.Estado</span>
+                            <span class="badge bg-success">Aprovado</span>
                         }
                     </td>
+
+                    <!-- Estado da Conta -->
                     <td>
-                        @if (c.Estado != "Ativo")
+                        @if (c.ApplicationUser?.Estado == "Ativo")
                         {
-                            <button class="btn btn-sm btn-success" @onclick="() => AlterarEstado(c.Id, estadoAtivo)">
-                                Ativar
+                            <span class="badge bg-success">Ativa</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Inativa</span>
+                        }
+                    </td>
+
+                    <td>
+                        <!-- Aprovar/registar -->
+                        @if (c.Estado == "Pendente")
+                        {
+                            <button class="btn btn-sm btn-success me-1"
+                                    @onclick="() => AlterarEstadoRegisto(c.Id)">
+                                Aprovar
                             </button>
                         }
 
-                        @if (c.Estado == "Ativo")
+                        <!-- Ativar conta -->
+                        @if (c.ApplicationUser?.Estado == "Inativo")
                         {
-                            <button class="btn btn-sm btn-danger" @onclick="() => AlterarEstado(c.Id, estadoInativo)">
-                                Desativar
+                            <button class="btn btn-sm btn-success me-1"
+                                    @onclick="() => AlterarEstadoConta(c.ApplicationUserId!, estadoAtivo)">
+                                Ativar Conta
+                            </button>
+                        }
+
+                        <!-- Desativar conta -->
+                        @if (c.ApplicationUser?.Estado == "Ativo")
+                        {
+                            <button class="btn btn-sm btn-danger"
+                                    @onclick="() => AlterarEstadoConta(c.ApplicationUserId!, estadoInativo)">
+                                Desativar Conta
                             </button>
                         }
                     </td>
@@ -71,7 +95,7 @@ else
     string estadoAtivo = "Ativo";
     string estadoInativo = "Inativo";
 
-    private List<ClienteViewModel>? clientes;
+    private List<Cliente>? clientes;
     private bool carregando = true;
 
     protected override async Task OnInitializedAsync()
@@ -83,27 +107,34 @@ else
     {
         carregando = true;
 
-        clientes = await Http.GetFromJsonAsync<List<ClienteViewModel>>(
-            "https://localhost:7070/api/clientes"
-        );
+        clientes = await _context.Clientes
+            .Include(c => c.ApplicationUser)
+            .ToListAsync();
 
         carregando = false;
     }
 
-    private async Task AlterarEstado(string id, string novoEstado)
+    // Aprovar o registo
+    private async Task AlterarEstadoRegisto(int id)
     {
-        var response = await Http.PutAsJsonAsync(
-            $"https://localhost:7070/api/clientes/{id}/estado",
-            novoEstado
-        );
+        var cliente = await _context.Clientes.FindAsync(id);
+        if (cliente == null) return;
 
-        if (response.IsSuccessStatusCode)
-        {
-            await CarregarClientes();
-        }
-        else
-        {
-            Console.WriteLine("Erro ao alterar estado.");
-        }
+        cliente.Estado = "Aprovado";
+
+        await _context.SaveChangesAsync();
+        await CarregarClientes();
+    }
+
+    // Alterar estado da conta (ApplicationUser)
+    private async Task AlterarEstadoConta(string userId, string novoEstado)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return;
+
+        user.Estado = novoEstado;
+
+        await _context.SaveChangesAsync();
+        await CarregarClientes();
     }
 }

@@ -200,8 +200,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xHZXN0YW9cRm9ybmVjZWRvcmVzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/joaop/source/repos/PituchoX/PWEB/GestaoLoja/GestaoLoja/Components/Pages/Gestao/Vendas.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xHZXN0YW9cVmVuZGFzLnJhem9y
+[C:/Users/joaop/source/repos/PituchoX/PWEB/GestaoLoja/GestaoLoja/Components/Pages/Gestao/GestaoVendas.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xHZXN0YW9cR2VzdGFvVmVuZGFzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/joaop/source/repos/PituchoX/PWEB/GestaoLoja/GestaoLoja/Components/Pages/Home.razor]

@@ -18,16 +18,16 @@ namespace GestaoLoja.Data
             context.Database.Migrate();
 
             const string adminRole = "Administrador";
-            const string adminEmail = "admin@frutillandia.pt";
-            const string adminPass = "Admin123!";
+            const string adminEmail = "admin@gestao.pt";     // <-- NOVO EMAIL
+            const string adminPass = "Admin123!";            // <-- NOVA PASSWORD
 
-            // Criar role
+            // Criar role Administrador se não existir
             if (!roleManager.RoleExistsAsync(adminRole).Result)
             {
                 roleManager.CreateAsync(new IdentityRole(adminRole)).Wait();
             }
 
-            // Criar utilizador admin
+            // Criar utilizador administrador
             var admin = userManager.FindByEmailAsync(adminEmail).Result;
             if (admin == null)
             {
@@ -35,7 +35,9 @@ namespace GestaoLoja.Data
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
-                    NomeCompleto = "Administrador",
+                    NomeCompleto = "Administrador do Sistema",
+                    Estado = "Ativo",       // <-- ATIVO POR DEFINIÇÃO
+                    Perfil = "Administrador", // <-- PERFIL DEFINIDO
                     EmailConfirmed = true
                 };
 
@@ -49,8 +51,25 @@ namespace GestaoLoja.Data
 
                 userManager.AddToRoleAsync(admin, adminRole).Wait();
             }
+            // Criar fornecedor interno (caso não exista)
+            var fornecedorInterno = context.Fornecedores
+                .FirstOrDefault(f => f.NomeEmpresa == "Fornecedor Interno");
 
-            // Categorias iniciais
+            if (fornecedorInterno == null)
+            {
+                fornecedorInterno = new Fornecedor
+                {
+                    NomeEmpresa = "Fornecedor Interno",
+                    NIF = "000000000",
+                    Estado = "Aprovado",
+                    ApplicationUserId = admin.Id  // o admin é o dono deste fornecedor interno
+                };
+
+                context.Fornecedores.Add(fornecedorInterno);
+                context.SaveChanges();
+            }
+
+
             // Modos de entrega iniciais
             if (!context.ModosEntrega.Any())
             {
@@ -69,7 +88,6 @@ namespace GestaoLoja.Data
                     }
                 );
             }
-
 
             context.SaveChanges();
         }

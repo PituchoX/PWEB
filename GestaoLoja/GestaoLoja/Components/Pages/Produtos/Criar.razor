@@ -28,7 +28,7 @@
     <div class="mb-3">
         <label>Categoria</label>
         <InputSelect class="form-select" @bind-Value="produto.CategoriaId">
-            <option value="">(Selecionar)</option>
+            <option value="0">(Selecionar)</option>
             @foreach (var cat in categorias)
             {
                 <option value="@cat.Id">@cat.Nome</option>
@@ -39,7 +39,7 @@
     <div class="mb-3">
         <label>Modo de Entrega</label>
         <InputSelect class="form-select" @bind-Value="produto.ModoEntregaId">
-            <option value="">(Selecionar)</option>
+            <option value="0">(Selecionar)</option>
             @foreach (var m in modos)
             {
                 <option value="@m.Id">@m.Tipo</option>
@@ -47,27 +47,50 @@
         </InputSelect>
     </div>
 
-    <!-- BOTÕES CORRIGIDOS -->
+    <div class="mb-3">
+        <label>Fornecedor</label>
+        <InputSelect class="form-select" @bind-Value="produto.FornecedorId">
+            <option value="">(Selecionar Fornecedor)</option>
+            @foreach (var f in fornecedores)
+            {
+                <option value="@f.Id">@f.NomeEmpresa</option>
+            }
+        </InputSelect>
+    </div>
+
     <button type="submit" class="btn btn-success">Guardar</button>
     <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
 </EditForm>
 
 @code {
-    Produtos produto = new();
+    Produtos produto = new()
+    {
+        Estado = "Pendente",
+        Imagem = "semfoto.png"
+    };
 
     List<Categorias> categorias = new();
     List<ModoEntrega> modos = new();
+    List<Fornecedor> fornecedores = new();
 
     protected override void OnInitialized()
     {
         categorias = db.Categorias.OrderBy(c => c.Nome).ToList();
         modos = db.ModosEntrega.OrderBy(m => m.Tipo).ToList();
+        fornecedores = db.Fornecedores
+            .Where(f => f.Estado == "Aprovado")
+            .ToList();
     }
 
     void Guardar()
     {
-        // Calcula Preço Final
-        produto.PrecoFinal = produto.PrecoBase - (produto.PrecoBase * (produto.Percentagem / 100));
+        if (produto.CategoriaId == 0 || produto.ModoEntregaId == 0 || produto.FornecedorId == 0)
+            return;
+
+        if (produto.Percentagem < 0)
+            produto.Percentagem = 0;
+
+        produto.PrecoFinal = produto.PrecoBase + (produto.PrecoBase * (produto.Percentagem / 100));
 
         db.Produtos.Add(produto);
         db.SaveChanges();

@@ -51,8 +51,24 @@ else
             </InputSelect>
         </div>
 
+        <div class="mb-3">
+            <label>Fornecedor</label>
+            <InputSelect class="form-select" @bind-Value="produto.FornecedorId">
+                @foreach (var f in fornecedores)
+                {
+                    <option value="@f.Id">@f.NomeEmpresa</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="mb-3">
+            <label>Estado</label>
+            <InputText class="form-control" Value="@produto.Estado" disabled />
+            <small class="text-muted">O estado é gerido na listagem de produtos.</small>
+        </div>
+
         <button class="btn btn-success">Guardar</button>
-        <button class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
+        <button class="btn btn-secondary ms-2" type="button" @onclick="Cancelar">Cancelar</button>
     </EditForm>
 }
 
@@ -62,20 +78,36 @@ else
     Produtos? produto;
     List<Categorias> categorias = new();
     List<ModoEntrega> modos = new();
+    List<Fornecedor> fornecedores = new();
 
     protected override void OnInitialized()
     {
-        produto = db.Produtos.FirstOrDefault(p => p.Id == id);
+        produto = db.Produtos
+            .Include(p => p.Categoria)
+            .Include(p => p.ModoEntrega)
+            .Include(p => p.Fornecedor)
+            .FirstOrDefault(p => p.Id == id);
 
         categorias = db.Categorias.OrderBy(c => c.Nome).ToList();
         modos = db.ModosEntrega.OrderBy(m => m.Tipo).ToList();
+        fornecedores = db.Fornecedores
+            .Where(f => f.Estado == "Aprovado")
+            .ToList(); // só fornecedores aprovados
     }
 
     void Guardar()
     {
-        produto.PrecoFinal = produto.PrecoBase - (produto.PrecoBase * (produto.Percentagem / 100));
-        db.Produtos.Update(produto!);
+        if (produto == null)
+            return;
+
+        if (produto.Percentagem < 0)
+            produto.Percentagem = 0;
+
+        produto.PrecoFinal = produto.PrecoBase + (produto.PrecoBase * (produto.Percentagem / 100));
+
+        db.Produtos.Update(produto);
         db.SaveChanges();
+
         nav.NavigateTo("/produtos");
     }
 

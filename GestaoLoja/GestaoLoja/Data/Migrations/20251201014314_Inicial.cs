@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GestaoLoja.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,7 +30,9 @@ namespace GestaoLoja.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    NomeCompleto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NomeCompleto = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Perfil = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -187,6 +189,50 @@ namespace GestaoLoja.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Clientes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NIF = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Clientes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Clientes_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Fornecedores",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NomeEmpresa = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NIF = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Fornecedores", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Fornecedores_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Produtos",
                 columns: table => new
                 {
@@ -200,7 +246,8 @@ namespace GestaoLoja.Data.Migrations
                     Stock = table.Column<int>(type: "int", nullable: false),
                     Imagem = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CategoriaId = table.Column<int>(type: "int", nullable: false),
-                    ModoEntregaId = table.Column<int>(type: "int", nullable: false)
+                    ModoEntregaId = table.Column<int>(type: "int", nullable: false),
+                    FornecedorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -212,11 +259,70 @@ namespace GestaoLoja.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_Produtos_Fornecedores_FornecedorId",
+                        column: x => x.FornecedorId,
+                        principalTable: "Fornecedores",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Produtos_ModosEntrega_ModoEntregaId",
                         column: x => x.ModoEntregaId,
                         principalTable: "ModosEntrega",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Vendas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Data = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ClienteId = table.Column<int>(type: "int", nullable: false),
+                    FornecedorId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vendas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Vendas_Clientes_ClienteId",
+                        column: x => x.ClienteId,
+                        principalTable: "Clientes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Vendas_Fornecedores_FornecedorId",
+                        column: x => x.FornecedorId,
+                        principalTable: "Fornecedores",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LinhasVenda",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VendaId = table.Column<int>(type: "int", nullable: true),
+                    ProdutoId = table.Column<int>(type: "int", nullable: true),
+                    Quantidade = table.Column<int>(type: "int", nullable: false),
+                    Preco = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LinhasVenda", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LinhasVenda_Produtos_ProdutoId",
+                        column: x => x.ProdutoId,
+                        principalTable: "Produtos",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_LinhasVenda_Vendas_VendaId",
+                        column: x => x.VendaId,
+                        principalTable: "Vendas",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -259,14 +365,51 @@ namespace GestaoLoja.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Clientes_ApplicationUserId",
+                table: "Clientes",
+                column: "ApplicationUserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Fornecedores_ApplicationUserId",
+                table: "Fornecedores",
+                column: "ApplicationUserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LinhasVenda_ProdutoId",
+                table: "LinhasVenda",
+                column: "ProdutoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LinhasVenda_VendaId",
+                table: "LinhasVenda",
+                column: "VendaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Produtos_CategoriaId",
                 table: "Produtos",
                 column: "CategoriaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Produtos_FornecedorId",
+                table: "Produtos",
+                column: "FornecedorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Produtos_ModoEntregaId",
                 table: "Produtos",
                 column: "ModoEntregaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vendas_ClienteId",
+                table: "Vendas",
+                column: "ClienteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vendas_FornecedorId",
+                table: "Vendas",
+                column: "FornecedorId");
         }
 
         /// <inheritdoc />
@@ -288,19 +431,31 @@ namespace GestaoLoja.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Produtos");
+                name: "LinhasVenda");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Produtos");
+
+            migrationBuilder.DropTable(
+                name: "Vendas");
 
             migrationBuilder.DropTable(
                 name: "Categorias");
 
             migrationBuilder.DropTable(
                 name: "ModosEntrega");
+
+            migrationBuilder.DropTable(
+                name: "Clientes");
+
+            migrationBuilder.DropTable(
+                name: "Fornecedores");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

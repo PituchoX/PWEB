@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestaoLoja.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251125003710_Init")]
-    partial class Init
+    [Migration("20251201014314_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,10 @@ namespace GestaoLoja.Data.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -51,6 +55,7 @@ namespace GestaoLoja.Data.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NomeCompleto")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
@@ -62,6 +67,10 @@ namespace GestaoLoja.Data.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Perfil")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -113,6 +122,99 @@ namespace GestaoLoja.Data.Migrations
                     b.ToTable("Categorias");
                 });
 
+            modelBuilder.Entity("GestaoLoja.Entities.Cliente", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NIF")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.ToTable("Clientes");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.Fornecedor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NIF")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NomeEmpresa")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId")
+                        .IsUnique();
+
+                    b.ToTable("Fornecedores");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.LinhasVenda", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Preco")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VendaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.HasIndex("VendaId");
+
+                    b.ToTable("LinhasVenda");
+                });
+
             modelBuilder.Entity("GestaoLoja.Entities.ModoEntrega", b =>
                 {
                     b.Property<int>("Id")
@@ -153,6 +255,9 @@ namespace GestaoLoja.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("FornecedorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Imagem")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -180,9 +285,42 @@ namespace GestaoLoja.Data.Migrations
 
                     b.HasIndex("CategoriaId");
 
+                    b.HasIndex("FornecedorId");
+
                     b.HasIndex("ModoEntregaId");
 
                     b.ToTable("Produtos");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.Vendas", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FornecedorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClienteId");
+
+                    b.HasIndex("FornecedorId");
+
+                    b.ToTable("Vendas");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -318,6 +456,43 @@ namespace GestaoLoja.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("GestaoLoja.Entities.Cliente", b =>
+                {
+                    b.HasOne("GestaoLoja.Data.ApplicationUser", "ApplicationUser")
+                        .WithOne("Cliente")
+                        .HasForeignKey("GestaoLoja.Entities.Cliente", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.Fornecedor", b =>
+                {
+                    b.HasOne("GestaoLoja.Data.ApplicationUser", "ApplicationUser")
+                        .WithOne("Fornecedor")
+                        .HasForeignKey("GestaoLoja.Entities.Fornecedor", "ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.LinhasVenda", b =>
+                {
+                    b.HasOne("GestaoLoja.Entities.Produtos", "Produto")
+                        .WithMany()
+                        .HasForeignKey("ProdutoId");
+
+                    b.HasOne("GestaoLoja.Entities.Vendas", "Venda")
+                        .WithMany("LinhasVenda")
+                        .HasForeignKey("VendaId");
+
+                    b.Navigation("Produto");
+
+                    b.Navigation("Venda");
+                });
+
             modelBuilder.Entity("GestaoLoja.Entities.Produtos", b =>
                 {
                     b.HasOne("GestaoLoja.Entities.Categorias", "Categoria")
@@ -326,15 +501,38 @@ namespace GestaoLoja.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GestaoLoja.Entities.Fornecedor", "Fornecedor")
+                        .WithMany("Produtos")
+                        .HasForeignKey("FornecedorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GestaoLoja.Entities.ModoEntrega", "ModoEntrega")
-                        .WithMany()
+                        .WithMany("Produtos")
                         .HasForeignKey("ModoEntregaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Categoria");
 
+                    b.Navigation("Fornecedor");
+
                     b.Navigation("ModoEntrega");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.Vendas", b =>
+                {
+                    b.HasOne("GestaoLoja.Entities.Cliente", "Cliente")
+                        .WithMany("Vendas")
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestaoLoja.Entities.Fornecedor", null)
+                        .WithMany("Vendas")
+                        .HasForeignKey("FornecedorId");
+
+                    b.Navigation("Cliente");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -388,9 +586,38 @@ namespace GestaoLoja.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("GestaoLoja.Data.ApplicationUser", b =>
+                {
+                    b.Navigation("Cliente");
+
+                    b.Navigation("Fornecedor");
+                });
+
             modelBuilder.Entity("GestaoLoja.Entities.Categorias", b =>
                 {
                     b.Navigation("Produtos");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.Cliente", b =>
+                {
+                    b.Navigation("Vendas");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.Fornecedor", b =>
+                {
+                    b.Navigation("Produtos");
+
+                    b.Navigation("Vendas");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.ModoEntrega", b =>
+                {
+                    b.Navigation("Produtos");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.Vendas", b =>
+                {
+                    b.Navigation("LinhasVenda");
                 });
 #pragma warning restore 612, 618
         }
