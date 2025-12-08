@@ -57,7 +57,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var p in produtos)
+            @foreach (var p in produtosPaginados)
             {
                 <tr>
                     <td>@p.Id</td>
@@ -125,6 +125,7 @@ else
                             </button>
 
 
+
                         </AuthorizeView>
                     </td>
 
@@ -132,6 +133,31 @@ else
             }
         </tbody>
     </table>
+
+    <div class="mt-3 d-flex justify-content-center">
+
+    <button class="btn btn-outline-primary me-2"
+            @onclick="PaginaAnterior"
+            disabled="@(!PodePaginaAnterior)">
+        « Anterior
+    </button>
+
+    @for (int i = 1; i <= totalPaginas; i++)
+    {
+        <button class="btn @(i == paginaAtual ? "btn-primary" : "btn-outline-primary") me-1"
+                @onclick="(() => IrParaPagina(i))">
+            @i
+        </button>
+    }
+
+    <button class="btn btn-outline-primary ms-2"
+            @onclick="ProximaPagina"
+            disabled="@(!PodeProximaPagina)">
+        Próxima »
+    </button>
+
+</div>
+
 }
 
 @code {
@@ -141,6 +167,39 @@ else
 
     string? mensagemErro = null;
 
+    int paginaAtual = 1;
+    int tamanhoPagina = 10; // 10 produtos por página
+    int totalPaginas = 1;
+
+    bool PodePaginaAnterior => paginaAtual > 1;
+    bool PodeProximaPagina => paginaAtual < totalPaginas;
+
+    void PaginaAnterior()
+    {
+        if (paginaAtual > 1)
+            paginaAtual--;
+
+        CarregarProdutos();
+    }
+
+    void ProximaPagina()
+    {
+        if (paginaAtual < totalPaginas)
+            paginaAtual++;
+
+        CarregarProdutos();
+    }
+
+    void IrParaPagina(int pagina)
+    {
+        paginaAtual = pagina;
+        CarregarProdutos();
+    }
+
+
+    List<Produtos> produtosPaginados = new();
+
+
 
     protected override void OnInitialized()
     {
@@ -149,16 +208,30 @@ else
 
     void CarregarProdutos()
     {
-        produtos = db.Produtos
-                     .Include(p => p.Categoria)
-                     .Include(p => p.Fornecedor)
-                     .Include(p => p.ModoEntrega)
-                     .OrderBy(p => p.Nome)
-                     .ToList();
+        var query = db.Produtos
+            .Include(p => p.Categoria)
+            .Include(p => p.Fornecedor)
+            .Include(p => p.ModoEntrega)
+            .OrderBy(p => p.Nome)
+            .AsQueryable();
 
         if (!string.IsNullOrEmpty(filtroEstado))
-            produtos = produtos.Where(p => p.Estado == filtroEstado).ToList();
+            query = query.Where(p => p.Estado == filtroEstado);
+
+        var totalProdutos = query.Count();
+        totalPaginas = (int)Math.Ceiling(totalProdutos / (double)tamanhoPagina);
+
+        if (paginaAtual > totalPaginas)
+            paginaAtual = totalPaginas == 0 ? 1 : totalPaginas;
+
+        produtos = query.ToList();
+
+        produtosPaginados = query
+            .Skip((paginaAtual - 1) * tamanhoPagina)
+            .Take(tamanhoPagina)
+            .ToList();
     }
+
 
     void FiltrarEstado(ChangeEventArgs e)
     {

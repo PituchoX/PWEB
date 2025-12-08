@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestaoLoja.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251201014314_Inicial")]
+    [Migration("20251203213908_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -139,10 +139,6 @@ namespace GestaoLoja.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NIF")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -311,14 +307,9 @@ namespace GestaoLoja.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FornecedorId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
-
-                    b.HasIndex("FornecedorId");
 
                     b.ToTable("Vendas");
                 });
@@ -528,10 +519,6 @@ namespace GestaoLoja.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GestaoLoja.Entities.Fornecedor", null)
-                        .WithMany("Vendas")
-                        .HasForeignKey("FornecedorId");
-
                     b.Navigation("Cliente");
                 });
 
@@ -606,8 +593,6 @@ namespace GestaoLoja.Data.Migrations
             modelBuilder.Entity("GestaoLoja.Entities.Fornecedor", b =>
                 {
                     b.Navigation("Produtos");
-
-                    b.Navigation("Vendas");
                 });
 
             modelBuilder.Entity("GestaoLoja.Entities.ModoEntrega", b =>

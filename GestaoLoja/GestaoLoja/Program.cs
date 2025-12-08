@@ -65,6 +65,9 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseAntiforgery();
 
 // Seed da BD
@@ -75,8 +78,5 @@ app.MapRazorComponents<App>()
 
 // Endpoints Identity (/Account/Login, Register, etc.)
 app.MapAdditionalIdentityEndpoints();
-
-
-
 
 app.Run();
