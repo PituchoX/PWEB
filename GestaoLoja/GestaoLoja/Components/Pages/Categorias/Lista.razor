@@ -1,4 +1,6 @@
 ﻿@page "/categorias"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrador,Funcionário")]
 @inject ApplicationDbContext db
 @inject NavigationManager nav
 @using Microsoft.EntityFrameworkCore
@@ -7,10 +9,10 @@
 
 <h3>Categorias</h3>
 
-<AuthorizeView Roles="Administrador">
-    <button class="btn btn-link p-0 mb-2" title="Novo modo de entrega" @onclick="Criar">
+<AuthorizeView Roles="Administrador,Funcionário">
+    <button class="btn btn-link p-0 mb-2" title="Nova categoria" @onclick="Criar">
         <img src="img/novo.png" alt="Novo" style="width:32px;height:32px;" />
-</button>
+    </button>
 </AuthorizeView>
 
 @if (categorias is null)
@@ -41,14 +43,14 @@ else
                     </td>
                     <td>@c.Nome</td>
                     <td>
-                        <AuthorizeView Roles="Administrador">
-                        <button class="btn btn-sm btn-warning me-1" @onclick="() => Editar(c.Id)">
-                            <i class="bi bi-pencil"></i> Editar
-                        </button>
-                        <button class="btn btn-sm btn-danger" @onclick="() => Apagar(c)">
-                            <i class="bi bi-trash"></i> Apagar
-                        </button>
-						</AuthorizeView>
+                        <AuthorizeView Roles="Administrador,Funcionário">
+                            <button class="btn btn-sm btn-warning me-1" @onclick="() => Editar(c.Id)">
+                                <i class="bi bi-pencil"></i> Editar
+                            </button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => Apagar(c)">
+                                <i class="bi bi-trash"></i> Apagar
+                            </button>
+                        </AuthorizeView>
                     </td>
                 </tr>
             }

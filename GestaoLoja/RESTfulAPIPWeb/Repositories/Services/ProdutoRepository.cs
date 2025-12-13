@@ -19,6 +19,7 @@ namespace RESTfulAPI.Repositories.Services
             return await _db.Produtos
                 .Include(p => p.Categoria)
                 .Include(p => p.ModoEntrega)
+                .Include(p => p.Fornecedor)
                 .ToListAsync();
         }
 
@@ -27,6 +28,7 @@ namespace RESTfulAPI.Repositories.Services
             return await _db.Produtos
                 .Include(p => p.Categoria)
                 .Include(p => p.ModoEntrega)
+                .Include(p => p.Fornecedor)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -39,7 +41,21 @@ namespace RESTfulAPI.Repositories.Services
 
         public async Task<bool> UpdateAsync(Produto produto)
         {
-            _db.Produtos.Update(produto);
+            var existing = await _db.Produtos.FindAsync(produto.Id);
+            if (existing == null)
+                return false;
+
+            existing.Nome = produto.Nome;
+            existing.PrecoBase = produto.PrecoBase;
+            existing.Percentagem = produto.Percentagem;
+            existing.PrecoFinal = produto.PrecoFinal;
+            existing.Estado = produto.Estado;
+            existing.Stock = produto.Stock;
+            existing.Imagem = produto.Imagem;
+            existing.CategoriaId = produto.CategoriaId;
+            existing.ModoEntregaId = produto.ModoEntregaId;
+            existing.FornecedorId = produto.FornecedorId;
+
             return await _db.SaveChangesAsync() > 0;
         }
 

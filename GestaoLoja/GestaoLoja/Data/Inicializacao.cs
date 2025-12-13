@@ -17,17 +17,25 @@ namespace GestaoLoja.Data
             // Aplica migrações pendentes
             context.Database.Migrate();
 
-            const string adminRole = "Administrador";
-            const string adminEmail = "admin@gestao.pt";     // <-- NOVO EMAIL
-            const string adminPass = "Admin123!";            // <-- NOVA PASSWORD
+            // ========================================
+            // CRIAR TODOS OS ROLES
+            // ========================================
+            string[] roles = { "Administrador", "Funcionário", "Cliente", "Fornecedor" };
 
-            // Criar role Administrador se não existir
-            if (!roleManager.RoleExistsAsync(adminRole).Result)
+            foreach (var role in roles)
             {
-                roleManager.CreateAsync(new IdentityRole(adminRole)).Wait();
+                if (!roleManager.RoleExistsAsync(role).Result)
+                {
+                    roleManager.CreateAsync(new IdentityRole(role)).Wait();
+                }
             }
 
-            // Criar utilizador administrador
+            // ========================================
+            // CRIAR ADMINISTRADOR
+            // ========================================
+            const string adminEmail = "admin@gestao.pt";
+            const string adminPass = "Admin123!";
+
             var admin = userManager.FindByEmailAsync(adminEmail).Result;
             if (admin == null)
             {
@@ -36,8 +44,8 @@ namespace GestaoLoja.Data
                     UserName = adminEmail,
                     Email = adminEmail,
                     NomeCompleto = "Administrador do Sistema",
-                    Estado = "Ativo",       // <-- ATIVO POR DEFINIÇÃO
-                    Perfil = "Administrador", // <-- PERFIL DEFINIDO
+                    Estado = "Ativo",
+                    Perfil = "Administrador",
                     EmailConfirmed = true
                 };
 
@@ -49,9 +57,39 @@ namespace GestaoLoja.Data
                         string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
 
-                userManager.AddToRoleAsync(admin, adminRole).Wait();
+                userManager.AddToRoleAsync(admin, "Administrador").Wait();
             }
-            // Criar fornecedor interno (caso não exista)
+
+            // ========================================
+            // CRIAR FUNCIONÁRIO (para testes)
+            // ========================================
+            const string funcEmail = "func@gestao.pt";
+            const string funcPass = "Func123!";
+
+            var funcionario = userManager.FindByEmailAsync(funcEmail).Result;
+            if (funcionario == null)
+            {
+                funcionario = new ApplicationUser
+                {
+                    UserName = funcEmail,
+                    Email = funcEmail,
+                    NomeCompleto = "Funcionário Exemplo",
+                    Estado = "Ativo",
+                    Perfil = "Funcionário",
+                    EmailConfirmed = true
+                };
+
+                var result = userManager.CreateAsync(funcionario, funcPass).Result;
+
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(funcionario, "Funcionário").Wait();
+                }
+            }
+
+            // ========================================
+            // CRIAR FORNECEDOR INTERNO
+            // ========================================
             var fornecedorInterno = context.Fornecedores
                 .FirstOrDefault(f => f.NomeEmpresa == "Fornecedor Interno");
 
@@ -62,34 +100,55 @@ namespace GestaoLoja.Data
                     NomeEmpresa = "Fornecedor Interno",
                     NIF = "000000000",
                     Estado = "Aprovado",
-                    ApplicationUserId = admin.Id  // o admin é o dono deste fornecedor interno
+                    ApplicationUserId = admin.Id
                 };
 
                 context.Fornecedores.Add(fornecedorInterno);
                 context.SaveChanges();
             }
 
-
-            // Modos de entrega iniciais
+            // ========================================
+            // MODOS DE ENTREGA INICIAIS
+            // ========================================
             if (!context.ModosEntrega.Any())
             {
                 context.ModosEntrega.AddRange(
                     new ModoEntrega
                     {
                         Nome = "Levantamento em loja",
-                        Tipo = "Levantamento em loja",
-                        Detalhe = ""
+                        Tipo = "Levantamento",
+                        Detalhe = "Levantar na loja física"
                     },
                     new ModoEntrega
                     {
                         Nome = "Entrega ao domicílio",
-                        Tipo = "Entrega ao domicílio",
-                        Detalhe = ""
+                        Tipo = "Entrega",
+                        Detalhe = "Entrega em morada indicada"
+                    },
+                    new ModoEntrega
+                    {
+                        Nome = "Ponto de recolha",
+                        Tipo = "Recolha",
+                        Detalhe = "Ponto de recolha parceiro"
                     }
                 );
+                context.SaveChanges();
             }
 
-            context.SaveChanges();
+            // ========================================
+            // CATEGORIAS INICIAIS (exemplo MyMEDIA)
+            // ========================================
+            if (!context.Categorias.Any())
+            {
+                context.Categorias.AddRange(
+                    new Categorias { Nome = "Filmes", Imagem = "filmes.png" },
+                    new Categorias { Nome = "Música", Imagem = "musica.png" },
+                    new Categorias { Nome = "Jogos", Imagem = "jogos.png" },
+                    new Categorias { Nome = "Acessórios", Imagem = "acessorios.png" },
+                    new Categorias { Nome = "Colecionáveis", Imagem = "coleccionaveis.png" }
+                );
+                context.SaveChanges();
+            }
         }
     }
 }

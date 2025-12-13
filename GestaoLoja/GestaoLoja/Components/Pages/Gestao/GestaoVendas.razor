@@ -1,4 +1,6 @@
 ﻿@page "/gestao/vendas"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrador,Funcionário")]
 @inject GestaoLoja.Data.ApplicationDbContext _context
 @using GestaoLoja.Entities
 

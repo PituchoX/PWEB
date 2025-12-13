@@ -1,8 +1,9 @@
 ﻿@page "/produtos/criar"
+@using Microsoft.AspNetCore.Authorization
+@using GestaoLoja.Entities
+@attribute [Authorize(Roles = "Administrador,Funcionário")]
 @inject ApplicationDbContext db
 @inject NavigationManager nav
-@using Microsoft.AspNetCore.Authorization
-@attribute [Authorize(Roles = "Administrador")]
 
 <h3>Criar Produto</h3>
 
@@ -23,6 +24,11 @@
     <div class="mb-3">
         <label>Percentagem (%)</label>
         <InputNumber class="form-control" @bind-Value="produto.Percentagem" />
+    </div>
+
+    <div class="mb-3">
+        <label>Stock</label>
+        <InputNumber class="form-control" @bind-Value="produto.Stock" />
     </div>
 
     <div class="mb-3">
@@ -50,7 +56,7 @@
     <div class="mb-3">
         <label>Fornecedor</label>
         <InputSelect class="form-select" @bind-Value="produto.FornecedorId">
-            <option value="">(Selecionar Fornecedor)</option>
+            <option value="0">(Selecionar Fornecedor)</option>
             @foreach (var f in fornecedores)
             {
                 <option value="@f.Id">@f.NomeEmpresa</option>

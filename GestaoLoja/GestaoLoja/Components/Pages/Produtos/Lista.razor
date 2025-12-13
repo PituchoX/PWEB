@@ -1,5 +1,6 @@
 ﻿@page "/produtos"
-
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrador,Funcionário")]
 @using Microsoft.EntityFrameworkCore
 @using GestaoLoja.Entities
 @inject ApplicationDbContext db
@@ -12,8 +13,7 @@
     <div class="alert alert-danger">@mensagemErro</div>
 }
 
-
-<AuthorizeView Roles="Administrador">
+<AuthorizeView Roles="Administrador,Funcionário">
     <button class="btn btn-link p-0 mb-2" title="Novo Produto" @onclick="Criar">
         <img src="img/novo.png" alt="Novo" style="width:32px;height:32px;" />
     </button>
@@ -88,8 +88,7 @@ else
                     <td>@p.ModoEntrega?.Tipo</td>
 
                     <td>
-                        <AuthorizeView Roles="Administrador">
-
+                        <AuthorizeView Roles="Administrador,Funcionário">
                             @if (p.Estado == "Pendente")
                             {
                                 <button class="btn btn-success btn-sm me-1"
@@ -123,83 +122,50 @@ else
                                     @onclick="() => Apagar(p)">
                                 Apagar
                             </button>
-
-
-
                         </AuthorizeView>
                     </td>
-
                 </tr>
             }
         </tbody>
     </table>
 
     <div class="mt-3 d-flex justify-content-center">
-
-    <button class="btn btn-outline-primary me-2"
-            @onclick="PaginaAnterior"
-            disabled="@(!PodePaginaAnterior)">
-        « Anterior
-    </button>
-
-    @for (int i = 1; i <= totalPaginas; i++)
-    {
-        <button class="btn @(i == paginaAtual ? "btn-primary" : "btn-outline-primary") me-1"
-                @onclick="(() => IrParaPagina(i))">
-            @i
+        <button class="btn btn-outline-primary me-2"
+                @onclick="PaginaAnterior"
+                disabled="@(!PodePaginaAnterior)">
+            « Anterior
         </button>
-    }
 
-    <button class="btn btn-outline-primary ms-2"
-            @onclick="ProximaPagina"
-            disabled="@(!PodeProximaPagina)">
-        Próxima »
-    </button>
+        @for (int i = 1; i <= totalPaginas; i++)
+        {
+            var pagina = i;
+            <button class="btn @(pagina == paginaAtual ? "btn-primary" : "btn-outline-primary") me-1"
+                    @onclick="@(() => IrParaPagina(pagina))">
+                @pagina
+            </button>
+        }
 
-</div>
-
+        <button class="btn btn-outline-primary ms-2"
+                @onclick="ProximaPagina"
+                disabled="@(!PodeProximaPagina)">
+            Próxima »
+        </button>
+    </div>
 }
 
 @code {
-
     List<Produtos>? produtos;
     string filtroEstado = "";
-
     string? mensagemErro = null;
 
     int paginaAtual = 1;
-    int tamanhoPagina = 10; // 10 produtos por página
+    int tamanhoPagina = 10;
     int totalPaginas = 1;
 
     bool PodePaginaAnterior => paginaAtual > 1;
     bool PodeProximaPagina => paginaAtual < totalPaginas;
 
-    void PaginaAnterior()
-    {
-        if (paginaAtual > 1)
-            paginaAtual--;
-
-        CarregarProdutos();
-    }
-
-    void ProximaPagina()
-    {
-        if (paginaAtual < totalPaginas)
-            paginaAtual++;
-
-        CarregarProdutos();
-    }
-
-    void IrParaPagina(int pagina)
-    {
-        paginaAtual = pagina;
-        CarregarProdutos();
-    }
-
-
     List<Produtos> produtosPaginados = new();
-
-
 
     protected override void OnInitialized()
     {
@@ -232,66 +198,62 @@ else
             .ToList();
     }
 
+    void PaginaAnterior()
+    {
+        if (paginaAtual > 1)
+            paginaAtual--;
+        CarregarProdutos();
+    }
+
+    void ProximaPagina()
+    {
+        if (paginaAtual < totalPaginas)
+            paginaAtual++;
+        CarregarProdutos();
+    }
+
+    void IrParaPagina(int pagina)
+    {
+        paginaAtual = pagina;
+        CarregarProdutos();
+    }
 
     void FiltrarEstado(ChangeEventArgs e)
     {
         filtroEstado = e.Value?.ToString() ?? "";
+        paginaAtual = 1;
         CarregarProdutos();
     }
 
-    void Criar()
-    {
-        nav.NavigateTo("/produtos/criar");
-    }
+    void Criar() => nav.NavigateTo("/produtos/criar");
 
-    void Editar(int id)
-    {
-        nav.NavigateTo($"/produtos/editar/{id}");
-    }
+    void Editar(int id) => nav.NavigateTo($"/produtos/editar/{id}");
 
-    async void Apagar(Produtos p)
+    void Apagar(Produtos p)
     {
-        // Verificar se o produto tem vendas associadas
         bool temVendas = db.LinhasVenda.Any(l => l.ProdutoId == p.Id);
 
         if (temVendas)
         {
-            // Não pode apagar — mostrar mensagem
             mensagemErro = "Não é possível apagar este produto porque existem vendas associadas.";
             return;
         }
 
-        // Caso não tenha vendas — apagar fisicamente
         db.Produtos.Remove(p);
         db.SaveChanges();
-
+        mensagemErro = null;
         CarregarProdutos();
     }
-
 
     void AlterarEstado(Produtos p, string novoEstado)
     {
         p.Estado = novoEstado;
-
-        // recalcular preco final
         p.PrecoFinal = p.PrecoBase + (p.PrecoBase * (p.Percentagem / 100));
-
         db.SaveChanges();
         CarregarProdutos();
     }
 
-    void Aprovar(Produtos p)
-    {
-        AlterarEstado(p, "Ativo");
-    }
-
-    void Ativar(Produtos p)
-    {
-        AlterarEstado(p, "Ativo");
-    }
-
-    void Inativar(Produtos p)
-    {
-        AlterarEstado(p, "Inativo");
-    }
+    void Aprovar(Produtos p) => AlterarEstado(p, "Ativo");
+    void Ativar(Produtos p) => AlterarEstado(p, "Ativo");
+    void Inativar(Produtos p) => AlterarEstado(p, "Inativo");
 }

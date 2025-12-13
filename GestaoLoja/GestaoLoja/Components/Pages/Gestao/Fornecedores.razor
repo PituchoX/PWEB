@@ -1,4 +1,8 @@
 ﻿@page "/gestao/fornecedores"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using GestaoLoja.Entities
+@attribute [Authorize(Roles = "Administrador,Funcionário")]
 @inject GestaoLoja.Data.ApplicationDbContext _context
 
 <h3>Gestão de Fornecedores</h3>
@@ -40,9 +44,13 @@ else
                         {
                             <span class="badge bg-warning">Pendente</span>
                         }
-                        else
+                        else if (f.Estado == "Aprovado" || f.Estado == "Ativo")
                         {
                             <span class="badge bg-success">Aprovado</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@f.Estado</span>
                         }
                     </td>
 
@@ -51,6 +59,10 @@ else
                         @if (f.ApplicationUser?.Estado == "Ativo")
                         {
                             <span class="badge bg-success">Ativa</span>
+                        }
+                        else if (f.ApplicationUser?.Estado == "Pendente")
+                        {
+                            <span class="badge bg-warning">Pendente</span>
                         }
                         else
                         {
@@ -63,25 +75,25 @@ else
                         @if (f.Estado == "Pendente")
                         {
                             <button class="btn btn-sm btn-success me-1"
-                                    @onclick="() => AprovarFornecedor(f.Id)">
-                                Aprovar
+                                    @onclick="@(async () => await AprovarFornecedor(f.Id))">
+                                Aprovar Registo
                             </button>
                         }
 
                         <!-- Ativar conta -->
-                        @if (f.ApplicationUser?.Estado == "Inativo")
+                        @if (f.ApplicationUser != null && f.ApplicationUser.Estado != "Ativo")
                         {
                             <button class="btn btn-sm btn-success me-1"
-                                    @onclick="() => AlterarEstadoConta(f.ApplicationUserId!, estadoAtivo)">
+                                    @onclick="@(async () => await AlterarEstadoConta(f.ApplicationUserId, "Ativo"))">
                                 Ativar Conta
                             </button>
                         }
 
                         <!-- Desativar conta -->
-                        @if (f.ApplicationUser?.Estado == "Ativo")
+                        @if (f.ApplicationUser != null && f.ApplicationUser.Estado == "Ativo")
                         {
                             <button class="btn btn-sm btn-danger"
-                                    @onclick="() => AlterarEstadoConta(f.ApplicationUserId!, estadoInativo)">
+                                    @onclick="@(async () => await AlterarEstadoConta(f.ApplicationUserId, "Inativo"))">
                                 Desativar Conta
                             </button>
                         }
@@ -93,11 +105,8 @@ else
 }
 
 @code {
-    List<Fornecedor>? fornecedores;
-    bool carregando = true;
-
-    string estadoAtivo = "Ativo";
-    string estadoInativo = "Inativo";
+    private List<Fornecedor>? fornecedores;
+    private bool carregando = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -113,14 +122,24 @@ else
             .ToListAsync();
 
         carregando = false;
+        StateHasChanged();
     }
 
     private async Task AprovarFornecedor(int id)
     {
-        var fornecedor = await _context.Fornecedores.FindAsync(id);
+        var fornecedor = await _context.Fornecedores
+            .Include(f => f.ApplicationUser)
+            .FirstOrDefaultAsync(f => f.Id == id);
+            
         if (fornecedor == null) return;
 
         fornecedor.Estado = "Aprovado";
+        
+        // Também ativar a conta do utilizador
+        if (fornecedor.ApplicationUser != null)
+        {
+            fornecedor.ApplicationUser.Estado = "Ativo";
+        }
 
         await _context.SaveChangesAsync();
         await CarregarFornecedores();

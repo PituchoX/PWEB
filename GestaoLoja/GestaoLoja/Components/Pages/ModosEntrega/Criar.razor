@@ -2,7 +2,7 @@
 @inject ApplicationDbContext db
 @inject NavigationManager nav
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize(Roles = "Administrador")]
+@attribute [Authorize(Roles = "Administrador,Funcionário")]
 
 <h3>Novo Modo de Entrega</h3>
 

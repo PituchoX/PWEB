@@ -11,28 +11,59 @@ namespace RESTfulAPIPWeb.Data
         {
         }
 
-        public DbSet<Categoria> Categorias => Set<Categoria>();
-        public DbSet<Produto> Produtos => Set<Produto>();
-        public DbSet<ModoEntrega> ModosEntrega => Set<ModoEntrega>();
-        public DbSet<Cliente> Clientes => Set<Cliente>();
-        public DbSet<Fornecedor> Fornecedores => Set<Fornecedor>();
-        public DbSet<Venda> Vendas => Set<Venda>();
-        public DbSet<LinhaVenda> LinhasVenda => Set<LinhaVenda>();
+        // DbSets - nomes das tabelas correspondem à BD do GestaoLoja
+        public DbSet<Categoria> Categorias { get; set; } = default!;
+        public DbSet<Produto> Produtos { get; set; } = default!;
+        public DbSet<ModoEntrega> ModosEntrega { get; set; } = default!;
+        public DbSet<Cliente> Clientes { get; set; } = default!;
+        public DbSet<Fornecedor> Fornecedores { get; set; } = default!;
+        public DbSet<Venda> Vendas { get; set; } = default!;
+        public DbSet<LinhaVenda> LinhasVenda { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
+            // Configurar relações para corresponder à BD existente
+            builder.Entity<Cliente>()
+                .HasOne(c => c.ApplicationUser)
+                .WithOne()
+                .HasForeignKey<Cliente>(c => c.ApplicationUserId);
+
+            builder.Entity<Fornecedor>()
+                .HasOne(f => f.ApplicationUser)
+                .WithOne()
+                .HasForeignKey<Fornecedor>(f => f.ApplicationUserId);
+
+            builder.Entity<Produto>()
+                .HasOne(p => p.Categoria)
+                .WithMany(c => c.Produtos)
+                .HasForeignKey(p => p.CategoriaId);
+
             builder.Entity<Produto>()
                 .HasOne(p => p.Fornecedor)
                 .WithMany(f => f.Produtos)
-                .HasForeignKey(p => p.FornecedorId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(p => p.FornecedorId);
+
+            builder.Entity<Produto>()
+                .HasOne(p => p.ModoEntrega)
+                .WithMany()
+                .HasForeignKey(p => p.ModoEntregaId);
+
+            builder.Entity<Venda>()
+                .HasOne(v => v.Cliente)
+                .WithMany(c => c.Vendas)
+                .HasForeignKey(v => v.ClienteId);
+
+            builder.Entity<LinhaVenda>()
+                .HasOne(l => l.Venda)
+                .WithMany(v => v.LinhasVenda)
+                .HasForeignKey(l => l.VendaId);
+
+            builder.Entity<LinhaVenda>()
+                .HasOne(l => l.Produto)
+                .WithMany()
+                .HasForeignKey(l => l.ProdutoId);
         }
-
-
-
-
     }
-
 }

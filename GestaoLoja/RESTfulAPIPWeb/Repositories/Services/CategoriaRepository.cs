@@ -29,7 +29,13 @@ namespace RESTfulAPIPWeb.Repositories.Services
 
         public async Task<bool> UpdateAsync(Categoria categoria)
         {
-            _db.Categorias.Update(categoria);
+            var existing = await _db.Categorias.FindAsync(categoria.Id);
+            if (existing == null)
+                return false;
+
+            existing.Nome = categoria.Nome;
+            existing.Imagem = categoria.Imagem;
+
             return await _db.SaveChangesAsync() > 0;
         }
 

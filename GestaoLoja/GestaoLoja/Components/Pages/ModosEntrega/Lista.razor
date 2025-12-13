@@ -1,19 +1,22 @@
 ﻿@page "/modosentrega"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrador,Funcionário")]
 @inject ApplicationDbContext db
 @inject NavigationManager nav
 
 <h3>Modos de Entrega</h3>
 
-<AuthorizeView Roles="Administrador">
-<button class="btn btn-link p-0 mb-2" title="Novo modo de entrega" @onclick="Criar">
-    <img src="img/novo.png" alt="Novo" style="width:32px;height:32px;" />
-</button>
+<AuthorizeView Roles="Administrador,Funcionário">
+    <button class="btn btn-link p-0 mb-2" title="Novo modo de entrega" @onclick="Criar">
+        <img src="img/novo.png" alt="Novo" style="width:32px;height:32px;" />
+    </button>
 </AuthorizeView>
 
 <table class="table table-striped">
     <thead>
         <tr>
             <th>Nome</th>
+            <th>Tipo</th>
             <th>Detalhe</th>
             <th style="width:120px; text-align:center;">Ações</th>
         </tr>
@@ -23,31 +26,22 @@
         {
             <tr>
                 <td>@modo.Nome</td>
+                <td>@modo.Tipo</td>
                 <td>@modo.Detalhe</td>
                 <td style="text-align:center;">
+                    <AuthorizeView Roles="Administrador,Funcionário">
+                        <button class="btn btn-link p-0 me-1" title="Editar"
+                                @onclick="@(() => Editar(modo.Id))">
+                            <img src="img/editicon.png" alt="Editar"
+                                 style="width:24px;height:24px;" />
+                        </button>
 
-                    <AuthorizeView Roles="Administrador">
-                    <!-- EDITAR -->
-                    <button class="btn btn-link p-0 me-1" title="Editar"
-                            @onclick="@(() => Editar(modo.Id))">
-                        <img src="img/editicon.png" alt="Editar"
-                             style="width:24px;height:24px;" />
-                    </button>
-
-                    <!-- DETALHE / CONSULTA -->
-                    <button class="btn btn-link p-0 me-1" title="Detalhes"
-                            @onclick="@(() => Detalhes(modo.Id))">
-                        <img src="img/detailsicon.png" alt="Detalhes"
-                             style="width:24px;height:24px;" />
-                    </button>
-
-                    <!-- APAGAR -->
-                    <button class="btn btn-link p-0" title="Apagar"
-                            @onclick="@(() => Apagar(modo.Id))">
-                        <img src="img/deleteicon.png" alt="Apagar"
-                             style="width:24px;height:24px;" />
-                    </button>
-					</AuthorizeView>
+                        <button class="btn btn-link p-0" title="Apagar"
+                                @onclick="@(() => Apagar(modo.Id))">
+                            <img src="img/deleteicon.png" alt="Apagar"
+                                 style="width:24px;height:24px;" />
+                        </button>
+                    </AuthorizeView>
                 </td>
             </tr>
         }
@@ -59,16 +53,12 @@
 
     protected override void OnInitialized()
     {
-        modos = db.ModosEntrega
-                  .OrderBy(m => m.Nome)
-                  .ToList();
+        modos = db.ModosEntrega.OrderBy(m => m.Nome).ToList();
     }
 
     void Criar() => nav.NavigateTo("/modosentrega/criar");
 
     void Editar(int id) => nav.NavigateTo($"/modosentrega/editar/{id}");
-
-    void Detalhes(int id) => nav.NavigateTo($"/modosentrega/editar/{id}"); // se não tiveres página só de detalhes
 
     void Apagar(int id)
     {

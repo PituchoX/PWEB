@@ -1,4 +1,8 @@
 ﻿@page "/gestao/clientes"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using GestaoLoja.Entities
+@attribute [Authorize(Roles = "Administrador,Funcionário")]
 @inject GestaoLoja.Data.ApplicationDbContext _context
 
 <h3>Gestão de Clientes</h3>
@@ -32,23 +36,31 @@ else
                     <td>@c.ApplicationUser?.Email</td>
                     <td>@c.NIF</td>
 
-                    <!-- Estado do Cliente -->
+                    <!-- Estado do Registo do Cliente -->
                     <td>
                         @if (c.Estado == "Pendente")
                         {
                             <span class="badge bg-warning">Pendente</span>
                         }
-                        else
+                        else if (c.Estado == "Ativo" || c.Estado == "Aprovado")
                         {
                             <span class="badge bg-success">Aprovado</span>
                         }
+                        else
+                        {
+                            <span class="badge bg-secondary">@c.Estado</span>
+                        }
                     </td>
 
-                    <!-- Estado da Conta -->
+                    <!-- Estado da Conta (ApplicationUser) -->
                     <td>
                         @if (c.ApplicationUser?.Estado == "Ativo")
                         {
                             <span class="badge bg-success">Ativa</span>
+                        }
+                        else if (c.ApplicationUser?.Estado == "Pendente")
+                        {
+                            <span class="badge bg-warning">Pendente</span>
                         }
                         else
                         {
@@ -57,29 +69,29 @@ else
                     </td>
 
                     <td>
-                        <!-- Aprovar/registar -->
+                        <!-- Aprovar registo do cliente -->
                         @if (c.Estado == "Pendente")
                         {
                             <button class="btn btn-sm btn-success me-1"
-                                    @onclick="() => AlterarEstadoRegisto(c.Id)">
-                                Aprovar
+                                    @onclick="@(async () => await AprovarRegisto(c.Id))">
+                                Aprovar Registo
                             </button>
                         }
 
-                        <!-- Ativar conta -->
-                        @if (c.ApplicationUser?.Estado == "Inativo")
+                        <!-- Ativar conta do utilizador -->
+                        @if (c.ApplicationUser != null && c.ApplicationUser.Estado != "Ativo")
                         {
                             <button class="btn btn-sm btn-success me-1"
-                                    @onclick="() => AlterarEstadoConta(c.ApplicationUserId!, estadoAtivo)">
+                                    @onclick="@(async () => await AlterarEstadoConta(c.ApplicationUserId, "Ativo"))">
                                 Ativar Conta
                             </button>
                         }
 
-                        <!-- Desativar conta -->
-                        @if (c.ApplicationUser?.Estado == "Ativo")
+                        <!-- Desativar conta do utilizador -->
+                        @if (c.ApplicationUser != null && c.ApplicationUser.Estado == "Ativo")
                         {
                             <button class="btn btn-sm btn-danger"
-                                    @onclick="() => AlterarEstadoConta(c.ApplicationUserId!, estadoInativo)">
+                                    @onclick="@(async () => await AlterarEstadoConta(c.ApplicationUserId, "Inativo"))">
                                 Desativar Conta
                             </button>
                         }
@@ -91,10 +103,6 @@ else
 }
 
 @code {
-
-    string estadoAtivo = "Ativo";
-    string estadoInativo = "Inativo";
-
     private List<Cliente>? clientes;
     private bool carregando = true;
 
@@ -112,21 +120,29 @@ else
             .ToListAsync();
 
         carregando = false;
+        StateHasChanged();
     }
 
-    // Aprovar o registo
-    private async Task AlterarEstadoRegisto(int id)
+    private async Task AprovarRegisto(int id)
     {
-        var cliente = await _context.Clientes.FindAsync(id);
+        var cliente = await _context.Clientes
+            .Include(c => c.ApplicationUser)
+            .FirstOrDefaultAsync(c => c.Id == id);
+            
         if (cliente == null) return;
 
         cliente.Estado = "Aprovado";
+        
+        // Também ativar a conta do utilizador
+        if (cliente.ApplicationUser != null)
+        {
+            cliente.ApplicationUser.Estado = "Ativo";
+        }
 
         await _context.SaveChangesAsync();
         await CarregarClientes();
     }
 
-    // Alterar estado da conta (ApplicationUser)
     private async Task AlterarEstadoConta(string userId, string novoEstado)
     {
         var user = await _context.Users.FindAsync(userId);

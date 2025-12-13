@@ -1,8 +1,10 @@
 ﻿@page "/produtos/editar/{id:int}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using GestaoLoja.Entities
+@attribute [Authorize(Roles = "Administrador,Funcionário")]
 @inject ApplicationDbContext db
 @inject NavigationManager nav
-@using Microsoft.AspNetCore.Authorization
-@attribute [Authorize(Roles = "Administrador")]
 
 <h3>Editar Produto</h3>
 
@@ -29,6 +31,11 @@ else
         <div class="mb-3">
             <label>Percentagem (%)</label>
             <InputNumber class="form-control" @bind-Value="produto.Percentagem" />
+        </div>
+
+        <div class="mb-3">
+            <label>Stock</label>
+            <InputNumber class="form-control" @bind-Value="produto.Stock" />
         </div>
 
         <div class="mb-3">
@@ -63,11 +70,11 @@ else
 
         <div class="mb-3">
             <label>Estado</label>
-            <InputText class="form-control" Value="@produto.Estado" disabled />
+            <input class="form-control" value="@produto.Estado" disabled />
             <small class="text-muted">O estado é gerido na listagem de produtos.</small>
         </div>
 
-        <button class="btn btn-success">Guardar</button>
+        <button type="submit" class="btn btn-success">Guardar</button>
         <button class="btn btn-secondary ms-2" type="button" @onclick="Cancelar">Cancelar</button>
     </EditForm>
 }
@@ -92,7 +99,7 @@ else
         modos = db.ModosEntrega.OrderBy(m => m.Tipo).ToList();
         fornecedores = db.Fornecedores
             .Where(f => f.Estado == "Aprovado")
-            .ToList(); // só fornecedores aprovados
+            .ToList();
     }
 
     void Guardar()

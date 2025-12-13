@@ -1,18 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RESTfulAPIPWeb.Dtos;
 using RESTfulAPIPWeb.Entities;
-using RESTfulAPIPWeb.Entities;
-using RESTfulAPIPWeb.Repositories.Interfaces;
 using RESTfulAPIPWeb.Repositories.Interfaces;
 
-namespace RESTfulAPIWeb.Controllers
+namespace RESTfulAPIPWeb.Controllers
 {
     [Authorize(Roles = "Administrador,Funcionário")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriasController : ControllerBase
     {
-
         private readonly ICategoriaRepository _repo;
 
         public CategoriasController(ICategoriaRepository repo)
@@ -22,34 +20,68 @@ namespace RESTfulAPIWeb.Controllers
 
         // GET: api/categorias
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias()
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<CategoriaDto>>> GetCategorias()
         {
-            return Ok(await _repo.GetAllAsync());
+            var categorias = await _repo.GetAllAsync();
+            var result = categorias.Select(c => new CategoriaDto
+            {
+                Id = c.Id,
+                Nome = c.Nome,
+                Imagem = c.Imagem
+            });
+
+            return Ok(result);
         }
 
         // GET: api/categorias/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Categoria>> GetCategoria(int id)
+        [AllowAnonymous]
+        public async Task<ActionResult<CategoriaDto>> GetCategoria(int id)
         {
             var categoria = await _repo.GetByIdAsync(id);
             if (categoria == null) return NotFound();
 
-            return Ok(categoria);
+            return Ok(new CategoriaDto
+            {
+                Id = categoria.Id,
+                Nome = categoria.Nome,
+                Imagem = categoria.Imagem
+            });
         }
 
         // POST: api/categorias
         [HttpPost]
-        public async Task<ActionResult<Categoria>> CreateCategoria(Categoria categoria)
+        public async Task<ActionResult<CategoriaDto>> CreateCategoria(CategoriaCreateDto dto)
         {
-            await _repo.AddAsync(categoria);
-            return CreatedAtAction(nameof(GetCategoria), new { id = categoria.Id }, categoria);
+            var categoria = new Categoria
+            {
+                Nome = dto.Nome,
+                Imagem = dto.Imagem
+            };
+
+            var created = await _repo.AddAsync(categoria);
+
+            return CreatedAtAction(nameof(GetCategoria), new { id = created.Id }, new CategoriaDto
+            {
+                Id = created.Id,
+                Nome = created.Nome,
+                Imagem = created.Imagem
+            });
         }
 
         // PUT: api/categorias/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategoria(int id, Categoria categoria)
+        public async Task<IActionResult> UpdateCategoria(int id, CategoriaDto dto)
         {
-            if (id != categoria.Id) return BadRequest();
+            if (id != dto.Id) return BadRequest();
+
+            var categoria = new Categoria
+            {
+                Id = dto.Id,
+                Nome = dto.Nome,
+                Imagem = dto.Imagem
+            };
 
             var ok = await _repo.UpdateAsync(categoria);
             if (!ok) return NotFound();
