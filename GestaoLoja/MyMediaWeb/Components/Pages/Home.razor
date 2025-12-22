@@ -1,0 +1,176 @@
+﻿@page "/"
+@inject ApiService Api
+@inject CarrinhoService CarrinhoService
+@inject NavigationManager Nav
+
+<PageTitle>MyMEDIA - Loja Online</PageTitle>
+
+<!-- SLIDER DE CATEGORIAS (por baixo do header) -->
+<div class="categorias-slider">
+    <div class="categorias-scroll">
+        @if (categorias == null)
+        {
+            <span class="text-muted px-3">A carregar categorias...</span>
+        }
+        else if (!categorias.Any())
+        {
+            <span class="text-muted px-3">Sem categorias</span>
+        }
+        else
+        {
+            @foreach (var cat in categorias)
+            {
+                <div class="categoria-item @(categoriaSelecionada?.Id == cat.Id ? "active" : "")" 
+                     @onclick="() => SelecionarCategoria(cat)">
+                    <img src="img/@(cat.Imagem ?? "semfoto.png")" alt="@cat.Nome" 
+                         onerror="this.src='img/noproductstrans.png'" />
+                    <span>@cat.Nome</span>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div class="container-fluid py-3">
+    <div class="row">
+        <!-- COLUNA PRINCIPAL - Produtos -->
+        <div class="col-lg-9">
+            <!-- Título da secção -->
+            <div class="secao-titulo mb-3">
+                <i class="bi bi-collection me-2"></i>
+                @if (categoriaSelecionada != null)
+                {
+                    <span>@categoriaSelecionada.Nome</span>
+                    <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="LimparCategoria">
+                        <i class="bi bi-x"></i> Limpar filtro
+                    </button>
+                }
+                else
+                {
+                    <span>Todos os Produtos</span>
+                }
+            </div>
+
+            <!-- Grid de Produtos -->
+            <div class="produtos-grid">
+                @if (produtosVisiveis == null)
+                {
+                    <p class="text-muted">A carregar produtos...</p>
+                }
+                else if (!produtosVisiveis.Any())
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                        <p class="text-muted mt-3">Sem produtos disponíveis</p>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var prod in produtosVisiveis)
+                    {
+                        <div class="produto-card">
+                            <img src="img/@prod.Imagem" alt="@prod.Nome" 
+                                 onerror="this.src='img/noproductstrans.png'"
+                                 @onclick="() => VerProduto(prod.Id)" />
+                            <div class="info">
+                                <div class="nome" title="@prod.Nome">@prod.Nome</div>
+                                <div class="categoria">@prod.CategoriaNome</div>
+                                <div class="preco">@prod.PrecoFinal.ToString("C2")</div>
+                            </div>
+                            @if (prod.Stock > 0)
+                            {
+                                <button class="btn btn-adicionar" @onclick="() => AdicionarAoCarrinho(prod)">
+                                    <i class="bi bi-cart-plus me-1"></i> Adicionar
+                                </button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary w-100" disabled>Esgotado</button>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- COLUNA LATERAL DIREITA - Produto Destaque -->
+        <div class="col-lg-3">
+            <div class="destaque-lateral">
+                <div class="destaque-header">
+                    <i class="bi bi-star-fill me-2"></i>Produto em Destaque
+                </div>
+                @if (produtoDestaque != null)
+                {
+                    <div class="destaque-content">
+                        <img src="img/@produtoDestaque.Imagem" alt="@produtoDestaque.Nome" 
+                             onerror="this.src='img/noproductstrans.png'"
+                             @onclick="() => VerProduto(produtoDestaque.Id)" />
+                        <h5>@produtoDestaque.Nome</h5>
+                        <p class="categoria">@produtoDestaque.CategoriaNome</p>
+                        <p class="preco">@produtoDestaque.PrecoFinal.ToString("C2")</p>
+                        <button class="btn btn-warning w-100" @onclick="() => AdicionarAoCarrinho(produtoDestaque)">
+                            <i class="bi bi-cart-plus me-1"></i> Adicionar ao Carrinho
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-4">
+                        <i class="bi bi-box display-4"></i>
+                        <p class="mt-2">Sem destaque</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<CategoriaDto>? categorias;
+    private List<ProdutoDto>? todosProdutos;
+    private List<ProdutoDto>? produtosVisiveis;
+    private ProdutoDto? produtoDestaque;
+    private CategoriaDto? categoriaSelecionada;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarDados();
+    }
+
+    private async Task CarregarDados()
+    {
+        categorias = await Api.GetCategoriasAsync();
+        todosProdutos = await Api.GetProdutosAsync();
+        produtosVisiveis = todosProdutos;
+        produtoDestaque = await Api.GetProdutoDestaqueAsync();
+    }
+
+    private async Task SelecionarCategoria(CategoriaDto categoria)
+    {
+        if (categoriaSelecionada?.Id == categoria.Id)
+        {
+            // Se clicar na mesma categoria, limpa o filtro
+            LimparCategoria();
+            return;
+        }
+        
+        categoriaSelecionada = categoria;
+        produtosVisiveis = await Api.GetProdutosPorCategoriaAsync(categoria.Id);
+    }
+
+    private void LimparCategoria()
+    {
+        categoriaSelecionada = null;
+        produtosVisiveis = todosProdutos;
+    }
+
+    private void VerProduto(int id)
+    {
+        Nav.NavigateTo($"/produto/{id}");
+    }
+
+    private void AdicionarAoCarrinho(ProdutoDto produto)
+    {
+        CarrinhoService.AdicionarItem(produto);
+    }
+}

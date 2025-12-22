@@ -1,0 +1,227 @@
+@page "/registar"
+@inject ApiService Api
+@inject NavigationManager Nav
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-plus me-2"></i>Criar Conta
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Tabs para Cliente/Fornecedor -->
+                    <ul class="nav nav-pills nav-justified mb-4">
+                        <li class="nav-item">
+                            <button class="nav-link @(tipoRegisto == "cliente" ? "active" : "")" 
+                                    @onclick="@(() => tipoRegisto = "cliente")">
+                                <i class="bi bi-person me-1"></i>Cliente
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link @(tipoRegisto == "fornecedor" ? "active" : "")"
+                                    @onclick="@(() => tipoRegisto = "fornecedor")">
+                                <i class="bi bi-shop me-1"></i>Fornecedor
+                            </button>
+                        </li>
+                    </ul>
+
+                    @if (tipoRegisto == "cliente")
+                    {
+                        <EditForm Model="clienteModel" OnValidSubmit="HandleRegistoCliente">
+                            <DataAnnotationsValidator />
+
+                            <div class="mb-3">
+                                <label class="form-label">Nome Completo</label>
+                                <InputText @bind-Value="clienteModel.NomeCompleto" class="form-control" />
+                                <ValidationMessage For="@(() => clienteModel.NomeCompleto)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <InputText @bind-Value="clienteModel.Email" class="form-control" />
+                                <ValidationMessage For="@(() => clienteModel.Email)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">NIF</label>
+                                <InputText @bind-Value="clienteModel.NIF" class="form-control" />
+                                <ValidationMessage For="@(() => clienteModel.NIF)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <InputText @bind-Value="clienteModel.Password" type="password" class="form-control" />
+                                <ValidationMessage For="@(() => clienteModel.Password)" />
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(mensagemErro))
+                            {
+                                <div class="alert alert-danger">@mensagemErro</div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(mensagemSucesso))
+                            {
+                                <div class="alert alert-success">@mensagemSucesso</div>
+                            }
+
+                            <button type="submit" class="btn btn-primary w-100" disabled="@processando">
+                                @if (processando)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                Registar como Cliente
+                            </button>
+                        </EditForm>
+                    }
+                    else
+                    {
+                        <EditForm Model="fornecedorModel" OnValidSubmit="HandleRegistoFornecedor">
+                            <DataAnnotationsValidator />
+
+                            <div class="mb-3">
+                                <label class="form-label">Nome Completo (Responsável)</label>
+                                <InputText @bind-Value="fornecedorModel.NomeCompleto" class="form-control" />
+                                <ValidationMessage For="@(() => fornecedorModel.NomeCompleto)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Nome da Empresa</label>
+                                <InputText @bind-Value="fornecedorModel.NomeEmpresa" class="form-control" />
+                                <ValidationMessage For="@(() => fornecedorModel.NomeEmpresa)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <InputText @bind-Value="fornecedorModel.Email" class="form-control" />
+                                <ValidationMessage For="@(() => fornecedorModel.Email)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">NIF</label>
+                                <InputText @bind-Value="fornecedorModel.NIF" class="form-control" />
+                                <ValidationMessage For="@(() => fornecedorModel.NIF)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <InputText @bind-Value="fornecedorModel.Password" type="password" class="form-control" />
+                                <ValidationMessage For="@(() => fornecedorModel.Password)" />
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(mensagemErro))
+                            {
+                                <div class="alert alert-danger">@mensagemErro</div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(mensagemSucesso))
+                            {
+                                <div class="alert alert-success">@mensagemSucesso</div>
+                            }
+
+                            <button type="submit" class="btn btn-primary w-100" disabled="@processando">
+                                @if (processando)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                Registar como Fornecedor
+                            </button>
+                        </EditForm>
+                    }
+
+                    <hr class="my-4" />
+
+                    <p class="text-center text-muted small mb-0">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Após o registo, a sua conta ficará pendente até ser aprovada por um administrador.
+                    </p>
+
+                    <p class="text-center mt-3 mb-0">
+                        Já tem conta? <a href="/login">Entrar</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string tipoRegisto = "cliente";
+    private RegisterClienteDto clienteModel = new();
+    private RegisterFornecedorDto fornecedorModel = new();
+    private bool processando = false;
+    private string? mensagemErro;
+    private string? mensagemSucesso;
+
+    private async Task HandleRegistoCliente()
+    {
+        processando = true;
+        mensagemErro = null;
+        mensagemSucesso = null;
+
+        try
+        {
+            var resultado = await Api.RegisterClienteAsync(clienteModel);
+
+            if (resultado.Success)
+            {
+                mensagemSucesso = "Registo efetuado com sucesso! A sua conta está pendente de aprovação.";
+                clienteModel = new();
+            }
+            else
+            {
+                mensagemErro = resultado.Message ?? "Erro ao registar";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro: {ex.Message}";
+        }
+        finally
+        {
+            processando = false;
+        }
+    }
+
+    private async Task HandleRegistoFornecedor()
+    {
+        processando = true;
+        mensagemErro = null;
+        mensagemSucesso = null;
+
+        try
+        {
+            var resultado = await Api.RegisterFornecedorAsync(fornecedorModel);
+
+            if (resultado.Success)
+            {
+                mensagemSucesso = "Registo efetuado com sucesso! A sua conta está pendente de aprovação.";
+                fornecedorModel = new();
+            }
+            else
+            {
+                mensagemErro = resultado.Message ?? "Erro ao registar";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro: {ex.Message}";
+        }
+        finally
+        {
+            processando = false;
+        }
+    }
+
+    private void SetTipoCliente()
+    {
+        tipoRegisto = "cliente";
+    }
+
+    private void SetTipoFornecedor()
+    {
+        tipoRegisto = "fornecedor";
+    }
+}

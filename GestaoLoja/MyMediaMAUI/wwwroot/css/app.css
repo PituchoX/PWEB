@@ -1,0 +1,388 @@
+﻿html, body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+a, .btn-link {
+    color: #006bb7;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.content {
+    padding-top: 1.1rem;
+}
+
+h1:focus {
+    outline: none;
+}
+
+/* ==================== RESET & BASE ==================== */
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid #e50000;
+}
+
+.validation-message {
+    color: #e50000;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+.blazor-error-boundary {
+    background: #b32121;
+    padding: 1rem;
+    color: white;
+}
+
+/* ==================== SAFE AREA (iOS) ==================== */
+.status-bar-safe-area {
+    display: none;
+}
+
+@supports (-webkit-touch-callout: none) {
+    .status-bar-safe-area {
+        display: flex;
+        position: sticky;
+        top: 0;
+        height: env(safe-area-inset-top);
+        background-color: #2a0a5e;
+        width: 100%;
+        z-index: 1;
+    }
+}
+
+/* ==================== HEADER ==================== */
+.header-top {
+    background: linear-gradient(135deg, #2a0a5e 0%, #4a148c 100%);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.search-bar .form-control {
+    border-radius: 20px 0 0 20px;
+    border: none;
+}
+
+.search-bar .btn-warning {
+    border-radius: 0 20px 20px 0;
+    border: none;
+}
+
+/* ==================== SLIDER DE CATEGORIAS ==================== */
+.categorias-slider {
+    background: white;
+    border-bottom: 3px solid #ffc107;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 56px;
+    z-index: 999;
+}
+
+.categorias-scroll {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 10px 15px;
+    gap: 10px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.categorias-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.categorias-scroll::-webkit-scrollbar-thumb {
+    background: #ffc107;
+    border-radius: 2px;
+}
+
+.categoria-item {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #f8f9fa;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.categoria-item:hover {
+    background: #e9ecef;
+    border-color: #ffc107;
+}
+
+.categoria-item.active {
+    background: #ffc107;
+    color: #2a0a5e;
+    font-weight: 600;
+}
+
+.categoria-item img {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.categoria-item span {
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+/* ==================== MAIN CONTENT ==================== */
+.main-content {
+    min-height: calc(100vh - 130px);
+    padding-bottom: 20px;
+}
+
+.secao-titulo {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2a0a5e;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ffc107;
+    display: flex;
+    align-items: center;
+}
+
+/* ==================== GRID DE PRODUTOS ==================== */
+.produtos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    padding: 15px 0;
+}
+
+/* ==================== CARDS DE PRODUTO ==================== */
+.produto-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.produto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.produto-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.produto-card .info {
+    padding: 10px;
+}
+
+.produto-card .nome {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.produto-card .categoria {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 2px;
+}
+
+.produto-card .preco {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2a0a5e;
+    margin-top: 5px;
+}
+
+.produto-card .btn-adicionar {
+    width: 100%;
+    border-radius: 0;
+    background: #ffc107;
+    border: none;
+    color: #333;
+    font-weight: 600;
+}
+
+.produto-card .btn-adicionar:hover {
+    background: #e0a800;
+}
+
+/* ==================== PRODUTO DESTAQUE (LATERAL) ==================== */
+.destaque-lateral {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+    position: sticky;
+    top: 180px;
+    margin-top: 50px;
+}
+
+.destaque-header {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: #2a0a5e;
+    padding: 12px 15px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.destaque-content {
+    padding: 15px;
+    text-align: center;
+}
+
+.destaque-content img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.destaque-content img:hover {
+    transform: scale(1.02);
+}
+
+.destaque-content h5 {
+    color: #2a0a5e;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.destaque-content .categoria {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.destaque-content .preco {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2a0a5e;
+    margin-bottom: 15px;
+}
+
+/* ==================== FOOTER ==================== */
+.footer-bottom {
+    background: #2a0a5e;
+    color: white;
+    margin-top: auto;
+}
+
+/* ==================== BOTÕES ==================== */
+.btn-primary {
+    background-color: #2a0a5e;
+    border-color: #2a0a5e;
+}
+
+.btn-primary:hover {
+    background-color: #4a148c;
+    border-color: #4a148c;
+}
+
+/* ==================== CARRINHO ==================== */
+.carrinho-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.carrinho-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* ==================== RESPONSIVO ==================== */
+@media (max-width: 991px) {
+    .destaque-lateral {
+        position: relative;
+        top: 0;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .search-bar {
+        display: none !important;
+    }
+    
+    .produtos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .produto-card .info {
+        padding: 8px;
+    }
+    
+    .produto-card img {
+        height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .produtos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .categoria-item {
+        padding: 6px 12px;
+    }
+    
+    .categoria-item img {
+        width: 24px;
+        height: 24px;
+    }
+}

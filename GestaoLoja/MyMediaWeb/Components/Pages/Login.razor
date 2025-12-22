@@ -1,0 +1,93 @@
+@page "/login"
+@inject ApiService Api
+@inject NavigationManager Nav
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-circle me-2"></i>Entrar
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+                        <DataAnnotationsValidator />
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <InputText @bind-Value="loginModel.Email" class="form-control" placeholder="seu@email.com" />
+                            <ValidationMessage For="@(() => loginModel.Email)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <InputText @bind-Value="loginModel.Password" type="password" class="form-control" />
+                            <ValidationMessage For="@(() => loginModel.Password)" />
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(mensagemErro))
+                        {
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle me-2"></i>@mensagemErro
+                            </div>
+                        }
+
+                        <button type="submit" class="btn btn-primary w-100" disabled="@processando">
+                            @if (processando)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+                        </button>
+                    </EditForm>
+
+                    <hr class="my-4" />
+
+                    <p class="text-center mb-0">
+                        Não tem conta? <a href="/registar">Registar</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    private LoginDto loginModel = new();
+    private bool processando = false;
+    private string? mensagemErro;
+
+    private async Task HandleLogin()
+    {
+        processando = true;
+        mensagemErro = null;
+
+        try
+        {
+            var resultado = await Api.LoginAsync(loginModel);
+
+            if (resultado.Success)
+            {
+                var redirectUrl = string.IsNullOrEmpty(ReturnUrl) ? "/" : ReturnUrl;
+                Nav.NavigateTo(redirectUrl);
+            }
+            else
+            {
+                mensagemErro = resultado.Message ?? "Credenciais inválidas";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro: {ex.Message}";
+        }
+        finally
+        {
+            processando = false;
+        }
+    }
+}

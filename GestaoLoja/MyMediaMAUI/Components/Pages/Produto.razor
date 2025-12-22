@@ -1,0 +1,151 @@
+@page "/produto/{Id:int}"
+@inject ApiService Api
+@inject CarrinhoService CarrinhoService
+@inject NavigationManager Nav
+
+<div class="container py-4">
+    @if (produto == null)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">A carregar...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Início</a></li>
+                <li class="breadcrumb-item"><a href="/?categoria=@produto.CategoriaId">@produto.CategoriaNome</a></li>
+                <li class="breadcrumb-item active">@produto.Nome</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-5">
+                <div class="card">
+                    <img src="img/@produto.Imagem" class="card-img-top" alt="@produto.Nome"
+                         style="max-height: 400px; object-fit: contain;"
+                         onerror="this.src='img/noproductstrans.png'" />
+                </div>
+            </div>
+            <div class="col-md-7">
+                <h2>@produto.Nome</h2>
+                
+                <p class="text-muted">
+                    <i class="bi bi-folder me-1"></i>@produto.CategoriaNome
+                    @if (!string.IsNullOrEmpty(produto.FornecedorNome))
+                    {
+                        <span class="ms-3"><i class="bi bi-shop me-1"></i>@produto.FornecedorNome</span>
+                    }
+                </p>
+
+                <div class="my-4">
+                    <span class="h2 text-primary fw-bold">@produto.PrecoFinal.ToString("C2")</span>
+                    @if (produto.PrecoBase != produto.PrecoFinal)
+                    {
+                        <small class="text-muted ms-2">
+                            <del>@produto.PrecoBase.ToString("C2")</del>
+                        </small>
+                    }
+                </div>
+
+                <div class="mb-4">
+                    @if (produto.Stock > 0)
+                    {
+                        <span class="badge bg-success fs-6">
+                            <i class="bi bi-check-circle me-1"></i>Em Stock (@produto.Stock disponíveis)
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger fs-6">
+                            <i class="bi bi-x-circle me-1"></i>Esgotado
+                        </span>
+                    }
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Quantidade:</label>
+                    <div class="input-group" style="width: 150px;">
+                        <button class="btn btn-outline-secondary" type="button" @onclick="DiminuirQuantidade">
+                            <i class="bi bi-dash"></i>
+                        </button>
+                        <input type="text" class="form-control text-center" value="@quantidade" readonly />
+                        <button class="btn btn-outline-secondary" type="button" @onclick="AumentarQuantidade">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                @if (produto.Stock > 0)
+                {
+                    <button class="btn btn-warning btn-lg" @onclick="AdicionarAoCarrinho">
+                        <i class="bi bi-cart-plus me-2"></i>Adicionar ao Carrinho
+                    </button>
+                }
+
+                @if (adicionado)
+                {
+                    <div class="alert alert-success mt-3">
+                        <i class="bi bi-check-circle me-2"></i>Produto adicionado ao carrinho!
+                        <a href="/carrinho" class="alert-link">Ver carrinho</a>
+                    </div>
+                }
+
+                <hr class="my-4" />
+
+                <div class="row">
+                    <div class="col-6">
+                        <h6><i class="bi bi-truck me-2"></i>Modo de Entrega</h6>
+                        <p class="text-muted">@produto.ModoEntregaNome</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private ProdutoDto? produto;
+    private int quantidade = 1;
+    private bool adicionado = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        produto = await Api.GetProdutoAsync(Id);
+    }
+
+    private void AumentarQuantidade()
+    {
+        if (produto != null && quantidade < produto.Stock)
+        {
+            quantidade++;
+        }
+    }
+
+    private void DiminuirQuantidade()
+    {
+        if (quantidade > 1)
+        {
+            quantidade--;
+        }
+    }
+
+    private void AdicionarAoCarrinho()
+    {
+        if (produto != null)
+        {
+            for (int i = 0; i < quantidade; i++)
+            {
+                CarrinhoService.AdicionarItem(produto);
+            }
+            adicionado = true;
+            quantidade = 1;
+        }
+    }
+}
