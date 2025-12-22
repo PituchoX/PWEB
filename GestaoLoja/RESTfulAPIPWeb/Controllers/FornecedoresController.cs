@@ -1,31 +1,30 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RESTfulAPIPWeb.Data;
 using RESTfulAPIPWeb.Dtos;
-using RESTfulAPIPWeb.Entities;
 
 namespace RESTfulAPIPWeb.Controllers
 {
+    /// <summary>
+    /// Controller para consulta de fornecedores da API MyMEDIA
+    /// Admin/Funcionário gerem fornecedores na aplicação GestaoLoja
+    /// </summary>
     [Authorize(Roles = "Administrador,Funcionário")]
     [Route("api/[controller]")]
     [ApiController]
     public class FornecedoresController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public FornecedoresController(AppDbContext context, UserManager<ApplicationUser> userManager)
+        public FornecedoresController(AppDbContext context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
-        // ================================================================
-        // GET: api/fornecedores
-        // Lista todos os fornecedores
-        // ================================================================
+        /// <summary>
+        /// Lista todos os fornecedores
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FornecedorDto>>> GetFornecedores()
         {
@@ -47,9 +46,9 @@ namespace RESTfulAPIPWeb.Controllers
             return Ok(result);
         }
 
-        // ================================================================
-        // GET: api/fornecedores/{id}
-        // ================================================================
+        /// <summary>
+        /// Obtém um fornecedor pelo ID
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<FornecedorDto>> GetFornecedor(string id)
         {
@@ -72,37 +71,9 @@ namespace RESTfulAPIPWeb.Controllers
             });
         }
 
-        // ================================================================
-        // PUT: api/fornecedores/{id}/estado
-        // Alterar estado: Pendente / Ativo / Inativo
-        // ================================================================
-        [HttpPut("{id}/estado")]
-        public async Task<IActionResult> AtualizarEstado(string id, [FromBody] FornecedorEstadoUpdateDto dto)
-        {
-            var validStates = new[] { "Pendente", "Ativo", "Inativo" };
-
-            if (!validStates.Contains(dto.NovoEstado))
-                return BadRequest("Estado inválido. Utilize: Pendente, Ativo ou Inativo.");
-
-            var fornecedor = await _context.Fornecedores
-                .Include(f => f.ApplicationUser)
-                .FirstOrDefaultAsync(f => f.ApplicationUserId == id);
-
-            if (fornecedor == null)
-                return NotFound();
-
-            fornecedor.ApplicationUser!.Estado = dto.NovoEstado;
-            fornecedor.Estado = dto.NovoEstado;
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Message = "Estado atualizado com sucesso." });
-        }
-
-        // ================================================================
-        // GET: api/fornecedores/{id}/produtos
-        // Lista produtos pertencentes ao fornecedor
-        // ================================================================
+        /// <summary>
+        /// Lista produtos de um fornecedor específico
+        /// </summary>
         [HttpGet("{id}/produtos")]
         public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetProdutosDoFornecedor(string id)
         {

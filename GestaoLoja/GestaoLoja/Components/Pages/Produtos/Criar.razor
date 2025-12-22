@@ -4,68 +4,117 @@
 @attribute [Authorize(Roles = "Administrador,Funcionário")]
 @inject ApplicationDbContext db
 @inject NavigationManager nav
+@inject IWebHostEnvironment env
+@rendermode InteractiveServer
 
 <h3>Criar Produto</h3>
+
+@if (!string.IsNullOrEmpty(mensagemErro))
+{
+    <div class="alert alert-danger">@mensagemErro</div>
+}
 
 <EditForm Model="produto" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <div class="mb-3">
-        <label>Nome</label>
-        <InputText class="form-control" @bind-Value="produto.Nome" />
+    <div class="row">
+        <div class="col-md-8">
+            <div class="mb-3">
+                <label>Nome</label>
+                <InputText class="form-control" @bind-Value="produto.Nome" />
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label>Preço Base (€)</label>
+                        <InputNumber class="form-control" @bind-Value="produto.PrecoBase" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label>Percentagem (%)</label>
+                        <InputNumber class="form-control" @bind-Value="produto.Percentagem" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label>Stock</label>
+                        <InputNumber class="form-control" @bind-Value="produto.Stock" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label>Categoria</label>
+                <InputSelect class="form-select" @bind-Value="produto.CategoriaId">
+                    <option value="0">(Selecionar)</option>
+                    @foreach (var cat in categorias)
+                    {
+                        <option value="@cat.Id">@cat.Nome</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="mb-3">
+                <label>Modo de Entrega</label>
+                <InputSelect class="form-select" @bind-Value="produto.ModoEntregaId">
+                    <option value="0">(Selecionar)</option>
+                    @foreach (var m in modos)
+                    {
+                        <option value="@m.Id">@m.Nome - @m.Tipo</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="mb-3">
+                <label>Fornecedor</label>
+                <InputSelect class="form-select" @bind-Value="produto.FornecedorId">
+                    <option value="0">(Selecionar Fornecedor)</option>
+                    @foreach (var f in fornecedores)
+                    {
+                        <option value="@f.Id">@f.NomeEmpresa</option>
+                    }
+                </InputSelect>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="mb-3">
+                <label>Imagem do Produto</label>
+                <InputFile class="form-control" OnChange="OnImagemSelecionada" accept="image/*" />
+                
+                <div class="mt-2 text-center p-2 border rounded bg-light">
+                    @if (!string.IsNullOrEmpty(previewImagem))
+                    {
+                        <img src="@previewImagem" alt="Preview" class="img-fluid img-thumbnail" style="max-height: 300px; object-fit: contain;" />
+                        <p class="text-success small mt-1 mb-0">✓ Nova imagem selecionada</p>
+                    }
+                    else
+                    {
+                        <img src="img/semfoto.png" alt="Sem foto" class="img-fluid img-thumbnail" style="max-height: 200px;" />
+                        <p class="text-muted small mt-1 mb-0">Nenhuma imagem selecionada</p>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label>Preço Base (€)</label>
-        <InputNumber class="form-control" @bind-Value="produto.PrecoBase" />
-    </div>
+    <hr />
 
-    <div class="mb-3">
-        <label>Percentagem (%)</label>
-        <InputNumber class="form-control" @bind-Value="produto.Percentagem" />
-    </div>
-
-    <div class="mb-3">
-        <label>Stock</label>
-        <InputNumber class="form-control" @bind-Value="produto.Stock" />
-    </div>
-
-    <div class="mb-3">
-        <label>Categoria</label>
-        <InputSelect class="form-select" @bind-Value="produto.CategoriaId">
-            <option value="0">(Selecionar)</option>
-            @foreach (var cat in categorias)
-            {
-                <option value="@cat.Id">@cat.Nome</option>
-            }
-        </InputSelect>
-    </div>
-
-    <div class="mb-3">
-        <label>Modo de Entrega</label>
-        <InputSelect class="form-select" @bind-Value="produto.ModoEntregaId">
-            <option value="0">(Selecionar)</option>
-            @foreach (var m in modos)
-            {
-                <option value="@m.Id">@m.Tipo</option>
-            }
-        </InputSelect>
-    </div>
-
-    <div class="mb-3">
-        <label>Fornecedor</label>
-        <InputSelect class="form-select" @bind-Value="produto.FornecedorId">
-            <option value="0">(Selecionar Fornecedor)</option>
-            @foreach (var f in fornecedores)
-            {
-                <option value="@f.Id">@f.NomeEmpresa</option>
-            }
-        </InputSelect>
-    </div>
-
-    <button type="submit" class="btn btn-success">Guardar</button>
-    <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
+    <button type="submit" class="btn btn-success" disabled="@aGuardar">
+        @if (aGuardar)
+        {
+            <span class="spinner-border spinner-border-sm me-1"></span>
+            <text>A guardar...</text>
+        }
+        else
+        {
+            <text>Guardar</text>
+        }
+    </button>
+    <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar" disabled="@aGuardar">Cancelar</button>
 </EditForm>
 
 @code {
@@ -78,6 +127,14 @@
     List<Categorias> categorias = new();
     List<ModoEntrega> modos = new();
     List<Fornecedor> fornecedores = new();
+    
+    IBrowserFile? ficheiroImagem;
+    string? previewImagem;
+    string? mensagemErro;
+    bool aGuardar = false;
+    
+    // Buffer para guardar os bytes da imagem
+    byte[]? imagemBytes;
 
     protected override void OnInitialized()
     {
@@ -88,19 +145,108 @@
             .ToList();
     }
 
-    void Guardar()
+    async Task OnImagemSelecionada(InputFileChangeEventArgs e)
     {
-        if (produto.CategoriaId == 0 || produto.ModoEntregaId == 0 || produto.FornecedorId == 0)
+        mensagemErro = null;
+        ficheiroImagem = e.File;
+
+        // Validar tamanho (max 5MB)
+        long maxSize = 5 * 1024 * 1024;
+        if (ficheiroImagem.Size > maxSize)
+        {
+            mensagemErro = "A imagem não pode ter mais de 5MB.";
+            ficheiroImagem = null;
+            previewImagem = null;
+            imagemBytes = null;
             return;
+        }
 
-        if (produto.Percentagem < 0)
-            produto.Percentagem = 0;
+        // Validar tipo
+        if (!ficheiroImagem.ContentType.StartsWith("image/"))
+        {
+            mensagemErro = "Por favor selecione um ficheiro de imagem.";
+            ficheiroImagem = null;
+            previewImagem = null;
+            imagemBytes = null;
+            return;
+        }
 
-        produto.PrecoFinal = produto.PrecoBase + (produto.PrecoBase * (produto.Percentagem / 100));
+        try
+        {
+            // Ler os bytes da imagem para memória
+            using var memoryStream = new MemoryStream();
+            await ficheiroImagem.OpenReadStream(maxSize).CopyToAsync(memoryStream);
+            imagemBytes = memoryStream.ToArray();
+            
+            // Criar preview
+            previewImagem = $"data:{ficheiroImagem.ContentType};base64,{Convert.ToBase64String(imagemBytes)}";
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro ao ler imagem: {ex.Message}";
+            ficheiroImagem = null;
+            previewImagem = null;
+            imagemBytes = null;
+        }
+    }
 
-        db.Produtos.Add(produto);
-        db.SaveChanges();
-        nav.NavigateTo("/produtos");
+    async Task Guardar()
+    {
+        mensagemErro = null;
+
+        if (string.IsNullOrWhiteSpace(produto.Nome))
+        {
+            mensagemErro = "O nome é obrigatório.";
+            return;
+        }
+
+        if (produto.CategoriaId == 0 || produto.ModoEntregaId == 0 || produto.FornecedorId == 0)
+        {
+            mensagemErro = "Por favor selecione categoria, modo de entrega e fornecedor.";
+            return;
+        }
+
+        aGuardar = true;
+        StateHasChanged();
+
+        try
+        {
+            // Guardar imagem se foi selecionada
+            if (imagemBytes != null && ficheiroImagem != null)
+            {
+                var extensao = Path.GetExtension(ficheiroImagem.Name).ToLowerInvariant();
+                if (string.IsNullOrEmpty(extensao))
+                    extensao = ".png";
+                    
+                var nomeUnico = $"prod_{Guid.NewGuid():N}{extensao}";
+                var pastaImg = Path.Combine(env.WebRootPath, "img");
+                
+                // Garantir que a pasta existe
+                if (!Directory.Exists(pastaImg))
+                    Directory.CreateDirectory(pastaImg);
+
+                var caminhoCompleto = Path.Combine(pastaImg, nomeUnico);
+                
+                // Escrever os bytes para o ficheiro
+                await File.WriteAllBytesAsync(caminhoCompleto, imagemBytes);
+
+                produto.Imagem = nomeUnico;
+            }
+
+            if (produto.Percentagem < 0)
+                produto.Percentagem = 0;
+
+            produto.PrecoFinal = produto.PrecoBase + (produto.PrecoBase * (produto.Percentagem / 100));
+
+            db.Produtos.Add(produto);
+            await db.SaveChangesAsync();
+            nav.NavigateTo("/produtos");
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro ao guardar: {ex.Message}";
+            aGuardar = false;
+        }
     }
 
     void Cancelar() => nav.NavigateTo("/produtos");

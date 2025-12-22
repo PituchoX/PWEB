@@ -15,6 +15,7 @@ wwwroot\img\cart.png
 wwwroot\img\cartcheio.jpg
 wwwroot\img\cartcheio.png
 wwwroot\img\castanhastransp220x120.png
+wwwroot\img\cat_42a0028746474a9fa9b4c7466d420858.png
 wwwroot\img\cereja.jpg
 wwwroot\img\cerejatransp220x120.png
 wwwroot\img\cestofrutas.jpg
@@ -118,6 +119,7 @@ wwwroot\img\pinhoestransp220x120.png
 wwwroot\img\pistaciostransp220x120.png
 wwwroot\img\plus.png
 wwwroot\img\pngegg.png
+wwwroot\img\prod_6c6b284624a8493fa9f7e973148e32f1.png
 wwwroot\img\profile.png
 wwwroot\img\profile2.png
 wwwroot\img\questionsanswers.jpg

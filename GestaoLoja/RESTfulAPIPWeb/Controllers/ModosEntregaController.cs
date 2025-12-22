@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RESTfulAPIPWeb.Dtos;
-using RESTfulAPIPWeb.Entities;
 using RESTfulAPIPWeb.Repositories.Interfaces;
 
 namespace RESTfulAPIPWeb.Controllers
 {
-    [Authorize(Roles = "Administrador,Funcionário")]
+    /// <summary>
+    /// Controller para consulta de modos de entrega da API MyMEDIA
+    /// Admin/Funcionário gerem modos de entrega na aplicação GestaoLoja
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ModosEntregaController : ControllerBase
@@ -18,7 +20,9 @@ namespace RESTfulAPIPWeb.Controllers
             _repo = repo;
         }
 
-        // GET: api/modosentrega
+        /// <summary>
+        /// Lista todos os modos de entrega
+        /// </summary>
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ModoEntregaDto>>> GetModosEntrega()
@@ -35,7 +39,9 @@ namespace RESTfulAPIPWeb.Controllers
             return Ok(result);
         }
 
-        // GET: api/modosentrega/5
+        /// <summary>
+        /// Obtém um modo de entrega pelo ID
+        /// </summary>
         [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<ActionResult<ModoEntregaDto>> GetModoEntrega(int id)
@@ -50,58 +56,6 @@ namespace RESTfulAPIPWeb.Controllers
                 Tipo = modo.Tipo,
                 Detalhe = modo.Detalhe
             });
-        }
-
-        // POST: api/modosentrega
-        [HttpPost]
-        public async Task<ActionResult<ModoEntregaDto>> CreateModoEntrega(ModoEntregaCreateDto dto)
-        {
-            var modo = new ModoEntrega
-            {
-                Nome = dto.Nome,
-                Tipo = dto.Tipo,
-                Detalhe = dto.Detalhe
-            };
-
-            var created = await _repo.AddAsync(modo);
-
-            return CreatedAtAction(nameof(GetModoEntrega), new { id = created.Id }, new ModoEntregaDto
-            {
-                Id = created.Id,
-                Nome = created.Nome,
-                Tipo = created.Tipo,
-                Detalhe = created.Detalhe
-            });
-        }
-
-        // PUT: api/modosentrega/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateModoEntrega(int id, ModoEntregaDto dto)
-        {
-            if (id != dto.Id) return BadRequest();
-
-            var modo = new ModoEntrega
-            {
-                Id = dto.Id,
-                Nome = dto.Nome,
-                Tipo = dto.Tipo,
-                Detalhe = dto.Detalhe
-            };
-
-            var ok = await _repo.UpdateAsync(modo);
-            if (!ok) return NotFound();
-
-            return NoContent();
-        }
-
-        // DELETE: api/modosentrega/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteModoEntrega(int id)
-        {
-            var ok = await _repo.DeleteAsync(id);
-            if (!ok) return NotFound();
-
-            return NoContent();
         }
     }
 }

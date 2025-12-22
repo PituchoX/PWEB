@@ -8,24 +8,25 @@ using RESTfulAPIPWeb.Entities;
 
 namespace RESTfulAPIPWeb.Controllers
 {
+    /// <summary>
+    /// Controller para consulta de clientes da API MyMEDIA
+    /// Admin/Funcionário gerem clientes na aplicação GestaoLoja
+    /// </summary>
     [Authorize(Roles = "Administrador,Funcionário")]
     [Route("api/[controller]")]
     [ApiController]
     public class ClientesController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ClientesController(AppDbContext context, UserManager<ApplicationUser> userManager)
+        public ClientesController(AppDbContext context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
-        // ================================================================
-        // GET: api/clientes
-        // Lista todos os clientes registados
-        // ================================================================
+        /// <summary>
+        /// Lista todos os clientes registados
+        /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ClienteDto>>> GetClientes()
         {
@@ -46,9 +47,9 @@ namespace RESTfulAPIPWeb.Controllers
             return Ok(result);
         }
 
-        // ================================================================
-        // GET: api/clientes/{id}
-        // ================================================================
+        /// <summary>
+        /// Obtém um cliente pelo ID
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<ClienteDto>> GetCliente(string id)
         {
@@ -70,37 +71,9 @@ namespace RESTfulAPIPWeb.Controllers
             });
         }
 
-        // ================================================================
-        // PUT: api/clientes/{id}/estado
-        // Altera estado de Pendente → Ativo ou Inativo
-        // ================================================================
-        [HttpPut("{id}/estado")]
-        public async Task<IActionResult> AtualizarEstado(string id, [FromBody] ClienteEstadoUpdateDto dto)
-        {
-            var validStates = new[] { "Pendente", "Ativo", "Inativo" };
-
-            if (!validStates.Contains(dto.NovoEstado))
-                return BadRequest("Estado inválido. Use: Pendente, Ativo ou Inativo.");
-
-            var cliente = await _context.Clientes
-                .Include(c => c.ApplicationUser)
-                .FirstOrDefaultAsync(c => c.ApplicationUserId == id);
-
-            if (cliente == null)
-                return NotFound();
-
-            cliente.ApplicationUser!.Estado = dto.NovoEstado;
-            cliente.Estado = dto.NovoEstado;
-
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Message = "Estado atualizado com sucesso." });
-        }
-
-        // ================================================================
-        // GET: api/clientes/{id}/vendas
-        // Lista vendas do cliente
-        // ================================================================
+        /// <summary>
+        /// Lista vendas de um cliente específico
+        /// </summary>
         [HttpGet("{id}/vendas")]
         public async Task<IActionResult> GetVendasDoCliente(string id)
         {

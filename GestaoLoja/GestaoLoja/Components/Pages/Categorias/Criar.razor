@@ -1,37 +1,145 @@
 ﻿@page "/categorias/criar"
 @inject ApplicationDbContext db
 @inject NavigationManager nav
+@inject IWebHostEnvironment env
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Administrador,Funcionário")]
-
+@rendermode InteractiveServer
 
 <h3>Criar Categoria</h3>
 
-<div class="mb-3">
-    <label>Nome</label>
-    <input class="form-control" @bind="categoria.Nome" />
-</div>
+@if (!string.IsNullOrEmpty(mensagemErro))
+{
+    <div class="alert alert-danger">@mensagemErro</div>
+}
 
-<div class="mb-3">
-    <label>Imagem (nome do ficheiro)</label>
-    <input class="form-control" @bind="categoria.Imagem" />
-    <small class="text-muted">Exemplo: maca.png</small>
-</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="mb-3">
+            <label>Nome</label>
+            <input class="form-control" @bind="categoria.Nome" />
+        </div>
 
-<button class="btn btn-success" @onclick="Guardar">Guardar</button>
-<button class="btn btn-secondary ms-2" @onclick="Cancelar">Cancelar</button>
+        <div class="mb-3">
+            <label>Imagem</label>
+            <InputFile class="form-control" OnChange="OnImagemSelecionada" accept="image/*" />
+            
+            <div class="mt-2 text-center p-2 border rounded bg-light">
+                @if (!string.IsNullOrEmpty(previewImagem))
+                {
+                    <img src="@previewImagem" alt="Preview" class="img-fluid img-thumbnail" style="max-height: 200px; object-fit: contain;" />
+                    <p class="text-success small mt-1 mb-0">✓ Imagem selecionada</p>
+                }
+                else
+                {
+                    <p class="text-muted small mb-0">Nenhuma imagem selecionada</p>
+                }
+            </div>
+        </div>
+
+        <button class="btn btn-success" @onclick="Guardar" disabled="@aGuardar">
+            @if (aGuardar)
+            {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+                <text>A guardar...</text>
+            }
+            else
+            {
+                <text>Guardar</text>
+            }
+        </button>
+        <button class="btn btn-secondary ms-2" @onclick="Cancelar" disabled="@aGuardar">Cancelar</button>
+    </div>
+</div>
 
 @code {
     Categorias categoria = new();
+    IBrowserFile? ficheiroImagem;
+    string? previewImagem;
+    string? mensagemErro;
+    bool aGuardar = false;
+    byte[]? imagemBytes;
 
-    void Guardar()
+    async Task OnImagemSelecionada(InputFileChangeEventArgs e)
+    {
+        mensagemErro = null;
+        ficheiroImagem = e.File;
+
+        long maxSize = 5 * 1024 * 1024;
+        if (ficheiroImagem.Size > maxSize)
+        {
+            mensagemErro = "A imagem não pode ter mais de 5MB.";
+            ficheiroImagem = null;
+            previewImagem = null;
+            imagemBytes = null;
+            return;
+        }
+
+        if (!ficheiroImagem.ContentType.StartsWith("image/"))
+        {
+            mensagemErro = "Por favor selecione um ficheiro de imagem.";
+            ficheiroImagem = null;
+            previewImagem = null;
+            imagemBytes = null;
+            return;
+        }
+
+        try
+        {
+            using var memoryStream = new MemoryStream();
+            await ficheiroImagem.OpenReadStream(maxSize).CopyToAsync(memoryStream);
+            imagemBytes = memoryStream.ToArray();
+            previewImagem = $"data:{ficheiroImagem.ContentType};base64,{Convert.ToBase64String(imagemBytes)}";
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro ao ler imagem: {ex.Message}";
+            ficheiroImagem = null;
+            previewImagem = null;
+            imagemBytes = null;
+        }
+    }
+
+    async Task Guardar()
     {
         if (string.IsNullOrWhiteSpace(categoria.Nome))
+        {
+            mensagemErro = "O nome é obrigatório.";
             return;
+        }
 
-        db.Categorias.Add(categoria);
-        db.SaveChanges();
-        nav.NavigateTo("/categorias");
+        aGuardar = true;
+        StateHasChanged();
+
+        try
+        {
+            if (imagemBytes != null && ficheiroImagem != null)
+            {
+                var extensao = Path.GetExtension(ficheiroImagem.Name).ToLowerInvariant();
+                if (string.IsNullOrEmpty(extensao))
+                    extensao = ".png";
+                    
+                var nomeUnico = $"cat_{Guid.NewGuid():N}{extensao}";
+                var pastaImg = Path.Combine(env.WebRootPath, "img");
+                
+                if (!Directory.Exists(pastaImg))
+                    Directory.CreateDirectory(pastaImg);
+
+                var caminhoCompleto = Path.Combine(pastaImg, nomeUnico);
+                await File.WriteAllBytesAsync(caminhoCompleto, imagemBytes);
+
+                categoria.Imagem = nomeUnico;
+            }
+
+            db.Categorias.Add(categoria);
+            await db.SaveChangesAsync();
+            nav.NavigateTo("/categorias");
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro ao guardar: {ex.Message}";
+            aGuardar = false;
+        }
     }
 
     void Cancelar() => nav.NavigateTo("/categorias");

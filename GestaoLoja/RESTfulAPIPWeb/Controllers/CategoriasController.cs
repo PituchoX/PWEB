@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RESTfulAPIPWeb.Dtos;
-using RESTfulAPIPWeb.Entities;
 using RESTfulAPIPWeb.Repositories.Interfaces;
 
 namespace RESTfulAPIPWeb.Controllers
 {
-    [Authorize(Roles = "Administrador,Funcionário")]
+    /// <summary>
+    /// Controller para consulta de categorias da API MyMEDIA
+    /// Admin/Funcionário gerem categorias na aplicação GestaoLoja
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriasController : ControllerBase
@@ -18,7 +20,9 @@ namespace RESTfulAPIPWeb.Controllers
             _repo = repo;
         }
 
-        // GET: api/categorias
+        /// <summary>
+        /// Lista todas as categorias
+        /// </summary>
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<CategoriaDto>>> GetCategorias()
@@ -34,7 +38,9 @@ namespace RESTfulAPIPWeb.Controllers
             return Ok(result);
         }
 
-        // GET: api/categorias/5
+        /// <summary>
+        /// Obtém uma categoria pelo ID
+        /// </summary>
         [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<ActionResult<CategoriaDto>> GetCategoria(int id)
@@ -48,55 +54,6 @@ namespace RESTfulAPIPWeb.Controllers
                 Nome = categoria.Nome,
                 Imagem = categoria.Imagem
             });
-        }
-
-        // POST: api/categorias
-        [HttpPost]
-        public async Task<ActionResult<CategoriaDto>> CreateCategoria(CategoriaCreateDto dto)
-        {
-            var categoria = new Categoria
-            {
-                Nome = dto.Nome,
-                Imagem = dto.Imagem
-            };
-
-            var created = await _repo.AddAsync(categoria);
-
-            return CreatedAtAction(nameof(GetCategoria), new { id = created.Id }, new CategoriaDto
-            {
-                Id = created.Id,
-                Nome = created.Nome,
-                Imagem = created.Imagem
-            });
-        }
-
-        // PUT: api/categorias/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategoria(int id, CategoriaDto dto)
-        {
-            if (id != dto.Id) return BadRequest();
-
-            var categoria = new Categoria
-            {
-                Id = dto.Id,
-                Nome = dto.Nome,
-                Imagem = dto.Imagem
-            };
-
-            var ok = await _repo.UpdateAsync(categoria);
-            if (!ok) return NotFound();
-
-            return NoContent();
-        }
-
-        // DELETE: api/categorias/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategoria(int id)
-        {
-            var ok = await _repo.DeleteAsync(id);
-            if (!ok) return NotFound();
-
-            return NoContent();
         }
     }
 }
