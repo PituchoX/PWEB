@@ -149,6 +149,173 @@ namespace GestaoLoja.Data
                 );
                 context.SaveChanges();
             }
+
+            // ========================================
+            // PRODUTOS INICIAIS (exemplo MyMEDIA)
+            // ========================================
+            if (!context.Produtos.Any())
+            {
+                // Obter IDs das categorias e modo de entrega
+                var catFilmes = context.Categorias.First(c => c.Nome == "Filmes");
+                var catMusica = context.Categorias.First(c => c.Nome == "Música");
+                var catJogos = context.Categorias.First(c => c.Nome == "Jogos");
+                var catAcessorios = context.Categorias.First(c => c.Nome == "Acessórios");
+                var modoEntrega = context.ModosEntrega.First();
+
+                context.Produtos.AddRange(
+                    // FILMES
+                    new Produtos
+                    {
+                        Nome = "Avatar - DVD",
+                        PrecoBase = 12.99m,
+                        Percentagem = 10,
+                        PrecoFinal = 14.29m,
+                        Estado = "Ativo",
+                        Stock = 50,
+                        Imagem = "avatar.png",
+                        CategoriaId = catFilmes.Id,
+                        ModoEntregaId = modoEntrega.Id,
+                        FornecedorId = fornecedorInterno.Id
+                    },
+                    new Produtos
+                    {
+                        Nome = "O Senhor dos Anéis - Blu-ray",
+                        PrecoBase = 19.99m,
+                        Percentagem = 15,
+                        PrecoFinal = 22.99m,
+                        Estado = "Ativo",
+                        Stock = 30,
+                        Imagem = "senhor_aneis.png",
+                        CategoriaId = catFilmes.Id,
+                        ModoEntregaId = modoEntrega.Id,
+                        FornecedorId = fornecedorInterno.Id
+                    },
+                    new Produtos
+                    {
+                        Nome = "Matrix - Edição Especial",
+                        PrecoBase = 24.99m,
+                        Percentagem = 10,
+                        PrecoFinal = 27.49m,
+                        Estado = "Ativo",
+                        Stock = 25,
+                        Imagem = "matrix.png",
+                        CategoriaId = catFilmes.Id,
+                        ModoEntregaId = modoEntrega.Id,
+                        FornecedorId = fornecedorInterno.Id
+                    },
+                    
+                    // MÚSICA
+                    new Produtos
+                    {
+                        Nome = "Queen - Greatest Hits - CD",
+                        PrecoBase = 14.99m,
+                        Percentagem = 5,
+                        PrecoFinal = 15.74m,
+                        Estado = "Ativo",
+                        Stock = 40,
+                        Imagem = "queen.png",
+                        CategoriaId = catMusica.Id,
+                        ModoEntregaId = modoEntrega.Id,
+                        FornecedorId = fornecedorInterno.Id
+                    },
+                    new Produtos
+                    {
+                        Nome = "Pink Floyd - The Wall - Vinil",
+                        PrecoBase = 34.99m,
+                        Percentagem = 10,
+                        PrecoFinal = 38.49m,
+                        Estado = "Ativo",
+                        Stock = 15,
+                        Imagem = "pinkfloyd.png",
+                        CategoriaId = catMusica.Id,
+                        ModoEntregaId = modoEntrega.Id,
+                        FornecedorId = fornecedorInterno.Id
+                    },
+                    new Produtos
+                    {
+                        Nome = "Beatles - Abbey Road - CD",
+                        PrecoBase = 12.99m,
+                        Percentagem = 5,
+                        PrecoFinal = 13.64m,
+                        Estado = "Ativo",
+                        Stock = 35,
+                        Imagem = "beatles.png",
+                        CategoriaId = catMusica.Id,
+                        ModoEntregaId = modoEntrega.Id,
+                        FornecedorId = fornecedorInterno.Id
+                    },
+                    
+                    // JOGOS
+                    new Produtos
+                    {
+                        Nome = "FIFA 24 - PS5",
+                        PrecoBase = 59.99m,
+                        Percentagem = 0,
+                        PrecoFinal = 59.99m,
+                        Estado = "Ativo",
+                        Stock = 100,
+                        Imagem = "fifa24.png",
+                        CategoriaId = catJogos.Id,
+                        ModoEntregaId = modoEntrega.Id,
+                        FornecedorId = fornecedorInterno.Id
+                    },
+                    new Produtos
+                    {
+                        Nome = "GTA V - Xbox",
+                        PrecoBase = 29.99m,
+                        Percentagem = 20,
+                        PrecoFinal = 35.99m,
+                        Estado = "Ativo",
+                        Stock = 45,
+                        Imagem = "gtav.png",
+                        CategoriaId = catJogos.Id,
+                        ModoEntregaId = modoEntrega.Id,
+                        FornecedorId = fornecedorInterno.Id
+                    },
+                    new Produtos
+                    {
+                        Nome = "Minecraft - PC",
+                        PrecoBase = 19.99m,
+                        Percentagem = 0,
+                        PrecoFinal = 19.99m,
+                        Estado = "Ativo",
+                        Stock = 200,
+                        Imagem = "minecraft.png",
+                        CategoriaId = catJogos.Id,
+                        ModoEntregaId = modoEntrega.Id,
+                        FornecedorId = fornecedorInterno.Id
+                    },
+                    
+                    // ACESSÓRIOS
+                    new Produtos
+                    {
+                        Nome = "Comando PS5 DualSense",
+                        PrecoBase = 69.99m,
+                        Percentagem = 5,
+                        PrecoFinal = 73.49m,
+                        Estado = "Ativo",
+                        Stock = 60,
+                        Imagem = "dualsense.png",
+                        CategoriaId = catAcessorios.Id,
+                        ModoEntregaId = modoEntrega.Id,
+                        FornecedorId = fornecedorInterno.Id
+                    },
+                    new Produtos
+                    {
+                        Nome = "Headset Gaming RGB",
+                        PrecoBase = 49.99m,
+                        Percentagem = 10,
+                        PrecoFinal = 54.99m,
+                        Estado = "Ativo",
+                        Stock = 80,
+                        Imagem = "headset.png",
+                        CategoriaId = catAcessorios.Id,
+                        ModoEntregaId = modoEntrega.Id,
+                        FornecedorId = fornecedorInterno.Id
+                    }
+                );
+                context.SaveChanges();
+            }
         }
     }
 }
