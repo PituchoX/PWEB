@@ -4,7 +4,7 @@ using RCLAPI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // URL da API RESTful
-var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7001/";
+var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "https://43tc4dk1-7104.uks1.devtunnels.ms/";
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -18,7 +18,8 @@ builder.Services.AddScoped(sp => new HttpClient
 
 // Registar serviços
 builder.Services.AddScoped<ApiService>();
-builder.Services.AddSingleton<CarrinhoService>();
+// --- MUDA DE AddSingleton PARA AddScoped ---
+builder.Services.AddScoped<RCLAPI.Services.CarrinhoService>();
 
 var app = builder.Build();
 

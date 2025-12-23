@@ -1,4 +1,5 @@
 @page "/registar"
+@using RCLAPI.Models
 @inject ApiService Api
 @inject NavigationManager Nav
 
@@ -7,15 +8,12 @@
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white text-center">
-                    <h4 class="mb-0">
-                        <i class="bi bi-person-plus me-2"></i>Criar Conta
-                    </h4>
+                    <h4 class="mb-0"><i class="bi bi-person-plus me-2"></i>Criar Conta</h4>
                 </div>
                 <div class="card-body p-4">
-                    <!-- Tabs para Cliente/Fornecedor -->
                     <ul class="nav nav-pills nav-justified mb-4">
                         <li class="nav-item">
-                            <button class="nav-link @(tipoRegisto == "cliente" ? "active" : "")" 
+                            <button class="nav-link @(tipoRegisto == "cliente" ? "active" : "")"
                                     @onclick="@(() => tipoRegisto = "cliente")">
                                 <i class="bi bi-person me-1"></i>Cliente
                             </button>
@@ -46,22 +44,21 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">NIF</label>
-                                <InputText @bind-Value="clienteModel.NIF" class="form-control" />
-                                <ValidationMessage For="@(() => clienteModel.NIF)" />
-                            </div>
-
-                            <div class="mb-3">
                                 <label class="form-label">Password</label>
                                 <InputText @bind-Value="clienteModel.Password" type="password" class="form-control" />
                                 <ValidationMessage For="@(() => clienteModel.Password)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Confirmar Password</label>
+                                <InputText @bind-Value="clienteModel.ConfirmPassword" type="password" class="form-control" />
+                                <ValidationMessage For="@(() => clienteModel.ConfirmPassword)" />
                             </div>
 
                             @if (!string.IsNullOrEmpty(mensagemErro))
                             {
                                 <div class="alert alert-danger">@mensagemErro</div>
                             }
-
                             @if (!string.IsNullOrEmpty(mensagemSucesso))
                             {
                                 <div class="alert alert-success">@mensagemSucesso</div>
@@ -100,22 +97,21 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">NIF</label>
-                                <InputText @bind-Value="fornecedorModel.NIF" class="form-control" />
-                                <ValidationMessage For="@(() => fornecedorModel.NIF)" />
-                            </div>
-
-                            <div class="mb-3">
                                 <label class="form-label">Password</label>
                                 <InputText @bind-Value="fornecedorModel.Password" type="password" class="form-control" />
                                 <ValidationMessage For="@(() => fornecedorModel.Password)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Confirmar Password</label>
+                                <InputText @bind-Value="fornecedorModel.ConfirmPassword" type="password" class="form-control" />
+                                <ValidationMessage For="@(() => fornecedorModel.ConfirmPassword)" />
                             </div>
 
                             @if (!string.IsNullOrEmpty(mensagemErro))
                             {
                                 <div class="alert alert-danger">@mensagemErro</div>
                             }
-
                             @if (!string.IsNullOrEmpty(mensagemSucesso))
                             {
                                 <div class="alert alert-success">@mensagemSucesso</div>
@@ -132,12 +128,9 @@
                     }
 
                     <hr class="my-4" />
-
                     <p class="text-center text-muted small mb-0">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Após o registo, a sua conta ficará pendente até ser aprovada por um administrador.
+                        <i class="bi bi-info-circle me-1"></i> Após o registo, a sua conta ficará pendente até ser aprovada.
                     </p>
-
                     <p class="text-center mt-3 mb-0">
                         Já tem conta? <a href="/login">Entrar</a>
                     </p>
@@ -161,18 +154,21 @@
         mensagemErro = null;
         mensagemSucesso = null;
 
+        // Atribuir NIF automático "dummy" se estiver vazio, para a API não rejeitar
+        if (string.IsNullOrEmpty(clienteModel.NIF)) clienteModel.NIF = "999999990";
+
         try
         {
             var resultado = await Api.RegisterClienteAsync(clienteModel);
-
             if (resultado.Success)
             {
-                mensagemSucesso = "Registo efetuado com sucesso! A sua conta está pendente de aprovação.";
-                clienteModel = new();
+                mensagemSucesso = "Registo efetuado com sucesso! Redirecionando para login...";
+                await Task.Delay(2000); // Espera 2 segundos para ler a mensagem
+                Nav.NavigateTo("/login");
             }
             else
             {
-                mensagemErro = resultado.Message ?? "Erro ao registar";
+                mensagemErro = resultado.Message ?? "Erro ao registar.";
             }
         }
         catch (Exception ex)
@@ -191,18 +187,21 @@
         mensagemErro = null;
         mensagemSucesso = null;
 
+        // Atribuir NIF automático "dummy" se estiver vazio
+        if (string.IsNullOrEmpty(fornecedorModel.NIF)) fornecedorModel.NIF = "999999990";
+
         try
         {
             var resultado = await Api.RegisterFornecedorAsync(fornecedorModel);
-
             if (resultado.Success)
             {
-                mensagemSucesso = "Registo efetuado com sucesso! A sua conta está pendente de aprovação.";
-                fornecedorModel = new();
+                mensagemSucesso = "Registo efetuado com sucesso! Redirecionando para login...";
+                await Task.Delay(2000);
+                Nav.NavigateTo("/login");
             }
             else
             {
-                mensagemErro = resultado.Message ?? "Erro ao registar";
+                mensagemErro = resultado.Message ?? "Erro ao registar.";
             }
         }
         catch (Exception ex)
@@ -213,15 +212,5 @@
         {
             processando = false;
         }
-    }
-
-    private void SetTipoCliente()
-    {
-        tipoRegisto = "cliente";
-    }
-
-    private void SetTipoFornecedor()
-    {
-        tipoRegisto = "fornecedor";
     }
 }

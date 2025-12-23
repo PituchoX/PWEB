@@ -2,6 +2,9 @@
 @inject ApiService Api
 @inject CarrinhoService Carrinho
 @inject NavigationManager Nav
+@inject RCLAPI.Services.CarrinhoService CarrinhoService
+@inject NavigationManager NavManager
+@inject IConfiguration Config
 
 <div class="container py-4">
     @if (produto == null)
@@ -25,7 +28,9 @@
         <div class="row">
             <div class="col-md-5">
                 <div class="card">
-                    <img src="images/@produto.Imagem" class="card-img-top" alt="@produto.Nome"
+                    <img src="@($"{Config["ApiBaseUrl"]}img/{produto.Imagem}")"
+                         class="card-img-top"
+                         alt="@produto.Nome"
                          style="max-height: 400px; object-fit: contain;"
                          onerror="this.src='images/semfoto.png'" />
                 </div>
@@ -81,8 +86,8 @@
 
                 @if (produto.Stock > 0)
                 {
-                    <button class="btn btn-warning btn-lg" @onclick="AdicionarAoCarrinho">
-                        <i class="bi bi-cart-plus me-2"></i>Adicionar ao Carrinho
+                    <button class="btn btn-primary btn-lg w-100" @onclick="AdicionarAoCarrinho">
+                        <i class="bi bi-cart-plus"></i> Adicionar ao Carrinho
                     </button>
                 }
 
@@ -140,10 +145,9 @@
     {
         if (produto != null)
         {
-            for (int i = 0; i < quantidade; i++)
-            {
-                Carrinho.AdicionarItem(produto);
-            }
+            // O teu serviço já aceita (produto, quantidade)
+            Carrinho.AdicionarItem(produto, quantidade);
+
             adicionado = true;
             quantidade = 1;
         }

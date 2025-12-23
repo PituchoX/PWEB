@@ -1,6 +1,7 @@
 @page "/meus-produtos"
 @inject ApiService Api
 @inject NavigationManager Nav
+@inject IConfiguration Config
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -138,7 +139,8 @@
                         {
                             <tr>
                                 <td>
-                                    <img src="images/@prod.Imagem" alt="@prod.Nome" 
+                                    <img src="@($"{Config["ApiBaseUrl"]}img/{prod.Imagem}")"
+                                         alt="@prod.Nome"
                                          style="width: 50px; height: 50px; object-fit: cover;"
                                          onerror="this.src='images/semfoto.png'" />
                                 </td>

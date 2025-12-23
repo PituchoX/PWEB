@@ -38,11 +38,11 @@ namespace RESTfulAPIPWeb.Controllers
 
         /// <summary>
         /// Registo de novo Cliente
-        /// Estado inicial: Pendente (necessita aprovação de Admin/Funcionário)
         /// </summary>
         [HttpPost("register-cliente")]
         public async Task<IActionResult> RegisterCliente([FromBody] RegisterClienteDto dto)
         {
+            // Nota: Se o DTO tiver [Required] no NIF, remove-o no ficheiro RegisterClienteDto.cs
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -56,7 +56,7 @@ namespace RESTfulAPIPWeb.Controllers
                 UserName = dto.Email,
                 Email = dto.Email,
                 NomeCompleto = dto.Nome,
-                Estado = "Pendente", // Aguarda aprovação
+                Estado = "Pendente",
                 Perfil = "Cliente"
             };
 
@@ -67,23 +67,42 @@ namespace RESTfulAPIPWeb.Controllers
 
             await _userManager.AddToRoleAsync(user, "Cliente");
 
-            // Criar registo na tabela Clientes
+            // --- ALTERAÇÃO AQUI: Gerar NIF aleatório para evitar erros de duplicados ---
+            string nifFinal = dto.NIF;
+
+            // Se vier vazio ou for o "dummy" do frontend, geramos um aleatório
+            if (string.IsNullOrEmpty(nifFinal) || nifFinal == "999999990")
+            {
+                // Gera um número aleatório de 9 dígitos começado por 9
+                nifFinal = "9" + new Random().Next(10000000, 99999999).ToString();
+            }
+            // --------------------------------------------------------------------------
+
             var cliente = new Cliente
             {
                 ApplicationUserId = user.Id,
-                NIF = dto.NIF,
+                NIF = nifFinal,
                 Estado = "Pendente"
             };
 
             _context.Clientes.Add(cliente);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                // Se der azar e gerar um NIF repetido (raro), tentamos mais uma vez
+                cliente.NIF = "9" + new Random().Next(10000000, 99999999).ToString();
+                await _context.SaveChangesAsync();
+            }
 
             return Ok(new { Message = "Cliente registado com sucesso. Aguarda aprovação." });
         }
 
         /// <summary>
         /// Registo de novo Fornecedor
-        /// Estado inicial: Pendente (necessita aprovação de Admin/Funcionário)
         /// </summary>
         [HttpPost("register-fornecedor")]
         public async Task<IActionResult> RegisterFornecedor([FromBody] RegisterFornecedorDto dto)
@@ -91,7 +110,6 @@ namespace RESTfulAPIPWeb.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Verificar se email já existe
             var existingUser = await _userManager.FindByEmailAsync(dto.Email);
             if (existingUser != null)
                 return BadRequest(new { Message = "Este email já está registado." });
@@ -101,7 +119,7 @@ namespace RESTfulAPIPWeb.Controllers
                 UserName = dto.Email,
                 Email = dto.Email,
                 NomeCompleto = dto.Nome,
-                Estado = "Pendente", // Aguarda aprovação
+                Estado = "Pendente",
                 Perfil = "Fornecedor"
             };
 
@@ -112,12 +130,11 @@ namespace RESTfulAPIPWeb.Controllers
 
             await _userManager.AddToRoleAsync(user, "Fornecedor");
 
-            // Criar registo na tabela Fornecedores
             var fornecedor = new Fornecedor
             {
                 ApplicationUserId = user.Id,
                 NomeEmpresa = dto.NomeEmpresa,
-                NIF = dto.NIF,
+                NIF = dto.NIF, // Fornecedores mantêm o NIF original (normalmente é obrigatório)
                 Estado = "Pendente"
             };
 
@@ -128,8 +145,7 @@ namespace RESTfulAPIPWeb.Controllers
         }
 
         /// <summary>
-        /// Login - Devolve JWT Token
-        /// Apenas utilizadores com estado "Ativo" podem fazer login
+        /// Login
         /// </summary>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
@@ -137,8 +153,7 @@ namespace RESTfulAPIPWeb.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = await _userManager.Users
-                .FirstOrDefaultAsync(u => u.Email == dto.Email);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
 
             if (user == null)
                 return Unauthorized(new { Message = "Credenciais inválidas." });
@@ -147,13 +162,10 @@ namespace RESTfulAPIPWeb.Controllers
             if (!passwordValid)
                 return Unauthorized(new { Message = "Credenciais inválidas." });
 
-            // Verificar estado do utilizador
             if (user.Estado != "Ativo")
                 return Unauthorized(new { Message = "A sua conta não está ativa. Aguarde aprovação." });
 
             var roles = await _userManager.GetRolesAsync(user);
-
-            // Gerar JWT Token
             var token = GenerateJwtToken(user, roles);
 
             return Ok(new
@@ -171,9 +183,6 @@ namespace RESTfulAPIPWeb.Controllers
             });
         }
 
-        /// <summary>
-        /// Gera um JWT Token para o utilizador
-        /// </summary>
         private string GenerateJwtToken(ApplicationUser user, IList<string> roles)
         {
             var claims = new List<Claim>
@@ -186,7 +195,6 @@ namespace RESTfulAPIPWeb.Controllers
                 new Claim("perfil", user.Perfil)
             };
 
-            // Adicionar roles como claims
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -194,7 +202,7 @@ namespace RESTfulAPIPWeb.Controllers
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? "DefaultSecretKeyForDevelopment123!"));
-            
+
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(

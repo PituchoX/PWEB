@@ -167,9 +167,9 @@ namespace GestaoLoja.Data
                     new Produtos
                     {
                         Nome = "Avatar - DVD",
-                        PrecoBase = 12.99m,
+                        PrecoBase = 14.29m,
                         Percentagem = 10,
-                        PrecoFinal = 14.29m,
+                        PrecoFinal = 12.99m,
                         Estado = "Ativo",
                         Stock = 50,
                         Imagem = "avatar.png",
@@ -180,9 +180,9 @@ namespace GestaoLoja.Data
                     new Produtos
                     {
                         Nome = "O Senhor dos Anéis - Blu-ray",
-                        PrecoBase = 19.99m,
+                        PrecoBase = 22.99m,
                         Percentagem = 15,
-                        PrecoFinal = 22.99m,
+                        PrecoFinal = 19.99m,
                         Estado = "Ativo",
                         Stock = 30,
                         Imagem = "senhor_aneis.png",
@@ -193,9 +193,9 @@ namespace GestaoLoja.Data
                     new Produtos
                     {
                         Nome = "Matrix - Edição Especial",
-                        PrecoBase = 24.99m,
+                        PrecoBase = 27.49m,
                         Percentagem = 10,
-                        PrecoFinal = 27.49m,
+                        PrecoFinal = 24.99m,
                         Estado = "Ativo",
                         Stock = 25,
                         Imagem = "matrix.png",

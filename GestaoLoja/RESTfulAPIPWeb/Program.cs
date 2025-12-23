@@ -9,6 +9,8 @@ using RESTfulAPIPWeb.Repositories.Interfaces;
 using RESTfulAPIPWeb.Repositories.Services;
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.FileProviders; // <--- FALTA ESTE
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -146,6 +148,24 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("allowAll");
+
+var caminhoImagensGestao = Path.Combine(builder.Environment.ContentRootPath, "..", "GestaoLoja", "wwwroot");
+
+// Verifica se a pasta existe para não dar erro
+if (Directory.Exists(caminhoImagensGestao))
+{
+    // Diz à API para usar essa pasta para servir ficheiros (imagens)
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(caminhoImagensGestao),
+        RequestPath = "" // Permite aceder via https://api/img/nome.png
+    });
+}
+else
+{
+    // Se a pasta não existir (ex: em produção noutro servidor), usa a pasta local
+    app.UseStaticFiles();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

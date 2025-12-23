@@ -1,4 +1,8 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@implements IDisposable
+@using RCLAPI.Services
+@inject CarrinhoService CarrinhoService
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">MyMediaWeb</a>
     </div>
@@ -15,16 +19,60 @@
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link" href="carrinho">
+                <span class="bi bi-cart-fill-nav-menu" aria-hidden="true"></span> Carrinho
+                @if (CarrinhoService.TotalItens > 0)
+                {
+                    <span class="badge bg-danger rounded-pill ms-2">
+                        @CarrinhoService.TotalItens
+                    </span>
+                }
             </NavLink>
         </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="minhas-compras">
+                        <span class="bi bi-bag-check-fill-nav-menu" aria-hidden="true"></span> Encomendas
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="logout">
+                        <span class="bi bi-box-arrow-right-nav-menu" aria-hidden="true"></span> Sair
+                    </NavLink>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="login">
+                        <span class="bi bi-person-circle-nav-menu" aria-hidden="true"></span> Entrar
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="registar">
+                        <span class="bi bi-person-plus-fill-nav-menu" aria-hidden="true"></span> Registar
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
     </nav>
 </div>
 
+@code {
+    protected override void OnInitialized()
+    {
+        CarrinhoService.OnChange += AtualizarMenu;
+    }
+
+    public void Dispose()
+    {
+        CarrinhoService.OnChange -= AtualizarMenu;
+    }
+
+    // --- ESTA É A CORREÇÃO DO ERRO DO DISPATCHER ---
+    private async void AtualizarMenu()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+}

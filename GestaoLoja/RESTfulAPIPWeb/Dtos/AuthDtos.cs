@@ -50,9 +50,8 @@ namespace RESTfulAPIPWeb.Dtos
         [EmailAddress(ErrorMessage = "Email inválido")]
         public string Email { get; set; } = "";
 
-        [Required(ErrorMessage = "NIF é obrigatório")]
         [StringLength(9, MinimumLength = 9, ErrorMessage = "NIF deve ter 9 dígitos")]
-        public string NIF { get; set; } = "";
+        public string ?NIF { get; set; } 
 
         [Required(ErrorMessage = "Password é obrigatória")]
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Password deve ter pelo menos 6 caracteres")]

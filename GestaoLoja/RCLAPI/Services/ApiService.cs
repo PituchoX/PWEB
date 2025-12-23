@@ -75,17 +75,50 @@ namespace RCLAPI.Services
             }
         }
 
+        // ... (dentro da classe ApiService)
+
         public async Task<AuthResponseDto> RegisterClienteAsync(RegisterClienteDto register)
         {
             try
             {
                 var response = await _httpClient.PostAsJsonAsync("api/auth/register/cliente", register);
-                var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-                return result ?? new AuthResponseDto { Success = false, Message = "Erro ao processar resposta" };
+
+                // 1. Verificar se a API respondeu com Sucesso (200 OK)
+                if (response.IsSuccessStatusCode)
+                {
+                    // Se tiver conteúdo JSON, lê
+                    if (response.Content.Headers.ContentLength > 0)
+                    {
+                        try
+                        {
+                            var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+                            return result ?? new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                        }
+                        catch
+                        {
+                            // Se falhar a ler o JSON mas for 200 OK, assumimos sucesso
+                            return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                        }
+                    }
+
+                    // Se for 200 OK mas corpo vazio
+                    return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                }
+                else
+                {
+                    // 2. Se deu erro (ex: 400 ou 500), lê a mensagem como TEXTO simples
+                    // Isto evita o erro "The input does not contain any JSON tokens"
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    return new AuthResponseDto
+                    {
+                        Success = false,
+                        Message = string.IsNullOrEmpty(errorMessage) ? "Erro desconhecido ao registar." : errorMessage
+                    };
+                }
             }
             catch (Exception ex)
             {
-                return new AuthResponseDto { Success = false, Message = $"Erro: {ex.Message}" };
+                return new AuthResponseDto { Success = false, Message = $"Erro de ligação: {ex.Message}" };
             }
         }
 
@@ -94,12 +127,36 @@ namespace RCLAPI.Services
             try
             {
                 var response = await _httpClient.PostAsJsonAsync("api/auth/register/fornecedor", register);
-                var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-                return result ?? new AuthResponseDto { Success = false, Message = "Erro ao processar resposta" };
+
+                if (response.IsSuccessStatusCode)
+                {
+                    if (response.Content.Headers.ContentLength > 0)
+                    {
+                        try
+                        {
+                            var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+                            return result ?? new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                        }
+                        catch
+                        {
+                            return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                        }
+                    }
+                    return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    return new AuthResponseDto
+                    {
+                        Success = false,
+                        Message = string.IsNullOrEmpty(errorMessage) ? "Erro desconhecido ao registar." : errorMessage
+                    };
+                }
             }
             catch (Exception ex)
             {
-                return new AuthResponseDto { Success = false, Message = $"Erro: {ex.Message}" };
+                return new AuthResponseDto { Success = false, Message = $"Erro de ligação: {ex.Message}" };
             }
         }
 
