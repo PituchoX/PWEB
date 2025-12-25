@@ -42,47 +42,38 @@ namespace RESTfulAPIPWeb.Controllers
         [HttpPost("register-cliente")]
         public async Task<IActionResult> RegisterCliente([FromBody] RegisterClienteDto dto)
         {
-            // Nota: Se o DTO tiver [Required] no NIF, remove-o no ficheiro RegisterClienteDto.cs
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { Success = false, Message = "Dados inválidos.", Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
 
             // Verificar se email já existe
             var existingUser = await _userManager.FindByEmailAsync(dto.Email);
             if (existingUser != null)
-                return BadRequest(new { Message = "Este email já está registado." });
+                return BadRequest(new { Success = false, Message = "Este email já está registado." });
 
             var user = new ApplicationUser
             {
                 UserName = dto.Email,
                 Email = dto.Email,
                 NomeCompleto = dto.Nome,
-                Estado = "Pendente",
+                Estado = "Ativo",  // <<< ALTERADO: Conta ativa automaticamente
                 Perfil = "Cliente"
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
 
             if (!result.Succeeded)
-                return BadRequest(new { Errors = result.Errors.Select(e => e.Description) });
+                return BadRequest(new { Success = false, Message = "Erro ao criar utilizador.", Errors = result.Errors.Select(e => e.Description) });
 
             await _userManager.AddToRoleAsync(user, "Cliente");
 
-            // --- ALTERAÇÃO AQUI: Gerar NIF aleatório para evitar erros de duplicados ---
-            string nifFinal = dto.NIF;
-
-            // Se vier vazio ou for o "dummy" do frontend, geramos um aleatório
-            if (string.IsNullOrEmpty(nifFinal) || nifFinal == "999999990")
-            {
-                // Gera um número aleatório de 9 dígitos começado por 9
-                nifFinal = "9" + new Random().Next(10000000, 99999999).ToString();
-            }
-            // --------------------------------------------------------------------------
+            // Gerar NIF aleatório
+            string nifFinal = "9" + new Random().Next(10000000, 99999999).ToString();
 
             var cliente = new Cliente
             {
                 ApplicationUserId = user.Id,
                 NIF = nifFinal,
-                Estado = "Pendente"
+                Estado = "Ativo"  // <<< ALTERADO: Registo ativo automaticamente
             };
 
             _context.Clientes.Add(cliente);
@@ -98,7 +89,7 @@ namespace RESTfulAPIPWeb.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return Ok(new { Message = "Cliente registado com sucesso. Aguarda aprovação." });
+            return Ok(new { Success = true, Message = "Registo efetuado com sucesso! Já pode fazer login." });
         }
 
         /// <summary>
@@ -108,40 +99,43 @@ namespace RESTfulAPIPWeb.Controllers
         public async Task<IActionResult> RegisterFornecedor([FromBody] RegisterFornecedorDto dto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { Success = false, Message = "Dados inválidos.", Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
 
             var existingUser = await _userManager.FindByEmailAsync(dto.Email);
             if (existingUser != null)
-                return BadRequest(new { Message = "Este email já está registado." });
+                return BadRequest(new { Success = false, Message = "Este email já está registado." });
 
             var user = new ApplicationUser
             {
                 UserName = dto.Email,
                 Email = dto.Email,
                 NomeCompleto = dto.Nome,
-                Estado = "Pendente",
+                Estado = "Pendente",  // Fornecedor mantém pendente - precisa aprovação para inserir produtos
                 Perfil = "Fornecedor"
             };
 
             var result = await _userManager.CreateAsync(user, dto.Password);
 
             if (!result.Succeeded)
-                return BadRequest(new { Errors = result.Errors.Select(e => e.Description) });
+                return BadRequest(new { Success = false, Message = "Erro ao criar utilizador.", Errors = result.Errors.Select(e => e.Description) });
 
             await _userManager.AddToRoleAsync(user, "Fornecedor");
+
+            // Gerar NIF aleatório
+            string nifFinal = "9" + new Random().Next(10000000, 99999999).ToString();
 
             var fornecedor = new Fornecedor
             {
                 ApplicationUserId = user.Id,
                 NomeEmpresa = dto.NomeEmpresa,
-                NIF = dto.NIF, // Fornecedores mantêm o NIF original (normalmente é obrigatório)
+                NIF = nifFinal,
                 Estado = "Pendente"
             };
 
             _context.Fornecedores.Add(fornecedor);
             await _context.SaveChangesAsync();
 
-            return Ok(new { Message = "Fornecedor registado com sucesso. Aguarda aprovação." });
+            return Ok(new { Success = true, Message = "Fornecedor registado com sucesso. Aguarda aprovação para inserir produtos." });
         }
 
         /// <summary>
@@ -151,35 +145,32 @@ namespace RESTfulAPIPWeb.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new { Success = false, Message = "Dados inválidos." });
 
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
 
             if (user == null)
-                return Unauthorized(new { Message = "Credenciais inválidas." });
+                return Unauthorized(new { Success = false, Message = "Credenciais inválidas." });
 
             var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
             if (!passwordValid)
-                return Unauthorized(new { Message = "Credenciais inválidas." });
+                return Unauthorized(new { Success = false, Message = "Credenciais inválidas." });
 
             if (user.Estado != "Ativo")
-                return Unauthorized(new { Message = "A sua conta não está ativa. Aguarde aprovação." });
+                return Unauthorized(new { Success = false, Message = "A sua conta não está ativa. Aguarde aprovação." });
 
             var roles = await _userManager.GetRolesAsync(user);
             var token = GenerateJwtToken(user, roles);
 
             return Ok(new
             {
+                Success = true,  // <<< ADICIONADO: Para o frontend saber que funcionou
                 Token = token,
-                Expiration = DateTime.UtcNow.AddHours(4),
-                User = new
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    Nome = user.NomeCompleto,
-                    Perfil = user.Perfil,
-                    Roles = roles
-                }
+                UserId = user.Id,
+                Email = user.Email,
+                NomeCompleto = user.NomeCompleto,
+                Perfil = user.Perfil,
+                Roles = roles
             });
         }
 

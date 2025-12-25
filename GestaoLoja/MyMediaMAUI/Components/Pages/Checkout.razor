@@ -1,0 +1,264 @@
+@page "/checkout"
+@inject CarrinhoService CarrinhoService
+@inject ApiService Api
+@inject NavigationManager Nav
+
+<div class="container py-4">
+    <h2 class="mb-4"><i class="bi bi-credit-card me-2"></i>Finalizar Compra</h2>
+
+    @if (!Api.IsAuthenticated)
+    {
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Precisa de <a href="/login?returnUrl=/checkout">entrar</a> para finalizar a compra.
+        </div>
+    }
+    else if (!CarrinhoService.Itens.Any() && !compraFinalizada)
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-cart-x display-1 text-muted"></i>
+            <h4 class="mt-3 text-muted">O seu carrinho esta vazio</h4>
+            <a href="/" class="btn btn-primary mt-3">Continuar a comprar</a>
+        </div>
+    }
+    else if (compraFinalizada)
+    {
+        <!-- Confirmacao de Sucesso -->
+        <div class="card">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-check-circle-fill text-success display-3"></i>
+                <h5 class="mt-3 text-success">Encomenda Registada!</h5>
+                <p class="text-muted small">Encomenda #@vendaId aguarda confirmacao.</p>
+                <p class="text-muted small">
+                    <i class="bi bi-arrow-right me-1"></i>
+                    A redirecionar...
+                </p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <!-- Resumo do Pedido -->
+            <div class="col-lg-7">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-bag me-2"></i>Resumo do Pedido
+                    </div>
+                    <div class="card-body p-2">
+                        @foreach (var item in CarrinhoService.Itens)
+                        {
+                            <div class="d-flex align-items-center p-2 border-bottom">
+                                <img src="img/@item.ProdutoImagem"
+                                     alt="@item.ProdutoNome"
+                                     style="width: 50px; height: 50px; object-fit: cover;"
+                                     class="rounded"
+                                     onerror="this.src='img/noproductstrans.png'" />
+                                <div class="flex-grow-1 ms-2">
+                                    <small class="fw-bold">@item.ProdutoNome</small>
+                                    <br />
+                                    <small class="text-muted">@item.Quantidade x @item.PrecoUnitario.ToString("C2")</small>
+                                </div>
+                                <span class="fw-bold text-primary">@item.Subtotal.ToString("C2")</span>
+                            </div>
+                        }
+                        <div class="d-flex justify-content-between p-2 bg-light">
+                            <strong>Total:</strong>
+                            <strong class="text-primary fs-5">@CarrinhoService.Total.ToString("C2")</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="/carrinho" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Voltar
+                </a>
+            </div>
+
+            <!-- Pagamento -->
+            <div class="col-lg-5">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-credit-card me-2"></i>Pagamento
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info small mb-3">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Apos o pagamento, a encomenda aguarda confirmacao.
+                        </div>
+
+                        <!-- Metodo de Pagamento -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Metodo de Pagamento</label>
+                            <select class="form-select form-select-sm" @bind="metodoPagamento">
+                                <option value="Cartao">Cartao de Credito/Debito</option>
+                                <option value="MB WAY">MB WAY</option>
+                                <option value="Multibanco">Multibanco</option>
+                            </select>
+                        </div>
+
+                        <!-- Campos Cartao -->
+                        @if (metodoPagamento == "Cartao")
+                        {
+                            <div class="mb-2">
+                                <label class="form-label small">Numero do Cartao</label>
+                                <input type="text" class="form-control form-control-sm" placeholder="1234 5678 9012 3456" @bind="numeroCartao" />
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <label class="form-label small">Validade</label>
+                                    <input type="text" class="form-control form-control-sm" placeholder="MM/AA" @bind="validadeCartao" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">CVV</label>
+                                    <input type="text" class="form-control form-control-sm" placeholder="123" @bind="cvvCartao" />
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Campos MB WAY -->
+                        @if (metodoPagamento == "MB WAY")
+                        {
+                            <div class="mb-2">
+                                <label class="form-label small">Numero de Telemovel</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">+351</span>
+                                    <input type="text" class="form-control" placeholder="912345678" @bind="numeroTelemovel" />
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Campos Multibanco -->
+                        @if (metodoPagamento == "Multibanco")
+                        {
+                            <div class="alert alert-light border small mb-2">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <small class="text-muted">Entidade</small>
+                                        <p class="fw-bold mb-0">@entidadeMultibanco</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted">Referencia</small>
+                                        <p class="fw-bold mb-0">@referenciaMultibanco</p>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted">Valor</small>
+                                        <p class="fw-bold text-success mb-0">@CarrinhoService.Total.ToString("C2")</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(mensagemErro))
+                        {
+                            <div class="alert alert-danger small">@mensagemErro</div>
+                        }
+
+                        <hr />
+
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Total a Pagar:</span>
+                            <span class="fs-5 fw-bold text-success">@CarrinhoService.Total.ToString("C2")</span>
+                        </div>
+
+                        <button class="btn btn-success w-100" @onclick="ProcessarPagamento" disabled="@processando">
+                            @if (processando)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                                <span>A processar...</span>
+                            }
+                            else
+                            {
+                                <i class="bi bi-lock me-2"></i>
+                                <span>Confirmar Encomenda</span>
+                            }
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private string metodoPagamento = "Cartao";
+    
+    // Cartao
+    private string numeroCartao = "";
+    private string validadeCartao = "";
+    private string cvvCartao = "";
+    
+    // MB WAY
+    private string numeroTelemovel = "";
+    
+    // Multibanco (simulado)
+    private string entidadeMultibanco = "21312";
+    private string referenciaMultibanco = "";
+    
+    private bool processando = false;
+    private bool compraFinalizada = false;
+    private string? mensagemErro;
+    
+    private int vendaId;
+    private decimal totalPago;
+
+    protected override void OnInitialized()
+    {
+        // Gerar referencia multibanco aleatoria
+        var random = new Random();
+        referenciaMultibanco = $"{random.Next(100, 999)} {random.Next(100, 999)} {random.Next(100, 999)}";
+    }
+
+    private async Task ProcessarPagamento()
+    {
+        processando = true;
+        mensagemErro = null;
+
+        try
+        {
+            // Validar campos conforme metodo
+            if (metodoPagamento == "MB WAY" && string.IsNullOrWhiteSpace(numeroTelemovel))
+            {
+                mensagemErro = "Por favor introduza o numero de telemovel.";
+                return;
+            }
+
+            // Simular delay de processamento
+            await Task.Delay(1500);
+
+            // Criar a venda na API
+            var venda = CarrinhoService.GetVendaDto();
+            var (resultado, erro) = await Api.CriarVendaAsync(venda);
+
+            if (resultado != null)
+            {
+                vendaId = resultado.Id;
+                totalPago = CarrinhoService.Total;
+                
+                // Simular pagamento (exceto Multibanco que fica pendente)
+                if (metodoPagamento != "Multibanco")
+                {
+                    await Api.SimularPagamentoAsync(vendaId);
+                }
+                
+                CarrinhoService.LimparCarrinho();
+                compraFinalizada = true;
+                
+                // Redirecionar para Minhas Compras apos 2 segundos
+                await Task.Delay(2000);
+                Nav.NavigateTo("/minhas-compras");
+            }
+            else
+            {
+                mensagemErro = erro ?? "Erro ao processar a encomenda. Tente novamente.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro: {ex.Message}";
+        }
+        finally
+        {
+            processando = false;
+        }
+    }
+}

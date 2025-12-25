@@ -34,8 +34,41 @@ namespace RCLAPI.Models
     {
         public int ProdutoId { get; set; }
         public string ProdutoNome { get; set; } = "";
+        public string ProdutoImagem { get; set; } = "semfoto.png";
         public int Quantidade { get; set; }
         public decimal PrecoUnitario { get; set; }
         public decimal Subtotal => PrecoUnitario * Quantidade;
+    }
+
+    // Resposta da API ao criar venda
+    public class VendaCriadaResponseDto
+    {
+        public int VendaId { get; set; }
+        public decimal Total { get; set; }
+        public string? Estado { get; set; }
+        public string? Message { get; set; }
+    }
+
+    // Resposta da simulação de pagamento
+    public class PagamentoResponseDto
+    {
+        public string? Message { get; set; }
+        public int VendaId { get; set; }
+        public decimal Total { get; set; }
+        public string? MetodoPagamento { get; set; }
+        public DateTime DataPagamento { get; set; }
+    }
+
+    // DTO para vendas do fornecedor
+    public class VendaFornecedorDto
+    {
+        public int? VendaId { get; set; }
+        public string? Data { get; set; }
+        public string? Estado { get; set; }
+        public string? ProdutoNome { get; set; }
+        public int Quantidade { get; set; }
+        public decimal PrecoUnitario { get; set; }
+        public decimal Total { get; set; }
+        public string? ClienteNome { get; set; }
     }
 }

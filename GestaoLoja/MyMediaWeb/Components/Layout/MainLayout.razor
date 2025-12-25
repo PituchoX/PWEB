@@ -14,7 +14,7 @@
         <!-- Barra de pesquisa -->
         <div class="search-bar d-none d-md-flex flex-grow-1 mx-4">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="Pesquisar produtos..." @bind="termoPesquisa" />
+                <input type="text" class="form-control" placeholder="Pesquisar produtos..." @bind="termoPesquisa" @onkeypress="OnKeyPress" />
                 <button class="btn btn-warning" type="button" @onclick="Pesquisar">
                     <i class="bi bi-search"></i>
                 </button>
@@ -38,6 +38,7 @@
                         @if (Api.GetUserInfo()?.Perfil == "Fornecedor")
                         {
                             <li><a class="dropdown-item" href="/meus-produtos"><i class="bi bi-box me-2"></i>Meus Produtos</a></li>
+                            <li><a class="dropdown-item" href="/minhas-vendas"><i class="bi bi-graph-up me-2"></i>Minhas Vendas</a></li>
                         }
                         <li><hr class="dropdown-divider" /></li>
                         <li><a class="dropdown-item" href="#" @onclick="Logout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
@@ -99,6 +100,14 @@
         if (!string.IsNullOrWhiteSpace(termoPesquisa))
         {
             Nav.NavigateTo($"/produtos?search={Uri.EscapeDataString(termoPesquisa)}");
+        }
+    }
+
+    private void OnKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            Pesquisar();
         }
     }
 

@@ -13,6 +13,5 @@
         public string Estado { get; set; } = "Pendente";
 
         public ICollection<Produto>? Produtos { get; set; }
-        public ICollection<Venda>? Vendas { get; set; }
     }
 }

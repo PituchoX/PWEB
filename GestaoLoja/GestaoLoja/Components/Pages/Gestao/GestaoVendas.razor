@@ -3,56 +3,250 @@
 @attribute [Authorize(Roles = "Administrador,Funcionário")]
 @inject GestaoLoja.Data.ApplicationDbContext _context
 @using GestaoLoja.Entities
+@using Microsoft.EntityFrameworkCore
 
-<h3>Gestão de Vendas</h3>
+<h3><i class="bi bi-receipt me-2"></i>Gestao de Vendas</h3>
 
 @if (carregando)
 {
-    <p>A carregar vendas...</p>
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">A carregar vendas...</p>
+    </div>
 }
 else
 {
-    <h4 class="mt-4">Vendas Pendentes</h4>
+    <!-- Vendas Pendentes -->
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <i class="bi bi-clock me-2"></i>Vendas Pendentes (@vendasPendentes.Count)
+        </div>
+        <div class="card-body">
+            @if (vendasPendentes.Count == 0)
+            {
+                <p class="text-muted mb-0">Nao existem vendas pendentes.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Data</th>
+                                <th>Produtos</th>
+                                <th>Total</th>
+                                <th style="width: 200px;">Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var v in vendasPendentes)
+                            {
+                                var total = v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0;
+                                <tr>
+                                    <td><strong>#@v.Id</strong></td>
+                                    <td>@v.Cliente?.ApplicationUser?.NomeCompleto</td>
+                                    <td>@v.Data</td>
+                                    <td>
+                                        @if (v.LinhasVenda != null)
+                                        {
+                                            @foreach (var linha in v.LinhasVenda)
+                                            {
+                                                <div class="small">
+                                                    <span class="badge bg-secondary me-1">@linha.Quantidade x</span>
+                                                    @linha.Produto?.Nome - @linha.Preco.ToString("C2")
+                                                </div>
+                                            }
+                                        }
+                                    </td>
+                                    <td><strong class="text-primary">@total.ToString("C2")</strong></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success me-1" @onclick="() => Confirmar(v.Id)">
+                                            <i class="bi bi-check me-1"></i>Confirmar
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" @onclick="() => Rejeitar(v.Id)">
+                                            <i class="bi bi-x me-1"></i>Rejeitar
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
 
-    @if (vendasPendentes.Count == 0)
-    {
-        <p>Não existem vendas pendentes.</p>
-    }
-    else
-    {
-        @RenderTabela(vendasPendentes, true, true, false)
-    }
+    <!-- Vendas Confirmadas -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <i class="bi bi-check-circle me-2"></i>Vendas Confirmadas (@vendasConfirmadas.Count)
+        </div>
+        <div class="card-body">
+            @if (vendasConfirmadas.Count == 0)
+            {
+                <p class="text-muted mb-0">Nao existem vendas confirmadas.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Data</th>
+                                <th>Produtos</th>
+                                <th>Total</th>
+                                <th style="width: 120px;">Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var v in vendasConfirmadas)
+                            {
+                                var total = v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0;
+                                <tr>
+                                    <td><strong>#@v.Id</strong></td>
+                                    <td>@v.Cliente?.ApplicationUser?.NomeCompleto</td>
+                                    <td>@v.Data</td>
+                                    <td>
+                                        @if (v.LinhasVenda != null)
+                                        {
+                                            @foreach (var linha in v.LinhasVenda)
+                                            {
+                                                <div class="small">
+                                                    <span class="badge bg-secondary me-1">@linha.Quantidade x</span>
+                                                    @linha.Produto?.Nome
+                                                </div>
+                                            }
+                                        }
+                                    </td>
+                                    <td><strong class="text-primary">@total.ToString("C2")</strong></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" @onclick="() => Expedir(v.Id)">
+                                            <i class="bi bi-truck me-1"></i>Expedir
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
 
-    <h4 class="mt-4">Vendas Confirmadas</h4>
+    <!-- Vendas Expedidas -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <i class="bi bi-truck me-2"></i>Vendas Expedidas (@vendasExpedidas.Count)
+        </div>
+        <div class="card-body">
+            @if (vendasExpedidas.Count == 0)
+            {
+                <p class="text-muted mb-0">Nao existem vendas expedidas.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Data</th>
+                                <th>Produtos</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var v in vendasExpedidas)
+                            {
+                                var total = v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0;
+                                <tr>
+                                    <td><strong>#@v.Id</strong></td>
+                                    <td>@v.Cliente?.ApplicationUser?.NomeCompleto</td>
+                                    <td>@v.Data</td>
+                                    <td>
+                                        @if (v.LinhasVenda != null)
+                                        {
+                                            @foreach (var linha in v.LinhasVenda)
+                                            {
+                                                <div class="small">
+                                                    <span class="badge bg-secondary me-1">@linha.Quantidade x</span>
+                                                    @linha.Produto?.Nome
+                                                </div>
+                                            }
+                                        }
+                                    </td>
+                                    <td><strong class="text-primary">@total.ToString("C2")</strong></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
 
-    @if (vendasConfirmadas.Count == 0)
+    <!-- Vendas Rejeitadas -->
+    @if (vendasRejeitadas.Count > 0)
     {
-        <p>Não existem vendas confirmadas.</p>
-    }
-    else
-    {
-        @RenderTabela(vendasConfirmadas, false, false, true)
-    }
-
-    <h4 class="mt-4">Vendas Expedidas</h4>
-
-    @if (vendasExpedidas.Count == 0)
-    {
-        <p>Não existem vendas expedidas.</p>
-    }
-    else
-    {
-        @RenderTabela(vendasExpedidas, false, false, false)
+        <div class="card mb-4">
+            <div class="card-header bg-danger text-white">
+                <i class="bi bi-x-circle me-2"></i>Vendas Rejeitadas (@vendasRejeitadas.Count)
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Data</th>
+                                <th>Produtos</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var v in vendasRejeitadas)
+                            {
+                                var total = v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0;
+                                <tr>
+                                    <td><strong>#@v.Id</strong></td>
+                                    <td>@v.Cliente?.ApplicationUser?.NomeCompleto</td>
+                                    <td>@v.Data</td>
+                                    <td>
+                                        @if (v.LinhasVenda != null)
+                                        {
+                                            @foreach (var linha in v.LinhasVenda)
+                                            {
+                                                <div class="small">
+                                                    <span class="badge bg-secondary me-1">@linha.Quantidade x</span>
+                                                    @linha.Produto?.Nome
+                                                </div>
+                                            }
+                                        }
+                                    </td>
+                                    <td><strong class="text-muted">@total.ToString("C2")</strong></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     }
 }
 
 @code {
-
     private bool carregando = true;
 
     private List<Vendas> vendasPendentes = new();
     private List<Vendas> vendasConfirmadas = new();
     private List<Vendas> vendasExpedidas = new();
+    private List<Vendas> vendasRejeitadas = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,14 +259,16 @@ else
 
         var todas = await _context.Vendas
             .Include(v => v.Cliente)
-                .ThenInclude(c => c.ApplicationUser)
+                .ThenInclude(c => c!.ApplicationUser)
             .Include(v => v.LinhasVenda!)
                 .ThenInclude(l => l.Produto!)
+            .OrderByDescending(v => v.Data)
             .ToListAsync();
 
         vendasPendentes = todas.Where(v => v.Estado == "Pendente").ToList();
         vendasConfirmadas = todas.Where(v => v.Estado == "Confirmada").ToList();
         vendasExpedidas = todas.Where(v => v.Estado == "Expedida").ToList();
+        vendasRejeitadas = todas.Where(v => v.Estado == "Rejeitada").ToList();
 
         carregando = false;
     }
@@ -87,14 +283,18 @@ else
         if (venda == null)
             return;
 
-        venda.Estado = "Confirmada";
-
+        // Deduzir stock dos produtos ao confirmar
         foreach (var linha in venda.LinhasVenda!)
         {
             if (linha.Produto != null)
+            {
                 linha.Produto.Stock -= linha.Quantidade;
+                if (linha.Produto.Stock < 0)
+                    linha.Produto.Stock = 0;
+            }
         }
 
+        venda.Estado = "Confirmada";
         await _context.SaveChangesAsync();
         await CarregarVendas();
     }
@@ -105,8 +305,8 @@ else
         if (venda == null)
             return;
 
+        // Nao deduz stock - venda rejeitada
         venda.Estado = "Rejeitada";
-
         await _context.SaveChangesAsync();
         await CarregarVendas();
     }
@@ -118,72 +318,7 @@ else
             return;
 
         venda.Estado = "Expedida";
-
         await _context.SaveChangesAsync();
         await CarregarVendas();
     }
-
-    private RenderFragment RenderTabela(
-        List<Vendas> vendas,
-        bool mostrarConfirmar,
-        bool mostrarRejeitar,
-        bool mostrarExpedir
-    ) => __builder =>
-    {
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Cliente</th>
-                    <th>Data</th>
-                    <th>Total</th>
-                    <th>Produtos</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var v in vendas)
-                {
-                    var total = v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0;
-
-                    <tr>
-                        <td>@v.Id</td>
-                        <td>@v.Cliente?.ApplicationUser?.NomeCompleto</td>
-                        <td>@v.Data</td>
-                        <td>@total €</td>
-                        <td>
-                            @if (v.LinhasVenda != null)
-                            {
-                                @foreach (var linha in v.LinhasVenda)
-                                {
-                                    <div>@linha.Produto?.Nome (x@linha.Quantidade) – @linha.Preco €</div>
-                                }
-                            }
-                        </td>
-                        <td>
-                            @if (mostrarConfirmar)
-                            {
-                                <button class="btn btn-sm btn-success me-1" @onclick="() => Confirmar(v.Id)">
-                                    Confirmar
-                                </button>
-                            }
-                            @if (mostrarRejeitar)
-                            {
-                                <button class="btn btn-sm btn-danger me-1" @onclick="() => Rejeitar(v.Id)">
-                                    Rejeitar
-                                </button>
-                            }
-                            @if (mostrarExpedir)
-                            {
-                                <button class="btn btn-sm btn-primary" @onclick="() => Expedir(v.Id)">
-                                    Expedir
-                                </button>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-;
-    };
 }

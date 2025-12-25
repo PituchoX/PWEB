@@ -40,10 +40,10 @@ namespace RESTfulAPIPWeb.Controllers
                 .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
 
             if (cliente == null)
-                return Unauthorized(new { Message = "Cliente não encontrado." });
+                return Unauthorized(new { Message = "Cliente não encontrado. Faça login novamente." });
 
-            // Verificar se cliente está ativo
-            if (cliente.Estado != "Ativo" && cliente.ApplicationUser?.Estado != "Ativo")
+            // Verificar se a conta do utilizador está ativa
+            if (cliente.ApplicationUser?.Estado != "Ativo")
                 return BadRequest(new { Message = "A sua conta não está ativa." });
 
             // Validar todos os produtos antes de criar a venda
@@ -61,12 +61,12 @@ namespace RESTfulAPIPWeb.Controllers
                     return BadRequest(new { Message = $"Stock insuficiente para o produto '{produto.Nome}'. Disponível: {produto.Stock}" });
             }
 
-            // Criar nova venda
+            // Criar nova venda - Estado Pendente aguarda confirmação do admin
             var venda = new Venda
             {
                 ClienteId = cliente.Id,
                 Estado = "Pendente",
-                Data = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+                Data = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
 
             _context.Vendas.Add(venda);
@@ -93,7 +93,7 @@ namespace RESTfulAPIPWeb.Controllers
 
             return Ok(new
             {
-                Message = "Encomenda criada com sucesso!",
+                Message = "Encomenda criada com sucesso! Aguarda confirmação.",
                 VendaId = venda.Id,
                 Total = total,
                 Estado = venda.Estado
@@ -128,25 +128,26 @@ namespace RESTfulAPIPWeb.Controllers
                 Data = v.Data,
                 Estado = v.Estado,
                 Total = v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0,
-                Itens = v.LinhasVenda?.Select(l => new
+                Linhas = v.LinhasVenda?.Select(l => new
                 {
                     ProdutoId = l.ProdutoId,
-                    ProdutoNome = l.Produto?.Nome,
+                    ProdutoNome = l.Produto?.Nome ?? "Produto",
+                    ProdutoImagem = l.Produto?.Imagem ?? "semfoto.png",
                     Quantidade = l.Quantidade,
                     PrecoUnitario = l.Preco,
                     Subtotal = l.Preco * l.Quantidade
-                })
+                }).ToList()
             });
 
             return Ok(result);
         }
 
         /// <summary>
-        /// Simula pagamento de uma venda
+        /// Regista intenção de pagamento (a venda continua Pendente até admin confirmar)
         /// </summary>
         [HttpPost("{id}/pagar")]
         [Authorize(Roles = "Cliente")]
-        public async Task<IActionResult> SimularPagamento(int id)
+        public async Task<IActionResult> RegistarPagamento(int id)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
@@ -161,16 +162,19 @@ namespace RESTfulAPIPWeb.Controllers
             if (venda == null)
                 return NotFound(new { Message = "Venda não encontrada." });
 
+            if (venda.Estado != "Pendente")
+                return BadRequest(new { Message = "Esta venda já foi processada." });
+
+            // A venda permanece Pendente - Admin/Funcionário irá confirmar na GestaoLoja
             var total = venda.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0;
 
-            // Simulação de pagamento
             return Ok(new
             {
-                Message = "Pagamento simulado com sucesso!",
+                Success = true,
+                Message = "Pagamento registado! A sua encomenda aguarda confirmação.",
                 VendaId = venda.Id,
                 Total = total,
-                MetodoPagamento = "Simulado",
-                DataPagamento = DateTime.UtcNow
+                Estado = venda.Estado
             });
         }
     }

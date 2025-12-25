@@ -51,6 +51,7 @@ namespace RCLAPI.Services
             try
             {
                 var response = await _httpClient.PostAsJsonAsync("api/auth/login", login);
+                
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
@@ -67,11 +68,33 @@ namespace RCLAPI.Services
                     }
                     return result ?? new AuthResponseDto { Success = false, Message = "Erro ao processar resposta" };
                 }
-                return new AuthResponseDto { Success = false, Message = "Credenciais inválidas" };
+                else
+                {
+                    // Tentar ler a mensagem de erro da API
+                    try
+                    {
+                        var errorResult = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+                        if (errorResult != null && !string.IsNullOrEmpty(errorResult.Message))
+                        {
+                            return errorResult;
+                        }
+                    }
+                    catch
+                    {
+                        // Se não conseguir ler como JSON, tenta como texto
+                        var errorText = await response.Content.ReadAsStringAsync();
+                        if (!string.IsNullOrEmpty(errorText))
+                        {
+                            return new AuthResponseDto { Success = false, Message = errorText };
+                        }
+                    }
+                    
+                    return new AuthResponseDto { Success = false, Message = "Credenciais inválidas ou conta não ativa." };
+                }
             }
             catch (Exception ex)
             {
-                return new AuthResponseDto { Success = false, Message = $"Erro: {ex.Message}" };
+                return new AuthResponseDto { Success = false, Message = $"Erro de ligação: {ex.Message}" };
             }
         }
 
@@ -81,7 +104,16 @@ namespace RCLAPI.Services
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/auth/register/cliente", register);
+                // Mapear para o formato que a API espera (Nome em vez de NomeCompleto)
+                var payload = new
+                {
+                    Nome = register.NomeCompleto,
+                    Email = register.Email,
+                    NIF = register.NIF ?? "999999990",
+                    Password = register.Password
+                };
+
+                var response = await _httpClient.PostAsJsonAsync("api/auth/register-cliente", payload);
 
                 // 1. Verificar se a API respondeu com Sucesso (200 OK)
                 if (response.IsSuccessStatusCode)
@@ -107,7 +139,6 @@ namespace RCLAPI.Services
                 else
                 {
                     // 2. Se deu erro (ex: 400 ou 500), lê a mensagem como TEXTO simples
-                    // Isto evita o erro "The input does not contain any JSON tokens"
                     var errorMessage = await response.Content.ReadAsStringAsync();
                     return new AuthResponseDto
                     {
@@ -126,7 +157,17 @@ namespace RCLAPI.Services
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/auth/register/fornecedor", register);
+                // Mapear para o formato que a API espera (Nome em vez de NomeCompleto)
+                var payload = new
+                {
+                    Nome = register.NomeCompleto,
+                    NomeEmpresa = register.NomeEmpresa,
+                    Email = register.Email,
+                    NIF = register.NIF ?? "999999990",
+                    Password = register.Password
+                };
+
+                var response = await _httpClient.PostAsJsonAsync("api/auth/register-fornecedor", payload);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -200,6 +241,19 @@ namespace RCLAPI.Services
             }
         }
 
+        public async Task<List<ProdutoDto>> PesquisarProdutosAsync(string termo)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<ProdutoDto>>($"api/produtos/pesquisa?q={Uri.EscapeDataString(termo)}");
+                return result ?? new List<ProdutoDto>();
+            }
+            catch
+            {
+                return new List<ProdutoDto>();
+            }
+        }
+
         public async Task<List<ProdutoDto>> GetProdutosPorCategoriaAsync(int categoriaId)
         {
             try
@@ -252,20 +306,40 @@ namespace RCLAPI.Services
         }
 
         // ==================== VENDAS (CLIENTE) ====================
-        public async Task<VendaDto?> CriarVendaAsync(VendaCreateDto venda)
+        public async Task<(VendaDto? Venda, string? Erro)> CriarVendaAsync(VendaCreateDto venda)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("api/vendas", venda);
+                // Converter para o formato que a API espera (List<ItemVendaDto>)
+                var itens = venda.Linhas.Select(l => new { ProdutoId = l.ProdutoId, Quantidade = l.Quantidade }).ToList();
+                
+                var response = await _httpClient.PostAsJsonAsync("api/vendas", itens);
+                
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadFromJsonAsync<VendaDto>();
+                    // A API devolve { VendaId, Total, Estado, Message }
+                    var result = await response.Content.ReadFromJsonAsync<VendaCriadaResponseDto>();
+                    if (result != null)
+                    {
+                        return (new VendaDto
+                        {
+                            Id = result.VendaId,
+                            Estado = result.Estado ?? "Pendente",
+                            Total = result.Total
+                        }, null);
+                    }
                 }
-                return null;
+                else
+                {
+                    // Ler mensagem de erro
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return (null, errorContent);
+                }
+                return (null, "Erro desconhecido ao criar venda.");
             }
-            catch
+            catch (Exception ex)
             {
-                return null;
+                return (null, ex.Message);
             }
         }
 
@@ -282,6 +356,19 @@ namespace RCLAPI.Services
             }
         }
 
+        public async Task<bool> SimularPagamentoAsync(int vendaId)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsync($"api/vendas/{vendaId}/pagar", null);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         // ==================== FORNECEDOR - MEUS PRODUTOS ====================
         public async Task<List<ProdutoDto>> GetMeusProdutosAsync()
         {
@@ -293,6 +380,19 @@ namespace RCLAPI.Services
             catch
             {
                 return new List<ProdutoDto>();
+            }
+        }
+
+        public async Task<List<VendaFornecedorDto>> GetMinhasVendasFornecedorAsync()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<VendaFornecedorDto>>("api/fornecedor/produtos/vendas");
+                return result ?? new List<VendaFornecedorDto>();
+            }
+            catch
+            {
+                return new List<VendaFornecedorDto>();
             }
         }
 

@@ -60,6 +60,48 @@ namespace RESTfulAPIPWeb.Controllers
         }
 
         /// <summary>
+        /// Pesquisa produtos por nome ou categoria (apenas ativos)
+        /// </summary>
+        [HttpGet("pesquisa")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<ProdutoDto>>> PesquisarProdutos([FromQuery] string q)
+        {
+            if (string.IsNullOrWhiteSpace(q))
+                return Ok(new List<ProdutoDto>());
+
+            var termoLower = q.ToLower();
+
+            var produtos = await _context.Produtos
+                .Where(p => p.Estado == "Ativo" && 
+                    (p.Nome.ToLower().Contains(termoLower) || 
+                     (p.Categoria != null && p.Categoria.Nome.ToLower().Contains(termoLower))))
+                .Include(p => p.Categoria)
+                .Include(p => p.ModoEntrega)
+                .Include(p => p.Fornecedor)
+                .ToListAsync();
+
+            var result = produtos.Select(p => new ProdutoDto
+            {
+                Id = p.Id,
+                Nome = p.Nome,
+                PrecoBase = p.PrecoBase,
+                Percentagem = p.Percentagem,
+                PrecoFinal = p.PrecoFinal,
+                Estado = p.Estado,
+                Stock = p.Stock,
+                Imagem = p.Imagem,
+                CategoriaId = p.CategoriaId,
+                CategoriaNome = p.Categoria?.Nome,
+                ModoEntregaId = p.ModoEntregaId,
+                ModoEntregaNome = p.ModoEntrega?.Nome,
+                FornecedorId = p.FornecedorId,
+                FornecedorNome = p.Fornecedor?.NomeEmpresa
+            });
+
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Lista produtos por categoria (apenas ativos)
         /// </summary>
         [HttpGet("categoria/{categoriaId}")]

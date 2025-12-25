@@ -10,6 +10,7 @@
     @if (!CarrinhoService.Itens.Any())
     {
         <div class="text-center py-5">
+            <i class="bi bi-cart-x display-1 text-muted"></i>
             <h4 class="mt-3 text-muted">O seu carrinho está vazio</h4>
             <a href="/" class="btn btn-primary mt-3">Continuar a comprar</a>
         </div>
@@ -25,6 +26,7 @@
                             <img src="@($"{Config["ApiBaseUrl"]}img/{item.ProdutoImagem}")"
                                  alt="@item.ProdutoNome"
                                  style="width: 80px; height: 80px; object-fit: cover;"
+                                 class="rounded"
                                  onerror="this.src='/img/noproducts.png'" />
 
                             <div class="flex-grow-1 ms-3">
@@ -34,11 +36,11 @@
 
                             <div class="d-flex align-items-center">
                                 <button class="btn btn-sm btn-outline-secondary" @onclick="() => CarrinhoService.AtualizarQuantidade(item.ProdutoId, item.Quantidade - 1)">-</button>
-                                <span class="mx-2">@item.Quantidade</span>
+                                <span class="mx-2 fw-bold">@item.Quantidade</span>
                                 <button class="btn btn-sm btn-outline-secondary" @onclick="() => CarrinhoService.AtualizarQuantidade(item.ProdutoId, item.Quantidade + 1)">+</button>
                             </div>
 
-                            <span class="fw-bold ms-4" style="min-width: 80px; text-align: right;">
+                            <span class="fw-bold ms-4 text-primary" style="min-width: 80px; text-align: right;">
                                 @item.Subtotal.ToString("C2")
                             </span>
 
@@ -50,14 +52,21 @@
                 }
 
                 <button class="btn btn-outline-secondary mt-2" @onclick="CarrinhoService.LimparCarrinho">
-                    Limpar Carrinho
+                    <i class="bi bi-trash me-2"></i>Limpar Carrinho
                 </button>
             </div>
 
             <div class="col-lg-4">
                 <div class="card">
-                    <div class="card-header bg-primary text-white">Resumo</div>
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-receipt me-2"></i>Resumo
+                    </div>
                     <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal (@CarrinhoService.TotalItens itens)</span>
+                            <span>@CarrinhoService.Total.ToString("C2")</span>
+                        </div>
+                        <hr />
                         <div class="d-flex justify-content-between">
                             <strong>Total</strong>
                             <strong class="text-primary fs-4">@CarrinhoService.Total.ToString("C2")</strong>
@@ -66,48 +75,33 @@
                     <div class="card-footer">
                         @if (Api.IsAuthenticated)
                         {
-                            <button class="btn btn-success w-100 btn-lg" @onclick="FinalizarCompra" disabled="@processando">
-                                @(processando ? "A processar..." : "Finalizar Compra")
+                            <button class="btn btn-success w-100 btn-lg" @onclick="IrParaCheckout">
+                                <i class="bi bi-credit-card me-2"></i>Finalizar Compra
                             </button>
                         }
                         else
                         {
-                            <a href="/login?returnUrl=/carrinho" class="btn btn-warning w-100">Entrar para Finalizar</a>
+                            <a href="/login?returnUrl=/carrinho" class="btn btn-warning w-100 btn-lg">
+                                <i class="bi bi-person me-2"></i>Entrar para Finalizar
+                            </a>
                         }
                     </div>
                 </div>
 
-                @if (compraFinalizada)
-                {
-                    <div class="alert alert-success mt-3">
-                        Compra realizada! <a href="/minhas-compras">Ver minhas compras</a>
+                <div class="card mt-3">
+                    <div class="card-body text-center text-muted small">
+                        <i class="bi bi-shield-check me-1"></i>
+                        Pagamento 100% seguro (simulado)
                     </div>
-                }
+                </div>
             </div>
         </div>
     }
 </div>
 
 @code {
-    private bool processando = false;
-    private bool compraFinalizada = false;
-
-    private async Task FinalizarCompra()
+    private void IrParaCheckout()
     {
-        processando = true;
-        try
-        {
-            var venda = CarrinhoService.GetVendaDto();
-            var resultado = await Api.CriarVendaAsync(venda);
-            if (resultado != null)
-            {
-                compraFinalizada = true;
-                CarrinhoService.LimparCarrinho();
-            }
-        }
-        finally
-        {
-            processando = false;
-        }
+        Nav.NavigateTo("/checkout");
     }
 }
