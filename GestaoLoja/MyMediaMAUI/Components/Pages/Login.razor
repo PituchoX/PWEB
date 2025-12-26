@@ -2,35 +2,42 @@
 @inject ApiService Api
 @inject NavigationManager Nav
 
-<div class="container py-5">
+<div class="container py-4">
     <div class="row justify-content-center">
-        <div class="col-md-5">
+        <div class="col-md-8 col-lg-5">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white text-center">
-                    <h4 class="mb-0">
+                    <h5 class="mb-0">
                         <i class="bi bi-person-circle me-2"></i>Entrar
-                    </h4>
+                    </h5>
                 </div>
                 <div class="card-body p-4">
                     <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
                         <DataAnnotationsValidator />
 
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
+                            <label class="form-label small">Email</label>
                             <InputText @bind-Value="loginModel.Email" class="form-control" placeholder="seu@email.com" />
                             <ValidationMessage For="@(() => loginModel.Email)" />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Password</label>
+                            <label class="form-label small">Password</label>
                             <InputText @bind-Value="loginModel.Password" type="password" class="form-control" />
                             <ValidationMessage For="@(() => loginModel.Password)" />
                         </div>
 
                         @if (!string.IsNullOrEmpty(mensagemErro))
                         {
-                            <div class="alert alert-danger">
-                                <i class="bi bi-exclamation-triangle me-2"></i>@mensagemErro
+                            <div class="alert alert-danger small py-2">
+                                <i class="bi bi-exclamation-triangle me-1"></i>@mensagemErro
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(mensagemSucesso))
+                        {
+                            <div class="alert alert-success small py-2">
+                                <i class="bi bi-check-circle me-1"></i>@mensagemSucesso
                             </div>
                         }
 
@@ -38,15 +45,20 @@
                             @if (processando)
                             {
                                 <span class="spinner-border spinner-border-sm me-2"></span>
+                                <span>A entrar...</span>
                             }
-                            <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+                            else
+                            {
+                                <i class="bi bi-box-arrow-in-right me-2"></i>
+                                <span>Entrar</span>
+                            }
                         </button>
                     </EditForm>
 
-                    <hr class="my-4" />
+                    <hr class="my-3" />
 
-                    <p class="text-center mb-0">
-                        Não tem conta? <a href="/registar">Registar</a>
+                    <p class="text-center small mb-0">
+                        Nao tem conta? <a href="/registar">Registar</a>
                     </p>
                 </div>
             </div>
@@ -61,11 +73,21 @@
     private LoginDto loginModel = new();
     private bool processando = false;
     private string? mensagemErro;
+    private string? mensagemSucesso;
 
     private async Task HandleLogin()
     {
         processando = true;
         mensagemErro = null;
+        mensagemSucesso = null;
+
+        // Validar email basico
+        if (string.IsNullOrWhiteSpace(loginModel.Email) || !loginModel.Email.Contains("@"))
+        {
+            mensagemErro = "Por favor insira um email valido (ex: nome@email.com)";
+            processando = false;
+            return;
+        }
 
         try
         {
@@ -73,13 +95,27 @@
 
             if (resultado.Success)
             {
+                mensagemSucesso = "Login com sucesso! A redirecionar...";
+                StateHasChanged();
+                
+                await Task.Delay(500);
+                
+                // Navegar SEM forceLoad para manter o estado
                 var redirectUrl = string.IsNullOrEmpty(ReturnUrl) ? "/" : ReturnUrl;
                 Nav.NavigateTo(redirectUrl);
             }
             else
             {
-                mensagemErro = resultado.Message ?? "Credenciais inválidas";
+                mensagemErro = resultado.Message ?? "Credenciais invalidas";
             }
+        }
+        catch (HttpRequestException ex)
+        {
+            mensagemErro = $"Erro de conexao: {ex.Message}";
+        }
+        catch (TaskCanceledException)
+        {
+            mensagemErro = "Timeout - A API demorou muito a responder.";
         }
         catch (Exception ex)
         {

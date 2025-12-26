@@ -45,6 +45,33 @@ namespace RCLAPI.Services
             }
         }
 
+        public void AumentarQuantidade(int produtoId)
+        {
+            var item = _itens.FirstOrDefault(i => i.ProdutoId == produtoId);
+            if (item != null)
+            {
+                item.Quantidade++;
+                NotifyStateChanged();
+            }
+        }
+
+        public void DiminuirQuantidade(int produtoId)
+        {
+            var item = _itens.FirstOrDefault(i => i.ProdutoId == produtoId);
+            if (item != null)
+            {
+                if (item.Quantidade > 1)
+                {
+                    item.Quantidade--;
+                }
+                else
+                {
+                    _itens.Remove(item);
+                }
+                NotifyStateChanged();
+            }
+        }
+
         public void AtualizarQuantidade(int produtoId, int quantidade)
         {
             var item = _itens.FirstOrDefault(i => i.ProdutoId == produtoId);

@@ -23,17 +23,20 @@ namespace RESTfulAPIPWeb.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _config;
         private readonly AppDbContext _context;
+        private readonly ILogger<AuthController> _logger;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IConfiguration config,
-            AppDbContext context)
+            AppDbContext context,
+            ILogger<AuthController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
             _context = context;
+            _logger = logger;
         }
 
         /// <summary>
@@ -55,7 +58,7 @@ namespace RESTfulAPIPWeb.Controllers
                 UserName = dto.Email,
                 Email = dto.Email,
                 NomeCompleto = dto.Nome,
-                Estado = "Ativo",  // <<< ALTERADO: Conta ativa automaticamente
+                Estado = "Ativo",
                 Perfil = "Cliente"
             };
 
@@ -73,7 +76,7 @@ namespace RESTfulAPIPWeb.Controllers
             {
                 ApplicationUserId = user.Id,
                 NIF = nifFinal,
-                Estado = "Ativo"  // <<< ALTERADO: Registo ativo automaticamente
+                Estado = "Ativo"
             };
 
             _context.Clientes.Add(cliente);
@@ -84,7 +87,6 @@ namespace RESTfulAPIPWeb.Controllers
             }
             catch
             {
-                // Se der azar e gerar um NIF repetido (raro), tentamos mais uma vez
                 cliente.NIF = "9" + new Random().Next(10000000, 99999999).ToString();
                 await _context.SaveChangesAsync();
             }
@@ -110,7 +112,7 @@ namespace RESTfulAPIPWeb.Controllers
                 UserName = dto.Email,
                 Email = dto.Email,
                 NomeCompleto = dto.Nome,
-                Estado = "Pendente",  // Fornecedor mantém pendente - precisa aprovação para inserir produtos
+                Estado = "Pendente",
                 Perfil = "Fornecedor"
             };
 
@@ -144,27 +146,52 @@ namespace RESTfulAPIPWeb.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
+            _logger.LogInformation("=== LOGIN ATTEMPT ===");
+            _logger.LogInformation($"Email: {dto.Email}");
+
             if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("ModelState invalid");
                 return BadRequest(new { Success = false, Message = "Dados inválidos." });
+            }
 
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
 
             if (user == null)
+            {
+                _logger.LogWarning($"User not found with email: {dto.Email}");
+                
+                // Listar todos os utilizadores para debug
+                var allUsers = await _userManager.Users.Select(u => u.Email).ToListAsync();
+                _logger.LogInformation($"All users in DB: {string.Join(", ", allUsers)}");
+                
                 return Unauthorized(new { Success = false, Message = "Credenciais inválidas." });
+            }
+
+            _logger.LogInformation($"User found: {user.Email}, Estado: {user.Estado}, Perfil: {user.Perfil}");
 
             var passwordValid = await _userManager.CheckPasswordAsync(user, dto.Password);
             if (!passwordValid)
+            {
+                _logger.LogWarning("Password invalid");
                 return Unauthorized(new { Success = false, Message = "Credenciais inválidas." });
+            }
 
             if (user.Estado != "Ativo")
-                return Unauthorized(new { Success = false, Message = "A sua conta não está ativa. Aguarde aprovação." });
+            {
+                _logger.LogWarning($"User not active. Estado: {user.Estado}");
+                return Unauthorized(new { Success = false, Message = $"A sua conta não está ativa. Estado atual: {user.Estado}" });
+            }
 
             var roles = await _userManager.GetRolesAsync(user);
+            _logger.LogInformation($"User roles: {string.Join(", ", roles)}");
+            
             var token = GenerateJwtToken(user, roles);
+            _logger.LogInformation("Login successful, token generated");
 
             return Ok(new
             {
-                Success = true,  // <<< ADICIONADO: Para o frontend saber que funcionou
+                Success = true,
                 Token = token,
                 UserId = user.Id,
                 Email = user.Email,
@@ -172,6 +199,18 @@ namespace RESTfulAPIPWeb.Controllers
                 Perfil = user.Perfil,
                 Roles = roles
             });
+        }
+
+        /// <summary>
+        /// Endpoint de teste - lista todos os utilizadores (REMOVER EM PRODUÇÃO)
+        /// </summary>
+        [HttpGet("debug/users")]
+        public async Task<IActionResult> DebugUsers()
+        {
+            var users = await _userManager.Users
+                .Select(u => new { u.Email, u.NomeCompleto, u.Estado, u.Perfil })
+                .ToListAsync();
+            return Ok(users);
         }
 
         private string GenerateJwtToken(ApplicationUser user, IList<string> roles)

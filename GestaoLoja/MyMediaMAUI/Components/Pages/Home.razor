@@ -20,7 +20,7 @@
             {
                 <div class="categoria-item @(categoriaSelecionada?.Id == cat.Id ? "active" : "")" 
                      @onclick="() => SelecionarCategoria(cat)">
-                    <img src="img/@(cat.Imagem ?? "noproductstrans.png")" alt="@cat.Nome" 
+                    <img src="@GetImageUrl(cat.Imagem)" alt="@cat.Nome" 
                          onerror="this.src='img/noproductstrans.png'" />
                     <span>@cat.Nome</span>
                 </div>
@@ -67,7 +67,7 @@
                     @foreach (var prod in produtosVisiveis)
                     {
                         <div class="produto-card">
-                            <img src="img/@prod.Imagem" alt="@prod.Nome" 
+                            <img src="@GetImageUrl(prod.Imagem)" alt="@prod.Nome" 
                                  onerror="this.src='img/noproductstrans.png'"
                                  @onclick="() => VerProduto(prod.Id)" />
                             <div class="info">
@@ -100,7 +100,7 @@
                 @if (produtoDestaque != null)
                 {
                     <div class="destaque-content">
-                        <img src="img/@produtoDestaque.Imagem" alt="@produtoDestaque.Nome" 
+                        <img src="@GetImageUrl(produtoDestaque.Imagem)" alt="@produtoDestaque.Nome" 
                              onerror="this.src='img/noproductstrans.png'"
                              @onclick="() => VerProduto(produtoDestaque.Id)" />
                         <h5>@produtoDestaque.Nome</h5>
@@ -130,6 +130,9 @@
     private ProdutoDto? produtoDestaque;
     private CategoriaDto? categoriaSelecionada;
 
+    // URL base da API para imagens
+    private string ApiBaseUrl => MauiProgram.ApiBaseUrl;
+
     protected override async Task OnInitializedAsync()
     {
         await CarregarDados();
@@ -141,6 +144,13 @@
         todosProdutos = await Api.GetProdutosAsync();
         produtosVisiveis = todosProdutos;
         produtoDestaque = await Api.GetProdutoDestaqueAsync();
+    }
+
+    private string GetImageUrl(string? imagem)
+    {
+        if (string.IsNullOrEmpty(imagem))
+            return "img/noproductstrans.png";
+        return $"{ApiBaseUrl}img/{imagem}";
     }
 
     private async Task SelecionarCategoria(CategoriaDto categoria)

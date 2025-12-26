@@ -10,6 +10,9 @@ namespace RCLAPI.Services
         private string? _token;
         private UserInfoDto? _userInfo;
 
+        // Evento para notificar mudanças de autenticação
+        public event Action? OnAuthStateChanged;
+
         public ApiService(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -28,6 +31,7 @@ namespace RCLAPI.Services
             {
                 _httpClient.DefaultRequestHeaders.Authorization = null;
             }
+            OnAuthStateChanged?.Invoke();
         }
 
         public string? GetToken() => _token;
@@ -37,12 +41,14 @@ namespace RCLAPI.Services
         public void SetUserInfo(UserInfoDto? userInfo)
         {
             _userInfo = userInfo;
+            OnAuthStateChanged?.Invoke();
         }
 
         public void Logout()
         {
             SetToken(null);
             _userInfo = null;
+            OnAuthStateChanged?.Invoke();
         }
 
         // ==================== AUTENTICAÇÃO ====================
@@ -65,6 +71,7 @@ namespace RCLAPI.Services
                             NomeCompleto = result.NomeCompleto ?? "",
                             Perfil = result.Perfil ?? ""
                         };
+                        OnAuthStateChanged?.Invoke();
                     }
                     return result ?? new AuthResponseDto { Success = false, Message = "Erro ao processar resposta" };
                 }
@@ -97,8 +104,6 @@ namespace RCLAPI.Services
                 return new AuthResponseDto { Success = false, Message = $"Erro de ligação: {ex.Message}" };
             }
         }
-
-        // ... (dentro da classe ApiService)
 
         public async Task<AuthResponseDto> RegisterClienteAsync(RegisterClienteDto register)
         {

@@ -51,7 +51,7 @@
                         @foreach (var linha in venda.Linhas)
                         {
                             <div class="d-flex align-items-center border-bottom py-2">
-                                <img src="img/@linha.ProdutoImagem"
+                                <img src="@GetImageUrl(linha.ProdutoImagem)"
                                      alt="@linha.ProdutoNome"
                                      style="width: 50px; height: 50px; object-fit: cover;"
                                      class="rounded me-2"
@@ -86,6 +86,7 @@
 
 @code {
     private List<VendaDto>? vendas;
+    private string ApiBaseUrl => MauiProgram.ApiBaseUrl;
 
     protected override async Task OnInitializedAsync()
     {
@@ -93,6 +94,13 @@
         {
             vendas = await Api.GetMinhasVendasAsync();
         }
+    }
+
+    private string GetImageUrl(string? imagem)
+    {
+        if (string.IsNullOrEmpty(imagem))
+            return "img/noproductstrans.png";
+        return $"{ApiBaseUrl}img/{imagem}";
     }
 
     private string GetEstadoBadgeClass(string estado) => estado switch

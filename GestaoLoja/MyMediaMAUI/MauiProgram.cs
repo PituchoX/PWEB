@@ -8,23 +8,13 @@ namespace MyMediaMAUI
         // ============================================================
         // URL da API RESTful
         // ============================================================
-        // Em DESENVOLVIMENTO: Usar Dev Tunnel URL para Android/iOS
-        // Para Windows Machine pode usar localhost
-        // 
-        // Para obter o Dev Tunnel:
-        // 1. No Visual Studio, clica na seta ao lado do botão Debug
-        // 2. Seleciona "Dev Tunnels" → "Create a Tunnel..."
-        // 3. Copia a URL gerada e cola aqui
+        // O Dev Tunnel ja esta configurado!
+        // Certifica-te que a API (RESTfulAPIPWeb) esta a correr
+        // antes de iniciar o MAUI.
         // ============================================================
         
-#if DEBUG
-        // Para WINDOWS pode usar localhost (porta 7104)
-        // Para ANDROID/iOS precisa de Dev Tunnel URL
-        public const string ApiBaseUrl = "https://localhost:7104/";
-#else
-        // URL de produção (quando publicares a API)
-        public const string ApiBaseUrl = "https://mymedia-api.azurewebsites.net/";
-#endif
+        // URL do Dev Tunnel (ja configurado)
+        public const string ApiBaseUrl = "https://43tc4dk1-7104.uks1.devtunnels.ms/";
 
         public static MauiApp CreateMauiApp()
         {
@@ -38,28 +28,22 @@ namespace MyMediaMAUI
 
             builder.Services.AddMauiBlazorWebView();
 
-            // Configurar HttpClient para comunicação com a API
-            // Ignorar erros de certificado SSL em desenvolvimento
+            // Configurar HttpClient para comunicacao com a API
             builder.Services.AddScoped(sp =>
             {
-#if DEBUG
                 var handler = new HttpClientHandler
                 {
+                    // Ignorar erros de certificado SSL em desenvolvimento
                     ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
                 };
                 return new HttpClient(handler)
                 {
-                    BaseAddress = new Uri(ApiBaseUrl)
+                    BaseAddress = new Uri(ApiBaseUrl),
+                    Timeout = TimeSpan.FromSeconds(30)
                 };
-#else
-                return new HttpClient
-                {
-                    BaseAddress = new Uri(ApiBaseUrl)
-                };
-#endif
             });
 
-            // Registar serviços
+            // Registar servicos
             builder.Services.AddScoped<ApiService>();
             builder.Services.AddSingleton<CarrinhoService>();
 

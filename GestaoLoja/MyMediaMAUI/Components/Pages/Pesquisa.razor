@@ -73,7 +73,7 @@
             @foreach (var prod in produtos)
             {
                 <div class="produto-card">
-                    <img src="img/@prod.Imagem"
+                    <img src="@GetImageUrl(prod.Imagem)"
                          alt="@prod.Nome"
                          onerror="this.src='img/noproductstrans.png'"
                          @onclick="() => VerProduto(prod.Id)" />
@@ -105,6 +105,7 @@
     private string termoPesquisa = "";
     private List<ProdutoDto>? produtos;
     private bool carregando = false;
+    private string ApiBaseUrl => MauiProgram.ApiBaseUrl;
 
     protected override async Task OnInitializedAsync()
     {
@@ -122,6 +123,13 @@
             termoPesquisa = SearchQuery;
             await Pesquisar();
         }
+    }
+
+    private string GetImageUrl(string? imagem)
+    {
+        if (string.IsNullOrEmpty(imagem))
+            return "img/noproductstrans.png";
+        return $"{ApiBaseUrl}img/{imagem}";
     }
 
     private async Task Pesquisar()
