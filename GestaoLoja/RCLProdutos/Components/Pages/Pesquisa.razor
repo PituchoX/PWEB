@@ -2,14 +2,12 @@
 @inject ApiService Api
 @inject CarrinhoService CarrinhoService
 @inject NavigationManager Nav
-@inject IConfiguration Config
 
 <PageTitle>Pesquisa - MyMEDIA</PageTitle>
 
 <div class="container py-4">
-    <!-- Cabecalho da pesquisa -->
     <div class="mb-4">
-        <h2>
+        <h4>
             <i class="bi bi-search me-2"></i>
             @if (!string.IsNullOrEmpty(termoPesquisa))
             {
@@ -19,26 +17,24 @@
             {
                 <span>Pesquisar Produtos</span>
             }
-        </h2>
+        </h4>
     </div>
 
-    <!-- Barra de pesquisa -->
     <div class="card mb-4">
         <div class="card-body">
             <div class="input-group">
-                <input type="text" class="form-control form-control-lg" 
+                <input type="text" class="form-control" 
                        placeholder="O que procura?" 
                        @bind="termoPesquisa" 
                        @bind:event="oninput"
                        @onkeypress="OnKeyPress" />
-                <button class="btn btn-warning btn-lg" @onclick="Pesquisar">
-                    <i class="bi bi-search me-2"></i>Pesquisar
+                <button class="btn btn-warning" @onclick="Pesquisar">
+                    <i class="bi bi-search me-1"></i>Pesquisar
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Resultados -->
     @if (carregando)
     {
         <div class="text-center py-5">
@@ -50,7 +46,7 @@
     {
         <div class="text-center py-5">
             <i class="bi bi-inbox display-1 text-muted"></i>
-            <h4 class="mt-3 text-muted">
+            <h5 class="mt-3 text-muted">
                 @if (!string.IsNullOrEmpty(termoPesquisa))
                 {
                     <span>Nenhum produto encontrado para "@termoPesquisa"</span>
@@ -59,9 +55,9 @@
                 {
                     <span>Introduza um termo de pesquisa</span>
                 }
-            </h4>
+            </h5>
             <a href="/" class="btn btn-primary mt-3">
-                <i class="bi bi-house me-2"></i>Voltar a Loja
+                <i class="bi bi-house me-2"></i>Voltar à Loja
             </a>
         </div>
     }
@@ -76,14 +72,14 @@
             @foreach (var prod in produtos)
             {
                 <div class="produto-card">
-                    <img src="@($"{Config["ApiBaseUrl"]}img/{prod.Imagem}")"
+                    <img src="@GetImagemUrl(prod.Imagem)"
                          alt="@prod.Nome"
                          onerror="this.src='img/noproductstrans.png'"
                          @onclick="() => VerProduto(prod.Id)" />
                     <div class="info">
                         <div class="nome" title="@prod.Nome">@prod.Nome</div>
                         <div class="categoria">@prod.CategoriaNome</div>
-                        <div class="preco">@prod.PrecoFinal.ToString("C2")</div>
+                        <div class="preco">@prod.PrecoFinal.ToString("0.00") €</div>
                     </div>
                     @if (prod.Stock > 0)
                     {
@@ -125,6 +121,17 @@
             termoPesquisa = SearchQuery;
             await Pesquisar();
         }
+    }
+
+    private string GetImagemUrl(string? imagem)
+    {
+        if (string.IsNullOrEmpty(imagem))
+            return "img/noproductstrans.png";
+        
+        if (imagem.StartsWith("http"))
+            return imagem;
+        
+        return Api.GetImageUrl(imagem);
     }
 
     private async Task Pesquisar()

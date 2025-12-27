@@ -10,12 +10,27 @@ namespace RCLAPI.Services
         private string? _token;
         private UserInfoDto? _userInfo;
 
+        // URL base da API - configurada pelos projetos Web/MAUI
+        public string ApiBaseUrl { get; set; } = "";
+
         // Evento para notificar mudanças de autenticação
         public event Action? OnAuthStateChanged;
 
         public ApiService(HttpClient httpClient)
         {
             _httpClient = httpClient;
+        }
+
+        // ==================== HELPERS ====================
+        /// <summary>
+        /// Obtém URL completa para imagens
+        /// </summary>
+        public string GetImageUrl(string? imagem)
+        {
+            if (string.IsNullOrEmpty(imagem))
+                return "img/noproductstrans.png";
+            
+            return $"{ApiBaseUrl}img/{imagem}";
         }
 
         // ==================== TOKEN/AUTH ====================
@@ -336,15 +351,41 @@ namespace RCLAPI.Services
                 }
                 else
                 {
-                    // Ler mensagem de erro
+                    // Ler mensagem de erro - tentar como JSON primeiro
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    return (null, errorContent);
+                    
+                    // Tentar extrair a mensagem do JSON
+                    try
+                    {
+                        var errorObj = System.Text.Json.JsonDocument.Parse(errorContent);
+                        if (errorObj.RootElement.TryGetProperty("Message", out var msgProp) ||
+                            errorObj.RootElement.TryGetProperty("message", out msgProp))
+                        {
+                            return (null, msgProp.GetString());
+                        }
+                    }
+                    catch
+                    {
+                        // Se não for JSON válido, usa o texto diretamente
+                    }
+                    
+                    // Verificar códigos de erro específicos
+                    if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                    {
+                        return (null, "Sessão expirada. Por favor faça login novamente.");
+                    }
+                    if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                    {
+                        return (null, "Não tem permissão para realizar esta operação. Apenas Clientes podem fazer compras.");
+                    }
+                    
+                    return (null, string.IsNullOrEmpty(errorContent) ? $"Erro {(int)response.StatusCode}" : errorContent);
                 }
                 return (null, "Erro desconhecido ao criar venda.");
             }
             catch (Exception ex)
             {
-                return (null, ex.Message);
+                return (null, $"Erro de ligação: {ex.Message}");
             }
         }
 
@@ -427,6 +468,38 @@ namespace RCLAPI.Services
             }
         }
 
+        /// <summary>
+        /// Suspende um produto (retira da listagem/venda)
+        /// </summary>
+        public async Task<bool> SuspenderProdutoAsync(int id)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsync($"api/fornecedor/produtos/{id}/suspender", null);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Reativa um produto suspenso (volta para Pendente aguardando aprovação)
+        /// </summary>
+        public async Task<bool> ReativarProdutoAsync(int id)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsync($"api/fornecedor/produtos/{id}/reativar", null);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> ApagarProdutoAsync(int id)
         {
             try
@@ -439,5 +512,48 @@ namespace RCLAPI.Services
                 return false;
             }
         }
+
+        // ==================== UPLOAD DE IMAGENS ====================
+        /// <summary>
+        /// Faz upload de uma imagem de produto para a API
+        /// </summary>
+        /// <param name="fileContent">Conteúdo do ficheiro em bytes</param>
+        /// <param name="fileName">Nome original do ficheiro</param>
+        /// <param name="contentType">Tipo MIME do ficheiro</param>
+        /// <returns>Nome do ficheiro guardado ou null se falhar</returns>
+        public async Task<string?> UploadImagemProdutoAsync(byte[] fileContent, string fileName, string contentType)
+        {
+            try
+            {
+                using var content = new MultipartFormDataContent();
+                var fileContentData = new ByteArrayContent(fileContent);
+                fileContentData.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+                content.Add(fileContentData, "ficheiro", fileName);
+
+                var response = await _httpClient.PostAsync("api/imagens/produto", content);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<ImagemUploadResponseDto>();
+                    return result?.NomeFicheiro;
+                }
+                
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
+    /// DTO para resposta de upload de imagem
+    /// </summary>
+    public class ImagemUploadResponseDto
+    {
+        public bool Success { get; set; }
+        public string? NomeFicheiro { get; set; }
+        public string? Message { get; set; }
     }
 }

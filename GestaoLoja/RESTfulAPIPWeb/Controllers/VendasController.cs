@@ -5,6 +5,7 @@ using RESTfulAPIPWeb.Data;
 using RESTfulAPIPWeb.Entities;
 using RESTfulAPIPWeb.Dtos;
 using System.Security.Claims;
+using Microsoft.Extensions.Logging;
 
 namespace RESTfulAPIPWeb.Controllers
 {
@@ -17,10 +18,12 @@ namespace RESTfulAPIPWeb.Controllers
     public class VendasController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<VendasController> _logger;
 
-        public VendasController(AppDbContext context)
+        public VendasController(AppDbContext context, ILogger<VendasController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         /// <summary>
@@ -30,21 +33,73 @@ namespace RESTfulAPIPWeb.Controllers
         [Authorize(Roles = "Cliente")]
         public async Task<IActionResult> CriarVenda([FromBody] List<ItemVendaDto> itens)
         {
+            _logger.LogInformation("=== CRIAR VENDA ===");
+            
             if (itens == null || !itens.Any())
                 return BadRequest(new { Message = "O carrinho está vazio." });
 
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            _logger.LogInformation($"UserId from token: {userId}");
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { Message = "Utilizador não identificado. Faça login novamente." });
+            }
 
             var cliente = await _context.Clientes
                 .Include(c => c.ApplicationUser)
                 .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
 
             if (cliente == null)
-                return Unauthorized(new { Message = "Cliente não encontrado. Faça login novamente." });
+            {
+                _logger.LogWarning($"Cliente não encontrado para userId: {userId}");
+                
+                // Verificar se o utilizador existe
+                var user = await _context.Users.FindAsync(userId);
+                if (user != null)
+                {
+                    _logger.LogInformation($"User existe: {user.Email}, Perfil: {user.Perfil}");
+                    
+                    // Se o utilizador existe mas não tem registo de Cliente, criar automaticamente
+                    if (user.Perfil == "Cliente")
+                    {
+                        _logger.LogInformation("A criar registo de Cliente automaticamente...");
+                        cliente = new Cliente
+                        {
+                            ApplicationUserId = userId,
+                            NIF = "9" + new Random().Next(10000000, 99999999).ToString(),
+                            Estado = "Ativo"
+                        };
+                        _context.Clientes.Add(cliente);
+                        await _context.SaveChangesAsync();
+                        
+                        // Recarregar com ApplicationUser
+                        cliente = await _context.Clientes
+                            .Include(c => c.ApplicationUser)
+                            .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+                    }
+                    else
+                    {
+                        return BadRequest(new { Message = $"O seu perfil é '{user.Perfil}'. Apenas Clientes podem fazer compras." });
+                    }
+                }
+                else
+                {
+                    return Unauthorized(new { Message = "Utilizador não encontrado. Faça login novamente." });
+                }
+            }
+
+            if (cliente == null)
+            {
+                return BadRequest(new { Message = "Não foi possível criar o registo de cliente." });
+            }
 
             // Verificar se a conta do utilizador está ativa
             if (cliente.ApplicationUser?.Estado != "Ativo")
+            {
+                _logger.LogWarning($"Conta não ativa. Estado: {cliente.ApplicationUser?.Estado}");
                 return BadRequest(new { Message = "A sua conta não está ativa." });
+            }
 
             // Validar todos os produtos antes de criar a venda
             foreach (var item in itens)
@@ -90,6 +145,8 @@ namespace RESTfulAPIPWeb.Controllers
             }
 
             await _context.SaveChangesAsync();
+            
+            _logger.LogInformation($"Venda criada com sucesso. ID: {venda.Id}, Total: {total}");
 
             return Ok(new
             {
@@ -108,12 +165,39 @@ namespace RESTfulAPIPWeb.Controllers
         public async Task<IActionResult> MinhasVendas()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            _logger.LogInformation($"MinhasVendas - UserId: {userId}");
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { Message = "Utilizador não identificado." });
+            }
 
             var cliente = await _context.Clientes
                 .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
 
             if (cliente == null)
-                return Unauthorized(new { Message = "Cliente não encontrado." });
+            {
+                _logger.LogWarning($"Cliente não encontrado para userId: {userId}");
+                
+                // Verificar se o utilizador existe e é Cliente
+                var user = await _context.Users.FindAsync(userId);
+                if (user != null && user.Perfil == "Cliente")
+                {
+                    // Criar registo de cliente automaticamente
+                    cliente = new Cliente
+                    {
+                        ApplicationUserId = userId,
+                        NIF = "9" + new Random().Next(10000000, 99999999).ToString(),
+                        Estado = "Ativo"
+                    };
+                    _context.Clientes.Add(cliente);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    return Ok(new List<object>()); // Retorna lista vazia
+                }
+            }
 
             var vendas = await _context.Vendas
                 .Where(v => v.ClienteId == cliente.Id)
@@ -121,6 +205,8 @@ namespace RESTfulAPIPWeb.Controllers
                     .ThenInclude(l => l.Produto)
                 .OrderByDescending(v => v.Data)
                 .ToListAsync();
+
+            _logger.LogInformation($"Encontradas {vendas.Count} vendas para cliente {cliente.Id}");
 
             var result = vendas.Select(v => new
             {
@@ -175,6 +261,36 @@ namespace RESTfulAPIPWeb.Controllers
                 VendaId = venda.Id,
                 Total = total,
                 Estado = venda.Estado
+            });
+        }
+
+        /// <summary>
+        /// Debug - verificar estado do cliente (REMOVER EM PRODUÇÃO)
+        /// </summary>
+        [HttpGet("debug/cliente-status")]
+        [Authorize]
+        public async Task<IActionResult> DebugClienteStatus()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            var userRoles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
+
+            var user = await _context.Users.FindAsync(userId);
+            var cliente = await _context.Clientes
+                .Include(c => c.ApplicationUser)
+                .FirstOrDefaultAsync(c => c.ApplicationUserId == userId);
+
+            return Ok(new
+            {
+                UserId = userId,
+                Email = userEmail,
+                Roles = userRoles,
+                UserExists = user != null,
+                UserPerfil = user?.Perfil,
+                UserEstado = user?.Estado,
+                ClienteExists = cliente != null,
+                ClienteId = cliente?.Id,
+                ClienteEstado = cliente?.Estado
             });
         }
     }

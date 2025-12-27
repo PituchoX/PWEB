@@ -59,9 +59,18 @@ namespace GestaoLoja.Data
 
                 userManager.AddToRoleAsync(admin, "Administrador").Wait();
             }
+            else
+            {
+                // Garantir que o admin tem a role
+                var adminRoles = userManager.GetRolesAsync(admin).Result;
+                if (!adminRoles.Contains("Administrador"))
+                {
+                    userManager.AddToRoleAsync(admin, "Administrador").Wait();
+                }
+            }
 
             // ========================================
-            // CRIAR FUNCIONÁRIO (para testes)
+            // CRIAR/RESTAURAR FUNCIONÁRIO (para testes)
             // ========================================
             const string funcEmail = "func@gestao.pt";
             const string funcPass = "Func123!";
@@ -82,6 +91,35 @@ namespace GestaoLoja.Data
                 var result = userManager.CreateAsync(funcionario, funcPass).Result;
 
                 if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(funcionario, "Funcionário").Wait();
+                }
+            }
+            else
+            {
+                // Restaurar o funcionário se foi removido/alterado
+                bool alterado = false;
+                
+                if (funcionario.Estado != "Ativo")
+                {
+                    funcionario.Estado = "Ativo";
+                    alterado = true;
+                }
+                
+                if (funcionario.Perfil != "Funcionário")
+                {
+                    funcionario.Perfil = "Funcionário";
+                    alterado = true;
+                }
+                
+                if (alterado)
+                {
+                    userManager.UpdateAsync(funcionario).Wait();
+                }
+
+                // Garantir que tem a role
+                var funcRoles = userManager.GetRolesAsync(funcionario).Result;
+                if (!funcRoles.Contains("Funcionário"))
                 {
                     userManager.AddToRoleAsync(funcionario, "Funcionário").Wait();
                 }
@@ -169,7 +207,7 @@ namespace GestaoLoja.Data
                         Nome = "Avatar - DVD",
                         PrecoBase = 14.29m,
                         Percentagem = 10,
-                        PrecoFinal = 12.99m,
+                        PrecoFinal = 15.72m,
                         Estado = "Ativo",
                         Stock = 50,
                         Imagem = "avatar.png",
@@ -182,7 +220,7 @@ namespace GestaoLoja.Data
                         Nome = "O Senhor dos Anéis - Blu-ray",
                         PrecoBase = 22.99m,
                         Percentagem = 15,
-                        PrecoFinal = 19.99m,
+                        PrecoFinal = 26.44m,
                         Estado = "Ativo",
                         Stock = 30,
                         Imagem = "senhor_aneis.png",
@@ -195,7 +233,7 @@ namespace GestaoLoja.Data
                         Nome = "Matrix - Edição Especial",
                         PrecoBase = 27.49m,
                         Percentagem = 10,
-                        PrecoFinal = 24.99m,
+                        PrecoFinal = 30.24m,
                         Estado = "Ativo",
                         Stock = 25,
                         Imagem = "matrix.png",

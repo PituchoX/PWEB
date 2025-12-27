@@ -1,0 +1,210 @@
+@page "/gestao/funcionarios"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using GestaoLoja.Data
+@attribute [Authorize(Roles = "Administrador")]
+@inject ApplicationDbContext _context
+@inject UserManager<ApplicationUser> _userManager
+@rendermode InteractiveServer
+
+<h3><i class="bi bi-person-badge me-2"></i>Gestão de Funcionários</h3>
+
+@if (!string.IsNullOrEmpty(mensagem))
+{
+    <div class="alert @(sucesso ? "alert-success" : "alert-danger") alert-dismissible fade show">
+        @mensagem
+        <button type="button" class="btn-close" @onclick="@(() => mensagem = null)"></button>
+    </div>
+}
+
+@if (carregando)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">A carregar funcionários...</p>
+    </div>
+}
+else
+{
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="bi bi-people-fill me-2"></i>Funcionários (@funcionarios.Count)
+        </div>
+        <div class="card-body">
+            @if (funcionarios.Count == 0)
+            {
+                <p class="text-muted mb-0">Não existem funcionários registados.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Estado</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in funcionarios)
+                            {
+                                <tr>
+                                    <td>@user.NomeCompleto</td>
+                                    <td>@user.Email</td>
+                                    <td>
+                                        @if (user.Estado == "Ativo")
+                                        {
+                                            <span class="badge bg-success">Ativo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Suspenso</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (user.Estado == "Ativo")
+                                        {
+                                            <button class="btn btn-sm btn-warning me-1"
+                                                    @onclick="() => SuspenderConta(user)">
+                                                <i class="bi bi-pause-circle me-1"></i>Suspender
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm btn-success me-1"
+                                                    @onclick="() => AtivarConta(user)">
+                                                <i class="bi bi-play-circle me-1"></i>Ativar
+                                            </button>
+                                        }
+                                        
+                                        <button class="btn btn-sm btn-danger"
+                                                @onclick="() => ConfirmarRemover(user)">
+                                            <i class="bi bi-trash me-1"></i>Remover
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@* Modal de confirmação para remover *@
+@if (funcionarioParaRemover != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmar Remoção
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CancelarRemover"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem a certeza que deseja remover o funcionário:</p>
+                    <p class="fw-bold text-center">@funcionarioParaRemover.NomeCompleto</p>
+                    <p class="text-muted small">Esta ação irá apagar permanentemente a conta do utilizador.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelarRemover">Cancelar</button>
+                    <button type="button" class="btn btn-danger" @onclick="RemoverFuncionario">
+                        <i class="bi bi-trash me-1"></i>Remover
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ApplicationUser> funcionarios = new();
+    private ApplicationUser? funcionarioParaRemover;
+    private bool carregando = true;
+    private string? mensagem;
+    private bool sucesso = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarDados();
+    }
+
+    private async Task CarregarDados()
+    {
+        carregando = true;
+
+        funcionarios = await _context.Users
+            .Where(u => u.Perfil == "Funcionário")
+            .OrderBy(u => u.NomeCompleto)
+            .ToListAsync();
+
+        carregando = false;
+    }
+
+    private async Task AtivarConta(ApplicationUser user)
+    {
+        user.Estado = "Ativo";
+        await _userManager.UpdateAsync(user);
+        
+        mensagem = $"Funcionário '{user.NomeCompleto}' ativado.";
+        sucesso = true;
+        
+        await CarregarDados();
+    }
+
+    private async Task SuspenderConta(ApplicationUser user)
+    {
+        user.Estado = "Suspenso";
+        await _userManager.UpdateAsync(user);
+        
+        mensagem = $"Funcionário '{user.NomeCompleto}' suspenso.";
+        sucesso = true;
+        
+        await CarregarDados();
+    }
+
+    private void ConfirmarRemover(ApplicationUser user)
+    {
+        funcionarioParaRemover = user;
+    }
+
+    private void CancelarRemover()
+    {
+        funcionarioParaRemover = null;
+    }
+
+    private async Task RemoverFuncionario()
+    {
+        if (funcionarioParaRemover == null) return;
+
+        try
+        {
+            var resultado = await _userManager.DeleteAsync(funcionarioParaRemover);
+            
+            if (resultado.Succeeded)
+            {
+                mensagem = $"Funcionário '{funcionarioParaRemover.NomeCompleto}' removido com sucesso.";
+                sucesso = true;
+            }
+            else
+            {
+                mensagem = "Erro ao remover funcionário: " + string.Join(", ", resultado.Errors.Select(e => e.Description));
+                sucesso = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            mensagem = $"Erro: {ex.Message}";
+            sucesso = false;
+        }
+
+        funcionarioParaRemover = null;
+        await CarregarDados();
+    }
+}

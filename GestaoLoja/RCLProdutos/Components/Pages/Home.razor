@@ -1,12 +1,11 @@
-ï»¿@page "/"
+@page "/"
 @inject ApiService Api
 @inject CarrinhoService CarrinhoService
 @inject NavigationManager Nav
-@inject IConfiguration Config
 
 <PageTitle>MyMEDIA - Loja Online</PageTitle>
 
-<!-- SLIDER DE CATEGORIAS (por baixo do header) -->
+<!-- SLIDER DE CATEGORIAS -->
 <div class="categorias-slider">
     <div class="categorias-scroll">
         @if (categorias == null)
@@ -23,8 +22,7 @@
             {
                 <div class="categoria-item @(categoriaSelecionada?.Id == cat.Id ? "active" : "")" 
                      @onclick="() => SelecionarCategoria(cat)">
-                    <img src="@($"{Config["ApiBaseUrl"]}img/{cat.Imagem ?? "semfoto.png"}")"
-                         alt="@cat.Nome"
+                    <img src="@GetImagemUrl(cat.Imagem)" alt="@cat.Nome" 
                          onerror="this.src='img/noproductstrans.png'" />
                     <span>@cat.Nome</span>
                 </div>
@@ -37,7 +35,6 @@
     <div class="row">
         <!-- COLUNA PRINCIPAL - Produtos -->
         <div class="col-lg-9">
-            <!-- TÃ­tulo da secÃ§Ã£o -->
             <div class="secao-titulo mb-3">
                 <i class="bi bi-collection me-2"></i>
                 @if (categoriaSelecionada != null)
@@ -53,7 +50,6 @@
                 }
             </div>
 
-            <!-- Grid de Produtos -->
             <div class="produtos-grid">
                 @if (produtosVisiveis == null)
                 {
@@ -63,7 +59,7 @@
                 {
                     <div class="text-center py-5">
                         <i class="bi bi-inbox display-1 text-muted"></i>
-                        <p class="text-muted mt-3">Sem produtos disponÃ­veis</p>
+                        <p class="text-muted mt-3">Sem produtos disponíveis</p>
                     </div>
                 }
                 else
@@ -71,14 +67,13 @@
                     @foreach (var prod in produtosVisiveis)
                     {
                         <div class="produto-card">
-                            <img src="@($"{Config["ApiBaseUrl"]}img/{prod.Imagem}")"
-                                 alt="@prod.Nome"
+                            <img src="@GetImagemUrl(prod.Imagem)" alt="@prod.Nome" 
                                  onerror="this.src='img/noproductstrans.png'"
                                  @onclick="() => VerProduto(prod.Id)" />
                             <div class="info">
                                 <div class="nome" title="@prod.Nome">@prod.Nome</div>
                                 <div class="categoria">@prod.CategoriaNome</div>
-                                <div class="preco">@prod.PrecoFinal.ToString("C2")</div>
+                                <div class="preco">@prod.PrecoFinal.ToString("0.00") €</div>
                             </div>
                             @if (prod.Stock > 0)
                             {
@@ -96,7 +91,7 @@
             </div>
         </div>
 
-        <!-- COLUNA LATERAL DIREITA - Produto Destaque -->
+        <!-- COLUNA LATERAL - Produto Destaque -->
         <div class="col-lg-3">
             <div class="destaque-lateral">
                 <div class="destaque-header">
@@ -105,13 +100,12 @@
                 @if (produtoDestaque != null)
                 {
                     <div class="destaque-content">
-                        <img src="@($"{Config["ApiBaseUrl"]}img/{produtoDestaque.Imagem}")"
-                             alt="@produtoDestaque.Nome"
+                        <img src="@GetImagemUrl(produtoDestaque.Imagem)" alt="@produtoDestaque.Nome" 
                              onerror="this.src='img/noproductstrans.png'"
                              @onclick="() => VerProduto(produtoDestaque.Id)" />
                         <h5>@produtoDestaque.Nome</h5>
                         <p class="categoria">@produtoDestaque.CategoriaNome</p>
-                        <p class="preco">@produtoDestaque.PrecoFinal.ToString("C2")</p>
+                        <p class="preco">@produtoDestaque.PrecoFinal.ToString("0.00") €</p>
                         <button class="btn btn-warning w-100" @onclick="() => AdicionarAoCarrinho(produtoDestaque)">
                             <i class="bi bi-cart-plus me-1"></i> Adicionar ao Carrinho
                         </button>
@@ -149,11 +143,21 @@
         produtoDestaque = await Api.GetProdutoDestaqueAsync();
     }
 
+    private string GetImagemUrl(string? imagem)
+    {
+        if (string.IsNullOrEmpty(imagem))
+            return "img/noproductstrans.png";
+        
+        if (imagem.StartsWith("http"))
+            return imagem;
+        
+        return Api.GetImageUrl(imagem);
+    }
+
     private async Task SelecionarCategoria(CategoriaDto categoria)
     {
         if (categoriaSelecionada?.Id == categoria.Id)
         {
-            // Se clicar na mesma categoria, limpa o filtro
             LimparCategoria();
             return;
         }

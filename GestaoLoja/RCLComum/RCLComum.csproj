@@ -18,8 +18,4 @@
     <ProjectReference Include="..\RCLAPI\RCLAPI.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\MyFeature\Pages\" />
-  </ItemGroup>
-
 </Project>

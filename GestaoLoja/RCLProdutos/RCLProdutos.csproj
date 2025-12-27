@@ -16,11 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RCLAPI\RCLAPI.csproj" />
-    <ProjectReference Include="..\RCLComum\RCLComum.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\MyFeature\Pages\" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,468 @@
+@page "/meus-produtos"
+@using Microsoft.AspNetCore.Components.Forms
+@inject ApiService Api
+@inject NavigationManager Nav
+
+<PageTitle>Meus Produtos - MyMEDIA</PageTitle>
+
+<div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h4 class="mb-0">
+            <i class="bi bi-box me-2"></i>Meus Produtos
+        </h4>
+        <button class="btn btn-primary btn-sm" @onclick="AbrirFormulario">
+            <i class="bi bi-plus-circle me-1"></i>Novo Produto
+        </button>
+    </div>
+
+    @if (!Api.IsAuthenticated || Api.GetUserInfo()?.Perfil != "Fornecedor")
+    {
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Esta página é apenas para fornecedores.
+        </div>
+    }
+    else if (produtos == null)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">A carregar...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        @if (mostrarFormulario)
+        {
+            <div class="card mb-3">
+                <div class="card-header py-2">
+                    <h6 class="mb-0">@(produtoEditar != null ? "Editar Produto" : "Novo Produto")</h6>
+                </div>
+                <div class="card-body p-2">
+                    <EditForm Model="produtoForm" OnValidSubmit="GuardarProduto">
+                        <DataAnnotationsValidator />
+                        
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Nome <span class="text-danger">*</span></label>
+                            <InputText @bind-Value="produtoForm.Nome" class="form-control form-control-sm" />
+                            <ValidationMessage For="@(() => produtoForm.Nome)" />
+                        </div>
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label class="form-label small mb-1">Preço Base (€) <span class="text-danger">*</span></label>
+                                <InputNumber @bind-Value="produtoForm.PrecoBase" class="form-control form-control-sm" />
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small mb-1">Stock <span class="text-danger">*</span></label>
+                                <InputNumber @bind-Value="produtoForm.Stock" class="form-control form-control-sm" />
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label class="form-label small mb-1">Categoria <span class="text-danger">*</span></label>
+                                <InputSelect @bind-Value="produtoForm.CategoriaId" class="form-select form-select-sm">
+                                    <option value="0">Selecione...</option>
+                                    @if (categorias != null)
+                                    {
+                                        @foreach (var cat in categorias)
+                                        {
+                                            <option value="@cat.Id">@cat.Nome</option>
+                                        }
+                                    }
+                                </InputSelect>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small mb-1">Entrega <span class="text-danger">*</span></label>
+                                <InputSelect @bind-Value="produtoForm.ModoEntregaId" class="form-select form-select-sm">
+                                    <option value="0">Selecione...</option>
+                                    @if (modosEntrega != null)
+                                    {
+                                        @foreach (var modo in modosEntrega)
+                                        {
+                                            <option value="@modo.Id">@modo.Nome</option>
+                                        }
+                                    }
+                                </InputSelect>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Imagem</label>
+                            <InputFile class="form-control form-control-sm" OnChange="OnImagemSelecionada" accept="image/*" />
+                            
+                            @if (!string.IsNullOrEmpty(previewImagem))
+                            {
+                                <div class="text-center mt-2">
+                                    <img src="@previewImagem" alt="Preview" class="img-thumbnail" style="max-height: 100px;" />
+                                </div>
+                            }
+                            else if (produtoEditar != null && !string.IsNullOrEmpty(produtoEditar.Imagem))
+                            {
+                                <div class="text-center mt-2">
+                                    <img src="@Api.GetImageUrl(produtoEditar.Imagem)" alt="Atual" class="img-thumbnail" style="max-height: 100px;" />
+                                </div>
+                            }
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(mensagemErro))
+                        {
+                            <div class="alert alert-danger py-1 small">@mensagemErro</div>
+                        }
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success btn-sm" disabled="@processando">
+                                @if (processando)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-1"></span>
+                                }
+                                <i class="bi bi-check me-1"></i>Guardar
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm" @onclick="FecharFormulario" disabled="@processando">
+                                Cancelar
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        }
+
+        @if (!produtos.Any())
+        {
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Ainda não tem produtos. Clique em "Novo Produto" para adicionar.
+            </div>
+        }
+        else
+        {
+            <!-- Vista Desktop (tabela) - escondida em mobile -->
+            <div class="d-none d-md-block">
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>Imagem</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Preço</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var prod in produtos)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="@Api.GetImageUrl(prod.Imagem)"
+                                             alt="@prod.Nome"
+                                             style="width: 40px; height: 40px; object-fit: cover;"
+                                             class="rounded"
+                                             onerror="this.src='img/noproductstrans.png'" />
+                                    </td>
+                                    <td>@prod.Nome</td>
+                                    <td>@prod.CategoriaNome</td>
+                                    <td>@prod.PrecoFinal.ToString("0.00") €</td>
+                                    <td>@prod.Stock</td>
+                                    <td>
+                                        <span class="badge @GetEstadoBadgeClass(prod.Estado)">@prod.Estado</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning me-1" @onclick="() => EditarProduto(prod)" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        @if (prod.Estado == "Ativo")
+                                        {
+                                            <button class="btn btn-sm btn-secondary me-1" @onclick="() => SuspenderProduto(prod.Id)" title="Suspender">
+                                                <i class="bi bi-pause-circle"></i>
+                                            </button>
+                                        }
+                                        else if (prod.Estado == "Inativo")
+                                        {
+                                            <button class="btn btn-sm btn-success me-1" @onclick="() => ReativarProduto(prod.Id)" title="Reativar">
+                                                <i class="bi bi-play-circle"></i>
+                                            </button>
+                                        }
+                                        <button class="btn btn-sm btn-danger" @onclick="() => ApagarProduto(prod.Id)" title="Apagar">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Vista Mobile (cards) - visível apenas em mobile -->
+            <div class="d-md-none">
+                @foreach (var prod in produtos)
+                {
+                    <div class="card mb-2">
+                        <div class="card-body p-2">
+                            <div class="d-flex align-items-start">
+                                <img src="@Api.GetImageUrl(prod.Imagem)"
+                                     alt="@prod.Nome"
+                                     style="width: 60px; height: 60px; object-fit: cover;"
+                                     class="rounded me-2 flex-shrink-0"
+                                     onerror="this.src='img/noproductstrans.png'" />
+                                
+                                <div class="flex-grow-1" style="min-width: 0;">
+                                    <h6 class="mb-1 text-truncate">@prod.Nome</h6>
+                                    <div class="d-flex flex-wrap gap-1 mb-1">
+                                        <span class="badge bg-light text-dark">@prod.CategoriaNome</span>
+                                        <span class="badge @GetEstadoBadgeClass(prod.Estado)">@prod.Estado</span>
+                                    </div>
+                                    <div>
+                                        <strong class="text-primary">@prod.PrecoFinal.ToString("0.00") €</strong>
+                                        <small class="text-muted ms-2">Stock: @prod.Stock</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Botões de ação -->
+                            <div class="d-flex gap-1 mt-2 pt-2 border-top">
+                                <button class="btn btn-sm btn-warning flex-fill" @onclick="() => EditarProduto(prod)">
+                                    <i class="bi bi-pencil me-1"></i>Editar
+                                </button>
+                                @if (prod.Estado == "Ativo")
+                                {
+                                    <button class="btn btn-sm btn-secondary flex-fill" @onclick="() => SuspenderProduto(prod.Id)">
+                                        <i class="bi bi-pause-circle me-1"></i>Suspender
+                                    </button>
+                                }
+                                else if (prod.Estado == "Inativo")
+                                {
+                                    <button class="btn btn-sm btn-success flex-fill" @onclick="() => ReativarProduto(prod.Id)">
+                                        <i class="bi bi-play-circle me-1"></i>Ativar
+                                    </button>
+                                }
+                                <button class="btn btn-sm btn-outline-danger" @onclick="() => ApagarProduto(prod.Id)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private List<ProdutoDto>? produtos;
+    private List<CategoriaDto>? categorias;
+    private List<ModoEntregaDto>? modosEntrega;
+    private ProdutoCreateDto produtoForm = new();
+    private ProdutoDto? produtoEditar;
+    private bool mostrarFormulario = false;
+    private bool processando = false;
+    private string? mensagemErro;
+    
+    private IBrowserFile? ficheiroImagem;
+    private string? previewImagem;
+    private byte[]? imagemBytes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Api.IsAuthenticated && Api.GetUserInfo()?.Perfil == "Fornecedor")
+        {
+            await CarregarDados();
+        }
+    }
+
+    private async Task CarregarDados()
+    {
+        produtos = await Api.GetMeusProdutosAsync();
+        categorias = await Api.GetCategoriasAsync();
+        modosEntrega = await Api.GetModosEntregaAsync();
+    }
+
+    private void AbrirFormulario()
+    {
+        produtoEditar = null;
+        produtoForm = new ProdutoCreateDto();
+        previewImagem = null;
+        imagemBytes = null;
+        ficheiroImagem = null;
+        mensagemErro = null;
+        mostrarFormulario = true;
+    }
+
+    private void FecharFormulario()
+    {
+        mostrarFormulario = false;
+        mensagemErro = null;
+        previewImagem = null;
+        imagemBytes = null;
+        ficheiroImagem = null;
+    }
+
+    private void EditarProduto(ProdutoDto produto)
+    {
+        produtoEditar = produto;
+        produtoForm = new ProdutoCreateDto
+        {
+            Nome = produto.Nome,
+            PrecoBase = produto.PrecoBase,
+            Stock = produto.Stock,
+            Imagem = produto.Imagem,
+            CategoriaId = produto.CategoriaId,
+            ModoEntregaId = produto.ModoEntregaId
+        };
+        previewImagem = null;
+        imagemBytes = null;
+        ficheiroImagem = null;
+        mensagemErro = null;
+        mostrarFormulario = true;
+    }
+
+    private async Task OnImagemSelecionada(InputFileChangeEventArgs e)
+    {
+        mensagemErro = null;
+        ficheiroImagem = e.File;
+
+        long maxSize = 5 * 1024 * 1024;
+        if (ficheiroImagem.Size > maxSize)
+        {
+            mensagemErro = "A imagem não pode ter mais de 5MB.";
+            ficheiroImagem = null;
+            previewImagem = null;
+            imagemBytes = null;
+            return;
+        }
+
+        if (!ficheiroImagem.ContentType.StartsWith("image/"))
+        {
+            mensagemErro = "Por favor selecione um ficheiro de imagem.";
+            ficheiroImagem = null;
+            previewImagem = null;
+            imagemBytes = null;
+            return;
+        }
+
+        try
+        {
+            using var memoryStream = new MemoryStream();
+            await ficheiroImagem.OpenReadStream(maxSize).CopyToAsync(memoryStream);
+            imagemBytes = memoryStream.ToArray();
+            previewImagem = $"data:{ficheiroImagem.ContentType};base64,{Convert.ToBase64String(imagemBytes)}";
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro ao ler imagem: {ex.Message}";
+            ficheiroImagem = null;
+            previewImagem = null;
+            imagemBytes = null;
+        }
+    }
+
+    private async Task GuardarProduto()
+    {
+        processando = true;
+        mensagemErro = null;
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(produtoForm.Nome))
+            {
+                mensagemErro = "O nome é obrigatório.";
+                processando = false;
+                return;
+            }
+
+            if (produtoForm.CategoriaId == 0 || produtoForm.ModoEntregaId == 0)
+            {
+                mensagemErro = "Selecione a categoria e o modo de entrega.";
+                processando = false;
+                return;
+            }
+
+            if (imagemBytes != null && ficheiroImagem != null)
+            {
+                var nomeImagem = await Api.UploadImagemProdutoAsync(
+                    imagemBytes, 
+                    ficheiroImagem.Name, 
+                    ficheiroImagem.ContentType);
+                
+                if (!string.IsNullOrEmpty(nomeImagem))
+                {
+                    produtoForm.Imagem = nomeImagem;
+                }
+                else
+                {
+                    mensagemErro = "Erro ao carregar a imagem. Tente novamente.";
+                    processando = false;
+                    return;
+                }
+            }
+
+            bool sucesso;
+            if (produtoEditar != null)
+            {
+                var updateDto = new ProdutoUpdateDto
+                {
+                    Id = produtoEditar.Id,
+                    Nome = produtoForm.Nome,
+                    PrecoBase = produtoForm.PrecoBase,
+                    Stock = produtoForm.Stock,
+                    Imagem = produtoForm.Imagem,
+                    CategoriaId = produtoForm.CategoriaId,
+                    ModoEntregaId = produtoForm.ModoEntregaId
+                };
+                sucesso = await Api.AtualizarProdutoAsync(updateDto);
+            }
+            else
+            {
+                sucesso = await Api.CriarProdutoAsync(produtoForm);
+            }
+
+            if (sucesso)
+            {
+                await CarregarDados();
+                FecharFormulario();
+            }
+            else
+            {
+                mensagemErro = "Erro ao guardar o produto. Verifique se todos os campos estão preenchidos.";
+            }
+        }
+        catch (Exception ex)
+        {
+            mensagemErro = $"Erro: {ex.Message}";
+        }
+        finally
+        {
+            processando = false;
+        }
+    }
+
+    private async Task SuspenderProduto(int id)
+    {
+        var sucesso = await Api.SuspenderProdutoAsync(id);
+        if (sucesso) await CarregarDados();
+    }
+
+    private async Task ReativarProduto(int id)
+    {
+        var sucesso = await Api.ReativarProdutoAsync(id);
+        if (sucesso) await CarregarDados();
+    }
+
+    private async Task ApagarProduto(int id)
+    {
+        var sucesso = await Api.ApagarProdutoAsync(id);
+        if (sucesso) await CarregarDados();
+    }
+
+    private string GetEstadoBadgeClass(string estado) => estado switch
+    {
+        "Ativo" => "bg-success",
+        "Pendente" => "bg-warning text-dark",
+        "Inativo" => "bg-secondary",
+        _ => "bg-secondary"
+    };
+}

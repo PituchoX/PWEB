@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RESTfulAPIPWeb.Data;
-using RESTfulAPIPWeb.Dtos;
 using RESTfulAPIPWeb.Entities;
-using RESTfulAPIPWeb.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -43,7 +41,7 @@ namespace RESTfulAPIPWeb.Controllers
         /// Registo de novo Cliente
         /// </summary>
         [HttpPost("register-cliente")]
-        public async Task<IActionResult> RegisterCliente([FromBody] RegisterClienteDto dto)
+        public async Task<IActionResult> RegisterCliente([FromBody] RegisterClienteRequest dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new { Success = false, Message = "Dados inválidos.", Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
@@ -98,7 +96,7 @@ namespace RESTfulAPIPWeb.Controllers
         /// Registo de novo Fornecedor
         /// </summary>
         [HttpPost("register-fornecedor")]
-        public async Task<IActionResult> RegisterFornecedor([FromBody] RegisterFornecedorDto dto)
+        public async Task<IActionResult> RegisterFornecedor([FromBody] RegisterFornecedorRequest dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new { Success = false, Message = "Dados inválidos.", Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
@@ -144,7 +142,7 @@ namespace RESTfulAPIPWeb.Controllers
         /// Login
         /// </summary>
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginRequest dto)
         {
             _logger.LogInformation("=== LOGIN ATTEMPT ===");
             _logger.LogInformation($"Email: {dto.Email}");
@@ -160,11 +158,6 @@ namespace RESTfulAPIPWeb.Controllers
             if (user == null)
             {
                 _logger.LogWarning($"User not found with email: {dto.Email}");
-                
-                // Listar todos os utilizadores para debug
-                var allUsers = await _userManager.Users.Select(u => u.Email).ToListAsync();
-                _logger.LogInformation($"All users in DB: {string.Join(", ", allUsers)}");
-                
                 return Unauthorized(new { Success = false, Message = "Credenciais inválidas." });
             }
 
@@ -183,8 +176,63 @@ namespace RESTfulAPIPWeb.Controllers
                 return Unauthorized(new { Success = false, Message = $"A sua conta não está ativa. Estado atual: {user.Estado}" });
             }
 
+            // Obter roles do utilizador
             var roles = await _userManager.GetRolesAsync(user);
-            _logger.LogInformation($"User roles: {string.Join(", ", roles)}");
+            _logger.LogInformation($"User roles from DB: {string.Join(", ", roles)}");
+
+            // Se não tem roles atribuídas, atribuir com base no Perfil
+            if (!roles.Any() && !string.IsNullOrEmpty(user.Perfil))
+            {
+                _logger.LogInformation($"No roles found, adding role based on Perfil: {user.Perfil}");
+                
+                // Verificar se a role existe, se não, criar
+                var roleManager = HttpContext.RequestServices.GetRequiredService<RoleManager<IdentityRole>>();
+                if (!await roleManager.RoleExistsAsync(user.Perfil))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(user.Perfil));
+                }
+                
+                await _userManager.AddToRoleAsync(user, user.Perfil);
+                roles = await _userManager.GetRolesAsync(user);
+                _logger.LogInformation($"Roles after adding: {string.Join(", ", roles)}");
+            }
+
+            // Se o utilizador é Cliente, garantir que tem registo na tabela Clientes
+            if (user.Perfil == "Cliente")
+            {
+                var clienteExiste = await _context.Clientes.AnyAsync(c => c.ApplicationUserId == user.Id);
+                if (!clienteExiste)
+                {
+                    _logger.LogInformation("Creating Cliente record automatically...");
+                    var cliente = new Cliente
+                    {
+                        ApplicationUserId = user.Id,
+                        NIF = "9" + new Random().Next(10000000, 99999999).ToString(),
+                        Estado = "Ativo"
+                    };
+                    _context.Clientes.Add(cliente);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            // Se o utilizador é Fornecedor, garantir que tem registo na tabela Fornecedores
+            if (user.Perfil == "Fornecedor")
+            {
+                var fornecedorExiste = await _context.Fornecedores.AnyAsync(f => f.ApplicationUserId == user.Id);
+                if (!fornecedorExiste)
+                {
+                    _logger.LogInformation("Creating Fornecedor record automatically...");
+                    var fornecedor = new Fornecedor
+                    {
+                        ApplicationUserId = user.Id,
+                        NomeEmpresa = user.NomeCompleto + " (Empresa)",
+                        NIF = "9" + new Random().Next(10000000, 99999999).ToString(),
+                        Estado = "Pendente"
+                    };
+                    _context.Fornecedores.Add(fornecedor);
+                    await _context.SaveChangesAsync();
+                }
+            }
             
             var token = GenerateJwtToken(user, roles);
             _logger.LogInformation("Login successful, token generated");
@@ -199,18 +247,6 @@ namespace RESTfulAPIPWeb.Controllers
                 Perfil = user.Perfil,
                 Roles = roles
             });
-        }
-
-        /// <summary>
-        /// Endpoint de teste - lista todos os utilizadores (REMOVER EM PRODUÇÃO)
-        /// </summary>
-        [HttpGet("debug/users")]
-        public async Task<IActionResult> DebugUsers()
-        {
-            var users = await _userManager.Users
-                .Select(u => new { u.Email, u.NomeCompleto, u.Estado, u.Perfil })
-                .ToListAsync();
-            return Ok(users);
         }
 
         private string GenerateJwtToken(ApplicationUser user, IList<string> roles)
@@ -245,5 +281,29 @@ namespace RESTfulAPIPWeb.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+    }
+
+    // DTOs simples para autenticação
+    public class LoginRequest
+    {
+        public string Email { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+
+    public class RegisterClienteRequest
+    {
+        public string Nome { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string NIF { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+
+    public class RegisterFornecedorRequest
+    {
+        public string Nome { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string NIF { get; set; } = "";
+        public string NomeEmpresa { get; set; } = "";
+        public string Password { get; set; } = "";
     }
 }

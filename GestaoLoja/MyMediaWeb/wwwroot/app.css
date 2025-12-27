@@ -105,66 +105,95 @@ h1:focus {
 
 /* ==================== SLIDER DE CATEGORIAS ==================== */
 .categorias-slider {
-    background: white;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-bottom: 3px solid #ffc107;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 56px;
-    z-index: 999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    padding: 15px 0;
 }
 
 .categorias-scroll {
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     overflow-x: auto;
     scroll-behavior: smooth;
-    padding: 10px 15px;
-    gap: 10px;
+    padding: 8px 20px;
+    gap: 20px;
     -webkit-overflow-scrolling: touch;
 }
 
 .categorias-scroll::-webkit-scrollbar {
-    height: 4px;
+    height: 6px;
 }
 
 .categorias-scroll::-webkit-scrollbar-thumb {
     background: #ffc107;
-    border-radius: 2px;
+    border-radius: 3px;
 }
 
+.categorias-scroll::-webkit-scrollbar-track {
+    background: #e9ecef;
+    border-radius: 3px;
+}
+
+/* Card de Categoria - Base (Desktop) */
 .categoria-item {
     flex: 0 0 auto;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: #f8f9fa;
-    border-radius: 25px;
+    width: 160px;
+    min-width: 160px;
+    max-width: 160px;
+    background: white;
+    border-radius: 15px;
     cursor: pointer;
-    transition: all 0.2s;
-    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    overflow: hidden;
+    border: 3px solid transparent;
+    padding: 0;
 }
 
 .categoria-item:hover {
-    background: #e9ecef;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.18);
     border-color: #ffc107;
 }
 
 .categoria-item.active {
-    background: #ffc107;
-    color: #2a0a5e;
-    font-weight: 600;
+    border-color: #ffc107;
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    box-shadow: 0 8px 25px rgba(255,193,7,0.4);
+    transform: translateY(-3px);
 }
 
 .categoria-item img {
-    width: 30px;
-    height: 30px;
+    width: 100%;
+    height: 100px;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: 12px 12px 0 0;
+    display: block;
+    background: #f0f0f0;
 }
 
 .categoria-item span {
+    display: block;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2a0a5e;
     white-space: nowrap;
-    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    background: white;
+}
+
+.categoria-item.active span {
+    background: transparent;
 }
 
 /* ==================== MAIN CONTENT ==================== */
@@ -210,6 +239,7 @@ h1:focus {
     width: 100%;
     height: 150px;
     object-fit: cover;
+    background: #f0f0f0;
 }
 
 .produto-card .info {
@@ -283,6 +313,7 @@ h1:focus {
     margin-bottom: 15px;
     cursor: pointer;
     transition: transform 0.2s;
+    background: #f0f0f0;
 }
 
 .destaque-content img:hover {
@@ -351,6 +382,26 @@ h1:focus {
         top: 0;
         margin-top: 20px;
     }
+    
+    .categoria-item {
+        width: 130px;
+        min-width: 130px;
+        max-width: 130px;
+    }
+    
+    .categoria-item img {
+        height: 80px;
+    }
+    
+    .categoria-item span {
+        font-size: 0.85rem;
+        padding: 10px 8px;
+    }
+    
+    .categorias-scroll {
+        gap: 15px;
+        padding: 6px 15px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -370,6 +421,30 @@ h1:focus {
     .produto-card img {
         height: 120px;
     }
+    
+    .categoria-item {
+        width: 110px;
+        min-width: 110px;
+        max-width: 110px;
+    }
+    
+    .categoria-item img {
+        height: 70px;
+    }
+    
+    .categoria-item span {
+        font-size: 0.8rem;
+        padding: 8px 6px;
+    }
+    
+    .categorias-slider {
+        padding: 10px 0;
+    }
+    
+    .categorias-scroll {
+        gap: 12px;
+        padding: 5px 12px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -378,11 +453,22 @@ h1:focus {
     }
     
     .categoria-item {
-        padding: 6px 12px;
+        width: 95px;
+        min-width: 95px;
+        max-width: 95px;
     }
     
     .categoria-item img {
-        width: 24px;
-        height: 24px;
+        height: 60px;
+    }
+    
+    .categoria-item span {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+    }
+    
+    .categorias-scroll {
+        gap: 10px;
+        padding: 5px 10px;
     }
 }

@@ -8,12 +8,12 @@ namespace MyMediaMAUI
         // ============================================================
         // URL da API RESTful
         // ============================================================
-        // O Dev Tunnel ja esta configurado!
-        // Certifica-te que a API (RESTfulAPIPWeb) esta a correr
+        // O Dev Tunnel já está configurado!
+        // Certifica-te que a API (RESTfulAPIPWeb) está a correr
         // antes de iniciar o MAUI.
         // ============================================================
         
-        // URL do Dev Tunnel (ja configurado)
+        // URL do Dev Tunnel (já configurado)
         public const string ApiBaseUrl = "https://43tc4dk1-7104.uks1.devtunnels.ms/";
 
         public static MauiApp CreateMauiApp()
@@ -28,7 +28,7 @@ namespace MyMediaMAUI
 
             builder.Services.AddMauiBlazorWebView();
 
-            // Configurar HttpClient para comunicacao com a API
+            // Configurar HttpClient para comunicação com a API
             builder.Services.AddScoped(sp =>
             {
                 var handler = new HttpClientHandler
@@ -43,8 +43,15 @@ namespace MyMediaMAUI
                 };
             });
 
-            // Registar servicos
-            builder.Services.AddScoped<ApiService>();
+            // Registar serviços - ApiService com ApiBaseUrl configurado
+            builder.Services.AddScoped(sp =>
+            {
+                var httpClient = sp.GetRequiredService<HttpClient>();
+                var apiService = new ApiService(httpClient);
+                apiService.ApiBaseUrl = ApiBaseUrl;
+                return apiService;
+            });
+
             builder.Services.AddSingleton<CarrinhoService>();
 
 #if DEBUG

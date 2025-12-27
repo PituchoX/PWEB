@@ -1,9 +1,204 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using GestaoLoja.Data
+@attribute [Authorize(Roles = "Administrador,Funcionário")]
+@inject ApplicationDbContext _context
+@rendermode InteractiveServer
 
-<h1>MyMedia</h1>
-<h3>Gestão de Loja</h3>
+<h3><i class="bi bi-speedometer2 me-2"></i>Dashboard - Gestão de Loja</h3>
 
-<p></p>
+<p class="text-muted mb-4">Bem-vindo ao painel de gestão MyMEDIA</p>
 
-<img src="" class="img-fluid rounded shadow" />
+@if (carregando)
+{
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">A carregar dados...</p>
+    </div>
+}
+else
+{
+    <!-- Cards de Resumo de Vendas -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Vendas Pendentes</h6>
+                            <h2 class="mb-0">@vendasPendentes</h2>
+                        </div>
+                        <i class="bi bi-clock fs-1 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a href="/gestao/vendas" class="text-white text-decoration-none small">
+                        Ver detalhes <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Vendas Confirmadas</h6>
+                            <h2 class="mb-0">@vendasConfirmadas</h2>
+                        </div>
+                        <i class="bi bi-check-circle fs-1 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a href="/gestao/vendas" class="text-white text-decoration-none small">
+                        Ver detalhes <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Vendas Expedidas</h6>
+                            <h2 class="mb-0">@vendasExpedidas</h2>
+                        </div>
+                        <i class="bi bi-truck fs-1 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a href="/gestao/vendas" class="text-white text-decoration-none small">
+                        Ver detalhes <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card bg-warning text-dark h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Total Vendas (Mês)</h6>
+                            <h2 class="mb-0">@totalVendasMes.ToString("C2")</h2>
+                        </div>
+                        <i class="bi bi-currency-euro fs-1 opacity-50"></i>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small>Últimos 30 dias</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Últimas Vendas -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <i class="bi bi-receipt me-2"></i><strong>Últimas Vendas</strong>
+                </div>
+                <div class="card-body">
+                    @if (ultimasVendas.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Cliente</th>
+                                        <th>Data</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var venda in ultimasVendas)
+                                    {
+                                        var total = venda.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0;
+                                        <tr>
+                                            <td><strong>@venda.Id</strong></td>
+                                            <td>@(venda.Cliente?.ApplicationUser?.NomeCompleto ?? "N/A")</td>
+                                            <td>@venda.Data</td>
+                                            <td>@total.ToString("C2")</td>
+                                            <td>
+                                                <span class="badge @GetEstadoBadgeClass(venda.Estado)">@venda.Estado</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <a href="/gestao/vendas" class="btn btn-primary btn-sm">Ver Todas as Vendas</a>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center mb-0">Nenhuma venda registada.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool carregando = true;
+
+    // Contadores de vendas
+    private int vendasPendentes = 0;
+    private int vendasConfirmadas = 0;
+    private int vendasExpedidas = 0;
+    private decimal totalVendasMes = 0;
+
+    // Listas
+    private List<GestaoLoja.Entities.Vendas> ultimasVendas = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarDados();
+    }
+
+    private async Task CarregarDados()
+    {
+        carregando = true;
+
+        // Contadores de vendas
+        vendasPendentes = await _context.Vendas.CountAsync(v => v.Estado == "Pendente");
+        vendasConfirmadas = await _context.Vendas.CountAsync(v => v.Estado == "Confirmada");
+        vendasExpedidas = await _context.Vendas.CountAsync(v => v.Estado == "Expedida");
+
+        // Total vendas do mês (últimos 30 dias)
+        var dataLimite = DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd");
+        var vendasMes = await _context.Vendas
+            .Where(v => v.Estado != "Rejeitada" && string.Compare(v.Data, dataLimite) >= 0)
+            .Include(v => v.LinhasVenda)
+            .ToListAsync();
+        totalVendasMes = vendasMes.Sum(v => v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0);
+
+        // Últimas 5 vendas
+        ultimasVendas = await _context.Vendas
+            .Include(v => v.Cliente)
+                .ThenInclude(c => c!.ApplicationUser)
+            .Include(v => v.LinhasVenda)
+            .OrderByDescending(v => v.Data)
+            .Take(5)
+            .ToListAsync();
+
+        carregando = false;
+    }
+
+    private string GetEstadoBadgeClass(string estado) => estado switch
+    {
+        "Pendente" => "bg-warning text-dark",
+        "Confirmada" => "bg-success",
+        "Expedida" => "bg-info",
+        "Rejeitada" => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
 

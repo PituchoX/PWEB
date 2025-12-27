@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <!-- Refer�ncias aos RCLs -->
+  <!-- Referências às RCLs organizadas -->
   <ItemGroup>
     <ProjectReference Include="..\RCLAPI\RCLAPI.csproj" />
     <ProjectReference Include="..\RCLComum\RCLComum.csproj" />

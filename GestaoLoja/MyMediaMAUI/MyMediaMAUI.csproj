@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <!-- Removido ios e maccatalyst para funcionar em Windows sem esses workloads -->
         <TargetFrameworks>net8.0-android</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
 
@@ -13,13 +12,8 @@
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
         <Nullable>enable</Nullable>
 
-        <!-- Display name -->
         <ApplicationTitle>MyMedia</ApplicationTitle>
-
-        <!-- App Identifier -->
         <ApplicationId>com.companyname.mymediamaui</ApplicationId>
-
-        <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
 
@@ -29,20 +23,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
-
-        <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
-
-        <!-- Images -->
         <MauiImage Include="Resources\Images\*" />
         <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
-
-        <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*" />
-
-        <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
     </ItemGroup>
 
@@ -53,12 +38,15 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
     </ItemGroup>
 
-    <!-- Referências aos RCLs -->
+    <!-- Referências às RCLs organizadas -->
     <ItemGroup>
         <ProjectReference Include="..\RCLAPI\RCLAPI.csproj" />
         <ProjectReference Include="..\RCLComum\RCLComum.csproj" />
         <ProjectReference Include="..\RCLProdutos\RCLProdutos.csproj" />
         <ProjectReference Include="..\RCLCompras\RCLCompras.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Components\Pages\" />
     </ItemGroup>
 
 </Project>

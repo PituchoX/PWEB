@@ -9,9 +9,6 @@ namespace RESTfulAPIPWeb.Controllers
 {
     /// <summary>
     /// Controller para consulta de produtos da API MyMEDIA
-    /// Apenas produtos ATIVOS são visíveis para utilizadores anónimos e clientes
-    /// Admin/Funcionário gerem produtos na aplicação GestaoLoja
-    /// Fornecedores gerem os seus produtos via FornecedorProdutosController
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -27,15 +24,13 @@ namespace RESTfulAPIPWeb.Controllers
         }
 
         /// <summary>
-        /// Lista todos os produtos ATIVOS (visíveis para utilizadores anónimos e clientes)
+        /// Lista todos os produtos ATIVOS
         /// </summary>
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetProdutos()
         {
             var produtos = await _repo.GetAllAsync();
-            
-            // Apenas produtos ativos são visíveis
             var produtosVisiveis = produtos.Where(p => p.Estado == "Ativo");
 
             var result = produtosVisiveis.Select(p => new ProdutoDto
@@ -60,7 +55,7 @@ namespace RESTfulAPIPWeb.Controllers
         }
 
         /// <summary>
-        /// Pesquisa produtos por nome ou categoria (apenas ativos)
+        /// Pesquisa produtos por nome ou categoria
         /// </summary>
         [HttpGet("pesquisa")]
         [AllowAnonymous]
@@ -102,7 +97,7 @@ namespace RESTfulAPIPWeb.Controllers
         }
 
         /// <summary>
-        /// Lista produtos por categoria (apenas ativos)
+        /// Lista produtos por categoria
         /// </summary>
         [HttpGet("categoria/{categoriaId}")]
         [AllowAnonymous]
@@ -137,7 +132,7 @@ namespace RESTfulAPIPWeb.Controllers
         }
 
         /// <summary>
-        /// Obtém produto em destaque (aleatório entre os ativos com stock)
+        /// Obtém produto em destaque (aleatório)
         /// </summary>
         [HttpGet("destaque")]
         [AllowAnonymous]
@@ -176,7 +171,7 @@ namespace RESTfulAPIPWeb.Controllers
         }
 
         /// <summary>
-        /// Obtém um produto pelo ID (apenas se estiver ativo)
+        /// Obtém um produto pelo ID
         /// </summary>
         [HttpGet("{id}")]
         [AllowAnonymous]
@@ -185,7 +180,6 @@ namespace RESTfulAPIPWeb.Controllers
             var p = await _repo.GetByIdAsync(id);
             if (p == null) return NotFound();
 
-            // Apenas produtos ativos são visíveis
             if (p.Estado != "Ativo")
                 return NotFound();
 

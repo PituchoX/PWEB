@@ -16,10 +16,17 @@ builder.Services.AddScoped(sp => new HttpClient
     BaseAddress = new Uri(apiBaseUrl)
 });
 
-// Registar serviços
-builder.Services.AddScoped<ApiService>();
-// --- MUDA DE AddSingleton PARA AddScoped ---
-builder.Services.AddScoped<RCLAPI.Services.CarrinhoService>();
+// Registar ApiService com ApiBaseUrl configurado
+builder.Services.AddScoped(sp =>
+{
+    var httpClient = sp.GetRequiredService<HttpClient>();
+    var apiService = new ApiService(httpClient);
+    apiService.ApiBaseUrl = apiBaseUrl;
+    return apiService;
+});
+
+// Registar CarrinhoService
+builder.Services.AddScoped<CarrinhoService>();
 
 var app = builder.Build();
 
@@ -27,16 +34,19 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .AddAdditionalAssemblies(
+        typeof(RCLComum._Imports).Assembly,
+        typeof(RCLProdutos._Imports).Assembly,
+        typeof(RCLCompras._Imports).Assembly
+    );
 
 app.Run();

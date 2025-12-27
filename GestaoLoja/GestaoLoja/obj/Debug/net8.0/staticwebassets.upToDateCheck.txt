@@ -119,13 +119,7 @@ wwwroot\img\pinhoestransp220x120.png
 wwwroot\img\pistaciostransp220x120.png
 wwwroot\img\plus.png
 wwwroot\img\pngegg.png
-wwwroot\img\prod_050d4b04122e4a168048f6ae100e988e.png
-wwwroot\img\prod_5bc00ba6ae2b4dc5a22adbd85e54059c.png
 wwwroot\img\prod_6c6b284624a8493fa9f7e973148e32f1.png
-wwwroot\img\prod_9249edbea4514ca9a581262509b1b18e.png
-wwwroot\img\prod_bd1d2a67c28f48869c0b1a624ca3b657.jpg
-wwwroot\img\prod_cf7305f7dbb34ba099ad194c02ed9aa2.png
-wwwroot\img\prod_dc9df499a20e42c29c9d6e96f1f373d5.webp
 wwwroot\img\profile.png
 wwwroot\img\profile2.png
 wwwroot\img\questionsanswers.jpg
@@ -163,3 +157,11 @@ wwwroot\img\user2.jpg
 wwwroot\img\uvatransp220x120.png
 wwwroot\img\waffles.png
 wwwroot\img\wafflestransp220x120.png
+wwwroot\img\prod_dc9df499a20e42c29c9d6e96f1f373d5.webp
+wwwroot\img\prod_050d4b04122e4a168048f6ae100e988e.png
+wwwroot\img\prod_5bc00ba6ae2b4dc5a22adbd85e54059c.png
+wwwroot\img\prod_9249edbea4514ca9a581262509b1b18e.png
+wwwroot\img\prod_cf7305f7dbb34ba099ad194c02ed9aa2.png
+wwwroot\img\prod_bd1d2a67c28f48869c0b1a624ca3b657.jpg
+wwwroot\img\cat_f19f788e7ceb436f96797f5c28cdb7e3.jpg
+wwwroot\img\cat_87b9c3e25ef04252b560f9a9e3adf0da.jpg
