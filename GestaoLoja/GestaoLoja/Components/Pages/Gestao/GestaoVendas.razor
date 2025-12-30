@@ -5,7 +5,52 @@
 @using GestaoLoja.Entities
 @using Microsoft.EntityFrameworkCore
 
-<h3><i class="bi bi-receipt me-2"></i>Gestao de Vendas</h3>
+<h3><i class="bi bi-receipt me-2"></i>Gestão de Vendas</h3>
+
+<!-- Filtros por Estado (Abas) -->
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <button class="nav-link @(filtroAtivo == "Pendente" ? "active" : "")" @onclick="@(() => FiltrarPorEstado("Pendente"))">
+            <i class="bi bi-clock me-1"></i>Pendentes
+            @if (contadores.TryGetValue("Pendente", out var countP) && countP > 0)
+            {
+                <span class="badge bg-warning text-dark ms-1">@countP</span>
+            }
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link @(filtroAtivo == "Confirmada" ? "active" : "")" @onclick="@(() => FiltrarPorEstado("Confirmada"))">
+            <i class="bi bi-check-circle me-1"></i>Confirmadas
+            @if (contadores.TryGetValue("Confirmada", out var countC) && countC > 0)
+            {
+                <span class="badge bg-success ms-1">@countC</span>
+            }
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link @(filtroAtivo == "Expedida" ? "active" : "")" @onclick="@(() => FiltrarPorEstado("Expedida"))">
+            <i class="bi bi-truck me-1"></i>Expedidas
+            @if (contadores.TryGetValue("Expedida", out var countE) && countE > 0)
+            {
+                <span class="badge bg-info ms-1">@countE</span>
+            }
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link @(filtroAtivo == "Rejeitada" ? "active" : "")" @onclick="@(() => FiltrarPorEstado("Rejeitada"))">
+            <i class="bi bi-x-circle me-1"></i>Rejeitadas
+            @if (contadores.TryGetValue("Rejeitada", out var countR) && countR > 0)
+            {
+                <span class="badge bg-danger ms-1">@countR</span>
+            }
+        </button>
+    </li>
+    <li class="nav-item">
+        <button class="nav-link @(filtroAtivo == "Todas" ? "active" : "")" @onclick="@(() => FiltrarPorEstado("Todas"))">
+            <i class="bi bi-list me-1"></i>Todas
+        </button>
+    </li>
+</ul>
 
 @if (carregando)
 {
@@ -16,20 +61,20 @@
 }
 else
 {
-    <!-- Vendas Pendentes -->
-    <div class="card mb-4">
-        <div class="card-header bg-warning text-dark">
-            <i class="bi bi-clock me-2"></i>Vendas Pendentes (@vendasPendentes.Count)
+    <!-- Card com cor dinâmica baseada no filtro -->
+    <div class="card">
+        <div class="card-header @GetHeaderClass()">
+            <i class="bi @GetHeaderIcon() me-2"></i>@GetHeaderTitle() (@vendasFiltradas.Count)
         </div>
         <div class="card-body">
-            @if (vendasPendentes.Count == 0)
+            @if (vendasFiltradas.Count == 0)
             {
-                <p class="text-muted mb-0">Nao existem vendas pendentes.</p>
+                <p class="text-muted mb-0">Não existem vendas @GetEstadoTexto().</p>
             }
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-striped">
+                    <table class="table table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -37,11 +82,15 @@ else
                                 <th>Data</th>
                                 <th>Produtos</th>
                                 <th>Total</th>
-                                <th style="width: 200px;">Acoes</th>
+                                @if (filtroAtivo == "Todas")
+                                {
+                                    <th>Estado</th>
+                                }
+                                <th style="width: 200px;">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var v in vendasPendentes)
+                            @foreach (var v in vendasFiltradas)
                             {
                                 var total = v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0;
                                 <tr>
@@ -61,13 +110,32 @@ else
                                         }
                                     </td>
                                     <td><strong class="text-primary">@total.ToString("C2")</strong></td>
+                                    @if (filtroAtivo == "Todas")
+                                    {
+                                        <td>
+                                            <span class="badge @GetBadgeClass(v.Estado)">@v.Estado</span>
+                                        </td>
+                                    }
                                     <td>
-                                        <button class="btn btn-sm btn-success me-1" @onclick="() => Confirmar(v.Id)">
-                                            <i class="bi bi-check me-1"></i>Confirmar
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" @onclick="() => Rejeitar(v.Id)">
-                                            <i class="bi bi-x me-1"></i>Rejeitar
-                                        </button>
+                                        @if (v.Estado == "Pendente")
+                                        {
+                                            <button class="btn btn-sm btn-success me-1" @onclick="() => Confirmar(v.Id)">
+                                                <i class="bi bi-check me-1"></i>Confirmar
+                                            </button>
+                                            <button class="btn btn-sm btn-danger" @onclick="() => Rejeitar(v.Id)">
+                                                <i class="bi bi-x me-1"></i>Rejeitar
+                                            </button>
+                                        }
+                                        else if (v.Estado == "Confirmada")
+                                        {
+                                            <button class="btn btn-sm btn-primary" @onclick="() => Expedir(v.Id)">
+                                                <i class="bi bi-truck me-1"></i>Expedir
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">Sem ações</span>
+                                        }
                                     </td>
                                 </tr>
                             }
@@ -77,176 +145,14 @@ else
             }
         </div>
     </div>
-
-    <!-- Vendas Confirmadas -->
-    <div class="card mb-4">
-        <div class="card-header bg-success text-white">
-            <i class="bi bi-check-circle me-2"></i>Vendas Confirmadas (@vendasConfirmadas.Count)
-        </div>
-        <div class="card-body">
-            @if (vendasConfirmadas.Count == 0)
-            {
-                <p class="text-muted mb-0">Nao existem vendas confirmadas.</p>
-            }
-            else
-            {
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Cliente</th>
-                                <th>Data</th>
-                                <th>Produtos</th>
-                                <th>Total</th>
-                                <th style="width: 120px;">Acoes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var v in vendasConfirmadas)
-                            {
-                                var total = v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0;
-                                <tr>
-                                    <td><strong>#@v.Id</strong></td>
-                                    <td>@v.Cliente?.ApplicationUser?.NomeCompleto</td>
-                                    <td>@v.Data</td>
-                                    <td>
-                                        @if (v.LinhasVenda != null)
-                                        {
-                                            @foreach (var linha in v.LinhasVenda)
-                                            {
-                                                <div class="small">
-                                                    <span class="badge bg-secondary me-1">@linha.Quantidade x</span>
-                                                    @linha.Produto?.Nome
-                                                </div>
-                                            }
-                                        }
-                                    </td>
-                                    <td><strong class="text-primary">@total.ToString("C2")</strong></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary" @onclick="() => Expedir(v.Id)">
-                                            <i class="bi bi-truck me-1"></i>Expedir
-                                        </button>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-        </div>
-    </div>
-
-    <!-- Vendas Expedidas -->
-    <div class="card mb-4">
-        <div class="card-header bg-info text-white">
-            <i class="bi bi-truck me-2"></i>Vendas Expedidas (@vendasExpedidas.Count)
-        </div>
-        <div class="card-body">
-            @if (vendasExpedidas.Count == 0)
-            {
-                <p class="text-muted mb-0">Nao existem vendas expedidas.</p>
-            }
-            else
-            {
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Cliente</th>
-                                <th>Data</th>
-                                <th>Produtos</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var v in vendasExpedidas)
-                            {
-                                var total = v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0;
-                                <tr>
-                                    <td><strong>#@v.Id</strong></td>
-                                    <td>@v.Cliente?.ApplicationUser?.NomeCompleto</td>
-                                    <td>@v.Data</td>
-                                    <td>
-                                        @if (v.LinhasVenda != null)
-                                        {
-                                            @foreach (var linha in v.LinhasVenda)
-                                            {
-                                                <div class="small">
-                                                    <span class="badge bg-secondary me-1">@linha.Quantidade x</span>
-                                                    @linha.Produto?.Nome
-                                                </div>
-                                            }
-                                        }
-                                    </td>
-                                    <td><strong class="text-primary">@total.ToString("C2")</strong></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-        </div>
-    </div>
-
-    <!-- Vendas Rejeitadas -->
-    @if (vendasRejeitadas.Count > 0)
-    {
-        <div class="card mb-4">
-            <div class="card-header bg-danger text-white">
-                <i class="bi bi-x-circle me-2"></i>Vendas Rejeitadas (@vendasRejeitadas.Count)
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Cliente</th>
-                                <th>Data</th>
-                                <th>Produtos</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var v in vendasRejeitadas)
-                            {
-                                var total = v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0;
-                                <tr>
-                                    <td><strong>#@v.Id</strong></td>
-                                    <td>@v.Cliente?.ApplicationUser?.NomeCompleto</td>
-                                    <td>@v.Data</td>
-                                    <td>
-                                        @if (v.LinhasVenda != null)
-                                        {
-                                            @foreach (var linha in v.LinhasVenda)
-                                            {
-                                                <div class="small">
-                                                    <span class="badge bg-secondary me-1">@linha.Quantidade x</span>
-                                                    @linha.Produto?.Nome
-                                                </div>
-                                            }
-                                        }
-                                    </td>
-                                    <td><strong class="text-muted">@total.ToString("C2")</strong></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    }
 }
 
 @code {
     private bool carregando = true;
-
-    private List<Vendas> vendasPendentes = new();
-    private List<Vendas> vendasConfirmadas = new();
-    private List<Vendas> vendasExpedidas = new();
-    private List<Vendas> vendasRejeitadas = new();
+    private string filtroAtivo = "Pendente";
+    private List<Vendas> todasVendas = new();
+    private List<Vendas> vendasFiltradas = new();
+    private Dictionary<string, int> contadores = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -257,7 +163,7 @@ else
     {
         carregando = true;
 
-        var todas = await _context.Vendas
+        todasVendas = await _context.Vendas
             .Include(v => v.Cliente)
                 .ThenInclude(c => c!.ApplicationUser)
             .Include(v => v.LinhasVenda!)
@@ -265,13 +171,76 @@ else
             .OrderByDescending(v => v.Data)
             .ToListAsync();
 
-        vendasPendentes = todas.Where(v => v.Estado == "Pendente").ToList();
-        vendasConfirmadas = todas.Where(v => v.Estado == "Confirmada").ToList();
-        vendasExpedidas = todas.Where(v => v.Estado == "Expedida").ToList();
-        vendasRejeitadas = todas.Where(v => v.Estado == "Rejeitada").ToList();
+        // Atualizar contadores
+        contadores = new Dictionary<string, int>
+        {
+            ["Pendente"] = todasVendas.Count(v => v.Estado == "Pendente"),
+            ["Confirmada"] = todasVendas.Count(v => v.Estado == "Confirmada"),
+            ["Expedida"] = todasVendas.Count(v => v.Estado == "Expedida"),
+            ["Rejeitada"] = todasVendas.Count(v => v.Estado == "Rejeitada")
+        };
 
+        AplicarFiltro();
         carregando = false;
     }
+
+    private void FiltrarPorEstado(string estado)
+    {
+        filtroAtivo = estado;
+        AplicarFiltro();
+    }
+
+    private void AplicarFiltro()
+    {
+        vendasFiltradas = filtroAtivo == "Todas"
+            ? todasVendas
+            : todasVendas.Where(v => v.Estado == filtroAtivo).ToList();
+    }
+
+    private string GetHeaderClass() => filtroAtivo switch
+    {
+        "Pendente" => "bg-warning text-dark",
+        "Confirmada" => "bg-success text-white",
+        "Expedida" => "bg-info text-white",
+        "Rejeitada" => "bg-danger text-white",
+        _ => "bg-secondary text-white"
+    };
+
+    private string GetHeaderIcon() => filtroAtivo switch
+    {
+        "Pendente" => "bi-clock",
+        "Confirmada" => "bi-check-circle",
+        "Expedida" => "bi-truck",
+        "Rejeitada" => "bi-x-circle",
+        _ => "bi-list"
+    };
+
+    private string GetHeaderTitle() => filtroAtivo switch
+    {
+        "Pendente" => "Vendas Pendentes",
+        "Confirmada" => "Vendas Confirmadas",
+        "Expedida" => "Vendas Expedidas",
+        "Rejeitada" => "Vendas Rejeitadas",
+        _ => "Todas as Vendas"
+    };
+
+    private string GetEstadoTexto() => filtroAtivo switch
+    {
+        "Pendente" => "pendentes",
+        "Confirmada" => "confirmadas",
+        "Expedida" => "expedidas",
+        "Rejeitada" => "rejeitadas",
+        _ => ""
+    };
+
+    private string GetBadgeClass(string estado) => estado switch
+    {
+        "Pendente" => "bg-warning text-dark",
+        "Confirmada" => "bg-success",
+        "Expedida" => "bg-info",
+        "Rejeitada" => "bg-danger",
+        _ => "bg-secondary"
+    };
 
     private async Task Confirmar(int id)
     {
@@ -283,7 +252,6 @@ else
         if (venda == null)
             return;
 
-        // Deduzir stock dos produtos ao confirmar
         foreach (var linha in venda.LinhasVenda!)
         {
             if (linha.Produto != null)
@@ -305,7 +273,6 @@ else
         if (venda == null)
             return;
 
-        // Nao deduz stock - venda rejeitada
         venda.Estado = "Rejeitada";
         await _context.SaveChangesAsync();
         await CarregarVendas();

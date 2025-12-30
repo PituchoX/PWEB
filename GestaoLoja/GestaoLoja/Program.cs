@@ -36,7 +36,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
 .AddSignInManager()
 .AddDefaultTokenProviders();
 
-// ⬇️ Email (no-op) para o Register funcionar
+// Email (no-op) para o Register funcionar
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 // Blazor + serviços de Identity para componentes /Account

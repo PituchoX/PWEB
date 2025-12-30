@@ -85,16 +85,24 @@
 <div id="blazor-error-ui">
     Ocorreu um erro inesperado.
     <a href="" class="reload">Recarregar</a>
-    <a class="dismiss">🗙</a>
+    <a class="dismiss">X</a>
 </div>
 
 @code {
     private string termoPesquisa = "";
+    private bool initialized = false;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         Carrinho.OnChange += OnStateChanged;
         Api.OnAuthStateChanged += OnStateChanged;
+        
+        // Carregar sessão guardada (restaurar login após refresh)
+        if (!initialized)
+        {
+            initialized = true;
+            await Api.InitializeAsync();
+        }
     }
 
     private void OnStateChanged()

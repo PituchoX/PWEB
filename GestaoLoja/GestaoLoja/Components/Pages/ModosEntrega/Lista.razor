@@ -7,8 +7,8 @@
 <h3>Modos de Entrega</h3>
 
 <AuthorizeView Roles="Administrador,Funcionário">
-    <button class="btn btn-link p-0 mb-2" title="Novo modo de entrega" @onclick="Criar">
-        <img src="img/novo.png" alt="Novo" style="width:32px;height:32px;" />
+    <button class="btn btn-primary btn-sm mb-3" @onclick="Criar">
+        Novo Modo de Entrega
     </button>
 </AuthorizeView>
 
@@ -18,7 +18,7 @@
             <th>Nome</th>
             <th>Tipo</th>
             <th>Detalhe</th>
-            <th style="width:120px; text-align:center;">Ações</th>
+            <th style="width:180px;">Ações</th>
         </tr>
     </thead>
     <tbody>
@@ -28,18 +28,13 @@
                 <td>@modo.Nome</td>
                 <td>@modo.Tipo</td>
                 <td>@modo.Detalhe</td>
-                <td style="text-align:center;">
+                <td>
                     <AuthorizeView Roles="Administrador,Funcionário">
-                        <button class="btn btn-link p-0 me-1" title="Editar"
-                                @onclick="@(() => Editar(modo.Id))">
-                            <img src="img/editicon.png" alt="Editar"
-                                 style="width:24px;height:24px;" />
+                        <button class="btn btn-warning btn-sm me-1" @onclick="@(() => Editar(modo.Id))">
+                            Editar
                         </button>
-
-                        <button class="btn btn-link p-0" title="Apagar"
-                                @onclick="@(() => Apagar(modo.Id))">
-                            <img src="img/deleteicon.png" alt="Apagar"
-                                 style="width:24px;height:24px;" />
+                        <button class="btn btn-danger btn-sm" @onclick="@(() => Apagar(modo.Id))">
+                            Apagar
                         </button>
                     </AuthorizeView>
                 </td>

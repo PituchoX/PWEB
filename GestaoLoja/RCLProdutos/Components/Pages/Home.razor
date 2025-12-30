@@ -32,6 +32,36 @@
 </div>
 
 <div class="container-fluid py-3">
+    <!-- PRODUTO DESTAQUE MOBILE (só aparece em mobile) -->
+    @if (produtoDestaque != null)
+    {
+        <div class="destaque-mobile d-lg-none mb-3">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark py-2">
+                    <i class="bi bi-star-fill me-2"></i><strong>Produto em Destaque</strong>
+                </div>
+                <div class="card-body p-2">
+                    <div class="d-flex align-items-center">
+                        <img src="@GetImagemUrl(produtoDestaque.Imagem)" alt="@produtoDestaque.Nome" 
+                             class="destaque-mobile-img me-3"
+                             onerror="this.src='img/noproductstrans.png'"
+                             @onclick="() => VerProduto(produtoDestaque.Id)" />
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 text-truncate" style="color: #2a0a5e;">@produtoDestaque.Nome</h6>
+                            <small class="text-muted">@produtoDestaque.CategoriaNome</small>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <strong class="text-primary">@produtoDestaque.PrecoFinal.ToString("0.00") €</strong>
+                                <button class="btn btn-warning btn-sm" @onclick="() => AdicionarAoCarrinho(produtoDestaque)">
+                                    <i class="bi bi-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
     <div class="row">
         <!-- COLUNA PRINCIPAL - Produtos -->
         <div class="col-lg-9">
@@ -91,8 +121,8 @@
             </div>
         </div>
 
-        <!-- COLUNA LATERAL - Produto Destaque -->
-        <div class="col-lg-3">
+        <!-- COLUNA LATERAL - Produto Destaque (Desktop) -->
+        <div class="col-lg-3 d-none d-lg-block">
             <div class="destaque-lateral">
                 <div class="destaque-header">
                     <i class="bi bi-star-fill me-2"></i>Produto em Destaque

@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using RCLAPI.Models;
 
 namespace RCLAPI.Services
@@ -7,8 +8,12 @@ namespace RCLAPI.Services
     public class ApiService
     {
         private readonly HttpClient _httpClient;
+        private readonly ILocalStorageService? _storage;
         private string? _token;
         private UserInfoDto? _userInfo;
+
+        private const string TOKEN_KEY = "mymedia_token";
+        private const string USERINFO_KEY = "mymedia_userinfo";
 
         // URL base da API - configurada pelos projetos Web/MAUI
         public string ApiBaseUrl { get; set; } = "";
@@ -16,9 +21,14 @@ namespace RCLAPI.Services
         // Evento para notificar mudanças de autenticação
         public event Action? OnAuthStateChanged;
 
-        public ApiService(HttpClient httpClient)
+        // Construtor sem storage (compatibilidade)
+        public ApiService(HttpClient httpClient) : this(httpClient, null) { }
+
+        // Construtor com storage
+        public ApiService(HttpClient httpClient, ILocalStorageService? storage)
         {
             _httpClient = httpClient;
+            _storage = storage;
         }
 
         // ==================== HELPERS ====================
@@ -31,6 +41,69 @@ namespace RCLAPI.Services
                 return "img/noproductstrans.png";
             
             return $"{ApiBaseUrl}img/{imagem}";
+        }
+
+        // ==================== PERSISTÊNCIA DA SESSÃO ====================
+        /// <summary>
+        /// Inicializa o serviço carregando a sessão guardada
+        /// Deve ser chamado no OnInitializedAsync do MainLayout
+        /// </summary>
+        public async Task InitializeAsync()
+        {
+            if (_storage == null) return;
+
+            try
+            {
+                var token = await _storage.GetItemAsync(TOKEN_KEY);
+                var userInfoJson = await _storage.GetItemAsync(USERINFO_KEY);
+
+                if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(userInfoJson))
+                {
+                    _token = token;
+                    _httpClient.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("Bearer", token);
+                    
+                    _userInfo = JsonSerializer.Deserialize<UserInfoDto>(userInfoJson);
+                    OnAuthStateChanged?.Invoke();
+                }
+            }
+            catch
+            {
+                // Se falhar a carregar, ignora (utilizador terá de fazer login)
+            }
+        }
+
+        private async Task SaveSessionAsync()
+        {
+            if (_storage == null) return;
+
+            try
+            {
+                if (!string.IsNullOrEmpty(_token) && _userInfo != null)
+                {
+                    await _storage.SetItemAsync(TOKEN_KEY, _token);
+                    await _storage.SetItemAsync(USERINFO_KEY, JsonSerializer.Serialize(_userInfo));
+                }
+            }
+            catch
+            {
+                // Ignora erros de armazenamento
+            }
+        }
+
+        private async Task ClearSessionAsync()
+        {
+            if (_storage == null) return;
+
+            try
+            {
+                await _storage.RemoveItemAsync(TOKEN_KEY);
+                await _storage.RemoveItemAsync(USERINFO_KEY);
+            }
+            catch
+            {
+                // Ignora erros
+            }
         }
 
         // ==================== TOKEN/AUTH ====================
@@ -59,10 +132,20 @@ namespace RCLAPI.Services
             OnAuthStateChanged?.Invoke();
         }
 
+        public async Task LogoutAsync()
+        {
+            SetToken(null);
+            _userInfo = null;
+            await ClearSessionAsync();
+            OnAuthStateChanged?.Invoke();
+        }
+
+        // Método síncrono para compatibilidade
         public void Logout()
         {
             SetToken(null);
             _userInfo = null;
+            _ = ClearSessionAsync(); // Fire and forget
             OnAuthStateChanged?.Invoke();
         }
 
@@ -86,6 +169,10 @@ namespace RCLAPI.Services
                             NomeCompleto = result.NomeCompleto ?? "",
                             Perfil = result.Perfil ?? ""
                         };
+                        
+                        // Guardar sessão localmente
+                        await SaveSessionAsync();
+                        
                         OnAuthStateChanged?.Invoke();
                     }
                     return result ?? new AuthResponseDto { Success = false, Message = "Erro ao processar resposta" };
@@ -144,17 +231,17 @@ namespace RCLAPI.Services
                         try
                         {
                             var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-                            return result ?? new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                            return result ?? new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso! Aguarde aprovação por um administrador." };
                         }
                         catch
                         {
                             // Se falhar a ler o JSON mas for 200 OK, assumimos sucesso
-                            return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                            return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso! Aguarde aprovação por um administrador." };
                         }
                     }
 
                     // Se for 200 OK mas corpo vazio
-                    return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                    return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso! Aguarde aprovação por um administrador." };
                 }
                 else
                 {
@@ -196,14 +283,14 @@ namespace RCLAPI.Services
                         try
                         {
                             var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
-                            return result ?? new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                            return result ?? new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso! Aguarde aprovação." };
                         }
                         catch
                         {
-                            return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                            return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso! Aguarde aprovação." };
                         }
                     }
-                    return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso." };
+                    return new AuthResponseDto { Success = true, Message = "Registo efetuado com sucesso! Aguarde aprovação." };
                 }
                 else
                 {
@@ -357,7 +444,7 @@ namespace RCLAPI.Services
                     // Tentar extrair a mensagem do JSON
                     try
                     {
-                        var errorObj = System.Text.Json.JsonDocument.Parse(errorContent);
+                        var errorObj = JsonDocument.Parse(errorContent);
                         if (errorObj.RootElement.TryGetProperty("Message", out var msgProp) ||
                             errorObj.RootElement.TryGetProperty("message", out msgProp))
                         {

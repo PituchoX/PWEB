@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using RCLAPI.Services;
+using MyMediaMAUI.Services;
 
 namespace MyMediaMAUI
 {
@@ -43,11 +44,15 @@ namespace MyMediaMAUI
                 };
             });
 
-            // Registar serviços - ApiService com ApiBaseUrl configurado
+            // Registar serviço de armazenamento local (MAUI Preferences)
+            builder.Services.AddSingleton<ILocalStorageService, MauiStorageService>();
+
+            // Registar ApiService com ApiBaseUrl e Storage configurados
             builder.Services.AddScoped(sp =>
             {
                 var httpClient = sp.GetRequiredService<HttpClient>();
-                var apiService = new ApiService(httpClient);
+                var storage = sp.GetRequiredService<ILocalStorageService>();
+                var apiService = new ApiService(httpClient, storage);
                 apiService.ApiBaseUrl = ApiBaseUrl;
                 return apiService;
             });

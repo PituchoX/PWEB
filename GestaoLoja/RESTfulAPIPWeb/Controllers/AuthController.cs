@@ -38,7 +38,7 @@ namespace RESTfulAPIPWeb.Controllers
         }
 
         /// <summary>
-        /// Registo de novo Cliente
+        /// Registo de novo Cliente - Fica PENDENTE até aprovação
         /// </summary>
         [HttpPost("register-cliente")]
         public async Task<IActionResult> RegisterCliente([FromBody] RegisterClienteRequest dto)
@@ -51,12 +51,13 @@ namespace RESTfulAPIPWeb.Controllers
             if (existingUser != null)
                 return BadRequest(new { Success = false, Message = "Este email já está registado." });
 
+            // ALTERADO: Estado Pendente - aguarda aprovação
             var user = new ApplicationUser
             {
                 UserName = dto.Email,
                 Email = dto.Email,
                 NomeCompleto = dto.Nome,
-                Estado = "Ativo",
+                Estado = "Pendente",  // <-- PENDENTE até admin/funcionário aprovar
                 Perfil = "Cliente"
             };
 
@@ -70,11 +71,12 @@ namespace RESTfulAPIPWeb.Controllers
             // Gerar NIF aleatório
             string nifFinal = "9" + new Random().Next(10000000, 99999999).ToString();
 
+            // ALTERADO: Cliente também fica Pendente
             var cliente = new Cliente
             {
                 ApplicationUserId = user.Id,
                 NIF = nifFinal,
-                Estado = "Ativo"
+                Estado = "Pendente"  // <-- PENDENTE até admin/funcionário aprovar
             };
 
             _context.Clientes.Add(cliente);
@@ -89,11 +91,11 @@ namespace RESTfulAPIPWeb.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return Ok(new { Success = true, Message = "Registo efetuado com sucesso! Já pode fazer login." });
+            return Ok(new { Success = true, Message = "Registo efetuado com sucesso! A sua conta aguarda aprovação por um administrador." });
         }
 
         /// <summary>
-        /// Registo de novo Fornecedor
+        /// Registo de novo Fornecedor - Fica PENDENTE até aprovação
         /// </summary>
         [HttpPost("register-fornecedor")]
         public async Task<IActionResult> RegisterFornecedor([FromBody] RegisterFornecedorRequest dto)
@@ -135,7 +137,7 @@ namespace RESTfulAPIPWeb.Controllers
             _context.Fornecedores.Add(fornecedor);
             await _context.SaveChangesAsync();
 
-            return Ok(new { Success = true, Message = "Fornecedor registado com sucesso. Aguarda aprovação para inserir produtos." });
+            return Ok(new { Success = true, Message = "Fornecedor registado com sucesso! Aguarda aprovação por um administrador." });
         }
 
         /// <summary>
@@ -170,6 +172,13 @@ namespace RESTfulAPIPWeb.Controllers
                 return Unauthorized(new { Success = false, Message = "Credenciais inválidas." });
             }
 
+            // ALTERADO: Verificar se conta está ativa OU pendente com mensagem específica
+            if (user.Estado == "Pendente")
+            {
+                _logger.LogWarning($"User account pending approval. Estado: {user.Estado}");
+                return Unauthorized(new { Success = false, Message = "A sua conta aguarda aprovação por um administrador. Por favor aguarde." });
+            }
+
             if (user.Estado != "Ativo")
             {
                 _logger.LogWarning($"User not active. Estado: {user.Estado}");
@@ -185,7 +194,6 @@ namespace RESTfulAPIPWeb.Controllers
             {
                 _logger.LogInformation($"No roles found, adding role based on Perfil: {user.Perfil}");
                 
-                // Verificar se a role existe, se não, criar
                 var roleManager = HttpContext.RequestServices.GetRequiredService<RoleManager<IdentityRole>>();
                 if (!await roleManager.RoleExistsAsync(user.Perfil))
                 {

@@ -6,22 +6,33 @@
 
 <!-- HEADER -->
 <div class="header-top">
-    <div class="container-fluid d-flex justify-content-between align-items-center py-2 px-3">
+    <div class="container-fluid d-flex justify-content-between align-items-center py-2 px-2">
         <!-- Logo -->
-        <a class="navbar-brand text-white fw-bold" href="/" style="font-size: 1.1rem; text-decoration: none;">
+        <a class="navbar-brand text-white fw-bold" href="/" style="font-size: 1rem; text-decoration: none;">
             <i class="bi bi-disc me-1"></i>MyMEDIA
         </a>
 
+        <!-- Barra de pesquisa compacta -->
+        <div class="flex-grow-1 mx-2">
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control" placeholder="Pesquisar..." 
+                       @bind="termoPesquisa" @bind:event="oninput" @onkeypress="OnKeyPress" 
+                       style="font-size: 0.8rem;" />
+                <button class="btn btn-warning" type="button" @onclick="Pesquisar">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+
         <!-- Ações do utilizador -->
-        <div class="user-actions d-flex align-items-center gap-2">
+        <div class="user-actions d-flex align-items-center gap-1">
             @if (Api.IsAuthenticated)
             {
                 <!-- Nome do utilizador com menu -->
                 <div class="user-menu-container">
                     <button class="btn btn-user-toggle" @onclick="ToggleMenu">
-                        <i class="bi bi-person-circle me-1"></i>
-                        <span class="user-name">@GetShortName()</span>
-                        <i class="bi @(mostrarMenu ? "bi-chevron-up" : "bi-chevron-down") ms-1" style="font-size: 0.7rem;"></i>
+                        <i class="bi bi-person-circle"></i>
+                        <i class="bi @(mostrarMenu ? "bi-chevron-up" : "bi-chevron-down") ms-1" style="font-size: 0.6rem;"></i>
                     </button>
                     
                     @if (mostrarMenu)
@@ -58,20 +69,20 @@
             }
             else
             {
-                <a href="/login" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-person me-1"></i><span class="d-none d-sm-inline">Entrar</span>
+                <a href="/login" class="btn btn-outline-light btn-sm px-2">
+                    <i class="bi bi-person"></i>
                 </a>
-                <a href="/registar" class="btn btn-warning btn-sm">
-                    <i class="bi bi-person-plus me-1"></i><span class="d-none d-sm-inline">Registar</span>
+                <a href="/registar" class="btn btn-warning btn-sm px-2">
+                    <i class="bi bi-person-plus"></i>
                 </a>
             }
 
             <!-- Carrinho -->
-            <a href="/carrinho" class="btn btn-outline-light btn-sm position-relative">
+            <a href="/carrinho" class="btn btn-outline-light btn-sm position-relative px-2">
                 <i class="bi bi-cart3"></i>
                 @if (Carrinho.TotalItens > 0)
                 {
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.55rem;">
                         @Carrinho.TotalItens
                     </span>
                 }
@@ -100,11 +111,20 @@
 
 @code {
     private bool mostrarMenu = false;
+    private bool initialized = false;
+    private string termoPesquisa = "";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         Carrinho.OnChange += OnStateChanged;
         Api.OnAuthStateChanged += OnStateChanged;
+        
+        // Carregar sessão guardada (restaurar login após refresh)
+        if (!initialized)
+        {
+            initialized = true;
+            await Api.InitializeAsync();
+        }
     }
 
     private void OnStateChanged()
@@ -127,7 +147,23 @@
         var nome = Api.GetUserInfo()?.NomeCompleto ?? "";
         if (string.IsNullOrEmpty(nome)) return "User";
         var partes = nome.Split(' ');
-        return partes[0]; // Primeiro nome apenas
+        return partes[0];
+    }
+
+    private void Pesquisar()
+    {
+        if (!string.IsNullOrWhiteSpace(termoPesquisa))
+        {
+            Nav.NavigateTo($"/produtos?search={Uri.EscapeDataString(termoPesquisa)}");
+        }
+    }
+
+    private void OnKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            Pesquisar();
+        }
     }
 
     private void Logout()

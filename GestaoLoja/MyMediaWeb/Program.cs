@@ -16,11 +16,15 @@ builder.Services.AddScoped(sp => new HttpClient
     BaseAddress = new Uri(apiBaseUrl)
 });
 
-// Registar ApiService com ApiBaseUrl configurado
+// Registar serviço de armazenamento local (Browser localStorage)
+builder.Services.AddScoped<ILocalStorageService, BrowserStorageService>();
+
+// Registar ApiService com ApiBaseUrl e Storage configurados
 builder.Services.AddScoped(sp =>
 {
     var httpClient = sp.GetRequiredService<HttpClient>();
-    var apiService = new ApiService(httpClient);
+    var storage = sp.GetRequiredService<ILocalStorageService>();
+    var apiService = new ApiService(httpClient, storage);
     apiService.ApiBaseUrl = apiBaseUrl;
     return apiService;
 });

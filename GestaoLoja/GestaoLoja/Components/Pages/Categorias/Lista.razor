@@ -10,8 +10,8 @@
 <h3>Categorias</h3>
 
 <AuthorizeView Roles="Administrador,Funcionário">
-    <button class="btn btn-link p-0 mb-2" title="Nova categoria" @onclick="Criar">
-        <img src="img/novo.png" alt="Novo" style="width:32px;height:32px;" />
+    <button class="btn btn-primary btn-sm mb-3" @onclick="Criar">
+        Nova Categoria
     </button>
 </AuthorizeView>
 
@@ -27,7 +27,7 @@ else
                 <th>Id</th>
                 <th>Imagem</th>
                 <th>Nome</th>
-                <th>Ações</th>
+                <th style="width:180px;">Acoes</th>
             </tr>
         </thead>
         <tbody>
@@ -45,10 +45,10 @@ else
                     <td>
                         <AuthorizeView Roles="Administrador,Funcionário">
                             <button class="btn btn-sm btn-warning me-1" @onclick="() => Editar(c.Id)">
-                                <i class="bi bi-pencil"></i> Editar
+                                Editar
                             </button>
                             <button class="btn btn-sm btn-danger" @onclick="() => Apagar(c)">
-                                <i class="bi bi-trash"></i> Apagar
+                                Apagar
                             </button>
                         </AuthorizeView>
                     </td>
@@ -77,11 +77,8 @@ else
 
     private void Apagar(Categorias categoria)
     {
-        // Remove do contexto e grava na BD
         db.Categorias.Remove(categoria);
         db.SaveChanges();
-
-        // Atualiza a lista na interface
         CarregarDados();
     }
 }
