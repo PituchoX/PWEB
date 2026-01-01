@@ -17,7 +17,9 @@ wwwroot\img\cartcheio.png
 wwwroot\img\castanhastransp220x120.png
 wwwroot\img\cat_42a0028746474a9fa9b4c7466d420858.png
 wwwroot\img\cat_87b9c3e25ef04252b560f9a9e3adf0da.jpg
+wwwroot\img\cat_bc4e4c3c70844b32a73c05fa26c762cf.jpg
 wwwroot\img\cat_f19f788e7ceb436f96797f5c28cdb7e3.jpg
+wwwroot\img\cat_f348dba9d3774c70bb772b9662391000.jpg
 wwwroot\img\cereja.jpg
 wwwroot\img\cerejatransp220x120.png
 wwwroot\img\cestofrutas.jpg
@@ -122,12 +124,15 @@ wwwroot\img\pistaciostransp220x120.png
 wwwroot\img\plus.png
 wwwroot\img\pngegg.png
 wwwroot\img\prod_050d4b04122e4a168048f6ae100e988e.png
+wwwroot\img\prod_549588eb3de6400e83f2fc4a0d5730b4.jpeg
 wwwroot\img\prod_5bc00ba6ae2b4dc5a22adbd85e54059c.png
 wwwroot\img\prod_6c6b284624a8493fa9f7e973148e32f1.png
+wwwroot\img\prod_8fa9f231c7794b2e863da144c913d81c.jpeg
 wwwroot\img\prod_9249edbea4514ca9a581262509b1b18e.png
 wwwroot\img\prod_bd1d2a67c28f48869c0b1a624ca3b657.jpg
 wwwroot\img\prod_cf7305f7dbb34ba099ad194c02ed9aa2.png
 wwwroot\img\prod_dc9df499a20e42c29c9d6e96f1f373d5.webp
+wwwroot\img\prod_fbf30578ccf14a1490fea7f6fd50b11a.jpeg
 wwwroot\img\profile.png
 wwwroot\img\profile2.png
 wwwroot\img\questionsanswers.jpg
@@ -142,6 +147,7 @@ wwwroot\img\saveicon.png
 wwwroot\img\searchredicon50x50.png
 wwwroot\img\Selecticon.png
 wwwroot\img\Selecticontransp120x50.png
+wwwroot\img\semfoto.png
 wwwroot\img\sobremesasfrutas.png
 wwwroot\img\sumamangatransp220x120.png
 wwwroot\img\sumoananastransp220x120.png

@@ -126,22 +126,116 @@ namespace GestaoLoja.Data
             }
 
             // ========================================
-            // CRIAR FORNECEDOR INTERNO
+            // CRIAR CLIENTE DE TESTE
             // ========================================
-            var fornecedorInterno = context.Fornecedores
-                .FirstOrDefault(f => f.NomeEmpresa == "Fornecedor Interno");
+            const string clienteEmail = "cliente@teste.pt";
+            const string clientePass = "Cliente123!";
 
-            if (fornecedorInterno == null)
+            var clienteUser = userManager.FindByEmailAsync(clienteEmail).Result;
+            if (clienteUser == null)
             {
-                fornecedorInterno = new Fornecedor
+                clienteUser = new ApplicationUser
                 {
-                    NomeEmpresa = "Fornecedor Interno",
-                    NIF = "000000000",
-                    Estado = "Aprovado",
-                    ApplicationUserId = admin.Id
+                    UserName = clienteEmail,
+                    Email = clienteEmail,
+                    NomeCompleto = "João Silva (Cliente Teste)",
+                    Estado = "Ativo",
+                    Perfil = "Cliente",
+                    EmailConfirmed = true
                 };
 
-                context.Fornecedores.Add(fornecedorInterno);
+                var result = userManager.CreateAsync(clienteUser, clientePass).Result;
+
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(clienteUser, "Cliente").Wait();
+                }
+            }
+            else
+            {
+                // Garantir que está ativo
+                if (clienteUser.Estado != "Ativo")
+                {
+                    clienteUser.Estado = "Ativo";
+                    userManager.UpdateAsync(clienteUser).Wait();
+                }
+
+                // Garantir que tem a role
+                var clienteRoles = userManager.GetRolesAsync(clienteUser).Result;
+                if (!clienteRoles.Contains("Cliente"))
+                {
+                    userManager.AddToRoleAsync(clienteUser, "Cliente").Wait();
+                }
+            }
+
+            // Criar registo na tabela Clientes
+            var clienteTeste = context.Clientes.FirstOrDefault(c => c.ApplicationUserId == clienteUser.Id);
+            if (clienteTeste == null)
+            {
+                clienteTeste = new Cliente
+                {
+                    ApplicationUserId = clienteUser.Id,
+                    NIF = "123456789",
+                    Estado = "Ativo"
+                };
+                context.Clientes.Add(clienteTeste);
+                context.SaveChanges();
+            }
+
+            // ========================================
+            // CRIAR FORNECEDOR DE TESTE
+            // ========================================
+            const string fornecedorEmail = "fornecedor@teste.pt";
+            const string fornecedorPass = "Forn123!";
+
+            var fornecedorUser = userManager.FindByEmailAsync(fornecedorEmail).Result;
+            if (fornecedorUser == null)
+            {
+                fornecedorUser = new ApplicationUser
+                {
+                    UserName = fornecedorEmail,
+                    Email = fornecedorEmail,
+                    NomeCompleto = "Maria Santos (Fornecedor Teste)",
+                    Estado = "Ativo",
+                    Perfil = "Fornecedor",
+                    EmailConfirmed = true
+                };
+
+                var result = userManager.CreateAsync(fornecedorUser, fornecedorPass).Result;
+
+                if (result.Succeeded)
+                {
+                    userManager.AddToRoleAsync(fornecedorUser, "Fornecedor").Wait();
+                }
+            }
+            else
+            {
+                // Garantir que está ativo
+                if (fornecedorUser.Estado != "Ativo")
+                {
+                    fornecedorUser.Estado = "Ativo";
+                    userManager.UpdateAsync(fornecedorUser).Wait();
+                }
+
+                // Garantir que tem a role
+                var fornRoles = userManager.GetRolesAsync(fornecedorUser).Result;
+                if (!fornRoles.Contains("Fornecedor"))
+                {
+                    userManager.AddToRoleAsync(fornecedorUser, "Fornecedor").Wait();
+                }
+            }
+
+            // Criar registo na tabela Fornecedores
+            var fornecedorTeste = context.Fornecedores.FirstOrDefault(f => f.ApplicationUserId == fornecedorUser.Id);
+            if (fornecedorTeste == null)
+            {
+                fornecedorTeste = new Fornecedor
+                {
+                    ApplicationUserId = fornecedorUser.Id,
+                    NomeEmpresa = "MediaTeste Lda.",
+                    Estado = "Aprovado"
+                };
+                context.Fornecedores.Add(fornecedorTeste);
                 context.SaveChanges();
             }
 
@@ -198,7 +292,11 @@ namespace GestaoLoja.Data
                 var catMusica = context.Categorias.First(c => c.Nome == "Música");
                 var catJogos = context.Categorias.First(c => c.Nome == "Jogos");
                 var catAcessorios = context.Categorias.First(c => c.Nome == "Acessórios");
+                var catColeccionaveis = context.Categorias.First(c => c.Nome == "Colecionáveis");
                 var modoEntrega = context.ModosEntrega.First();
+
+                // Usar o fornecedor de teste
+                var fornTeste = context.Fornecedores.First(f => f.NomeEmpresa == "MediaTeste Lda.");
 
                 context.Produtos.AddRange(
                     // FILMES
@@ -210,10 +308,10 @@ namespace GestaoLoja.Data
                         PrecoFinal = 15.72m,
                         Estado = "Ativo",
                         Stock = 50,
-                        Imagem = "avatar.png",
+                        Imagem = "noproductstrans.png",
                         CategoriaId = catFilmes.Id,
                         ModoEntregaId = modoEntrega.Id,
-                        FornecedorId = fornecedorInterno.Id
+                        FornecedorId = fornTeste.Id
                     },
                     new Produtos
                     {
@@ -223,10 +321,10 @@ namespace GestaoLoja.Data
                         PrecoFinal = 26.44m,
                         Estado = "Ativo",
                         Stock = 30,
-                        Imagem = "senhor_aneis.png",
+                        Imagem = "noproductstrans.png",
                         CategoriaId = catFilmes.Id,
                         ModoEntregaId = modoEntrega.Id,
-                        FornecedorId = fornecedorInterno.Id
+                        FornecedorId = fornTeste.Id
                     },
                     new Produtos
                     {
@@ -236,10 +334,10 @@ namespace GestaoLoja.Data
                         PrecoFinal = 30.24m,
                         Estado = "Ativo",
                         Stock = 25,
-                        Imagem = "matrix.png",
+                        Imagem = "noproductstrans.png",
                         CategoriaId = catFilmes.Id,
                         ModoEntregaId = modoEntrega.Id,
-                        FornecedorId = fornecedorInterno.Id
+                        FornecedorId = fornTeste.Id
                     },
                     
                     // MÚSICA
@@ -251,10 +349,10 @@ namespace GestaoLoja.Data
                         PrecoFinal = 15.74m,
                         Estado = "Ativo",
                         Stock = 40,
-                        Imagem = "queen.png",
+                        Imagem = "noproductstrans.png",
                         CategoriaId = catMusica.Id,
                         ModoEntregaId = modoEntrega.Id,
-                        FornecedorId = fornecedorInterno.Id
+                        FornecedorId = fornTeste.Id
                     },
                     new Produtos
                     {
@@ -264,10 +362,10 @@ namespace GestaoLoja.Data
                         PrecoFinal = 38.49m,
                         Estado = "Ativo",
                         Stock = 15,
-                        Imagem = "pinkfloyd.png",
+                        Imagem = "noproductstrans.png",
                         CategoriaId = catMusica.Id,
                         ModoEntregaId = modoEntrega.Id,
-                        FornecedorId = fornecedorInterno.Id
+                        FornecedorId = fornTeste.Id
                     },
                     new Produtos
                     {
@@ -277,10 +375,10 @@ namespace GestaoLoja.Data
                         PrecoFinal = 13.64m,
                         Estado = "Ativo",
                         Stock = 35,
-                        Imagem = "beatles.png",
+                        Imagem = "noproductstrans.png",
                         CategoriaId = catMusica.Id,
                         ModoEntregaId = modoEntrega.Id,
-                        FornecedorId = fornecedorInterno.Id
+                        FornecedorId = fornTeste.Id
                     },
                     
                     // JOGOS
@@ -292,10 +390,10 @@ namespace GestaoLoja.Data
                         PrecoFinal = 59.99m,
                         Estado = "Ativo",
                         Stock = 100,
-                        Imagem = "fifa24.png",
+                        Imagem = "noproductstrans.png",
                         CategoriaId = catJogos.Id,
                         ModoEntregaId = modoEntrega.Id,
-                        FornecedorId = fornecedorInterno.Id
+                        FornecedorId = fornTeste.Id
                     },
                     new Produtos
                     {
@@ -305,10 +403,10 @@ namespace GestaoLoja.Data
                         PrecoFinal = 35.99m,
                         Estado = "Ativo",
                         Stock = 45,
-                        Imagem = "gtav.png",
+                        Imagem = "noproductstrans.png",
                         CategoriaId = catJogos.Id,
                         ModoEntregaId = modoEntrega.Id,
-                        FornecedorId = fornecedorInterno.Id
+                        FornecedorId = fornTeste.Id
                     },
                     new Produtos
                     {
@@ -318,10 +416,10 @@ namespace GestaoLoja.Data
                         PrecoFinal = 19.99m,
                         Estado = "Ativo",
                         Stock = 200,
-                        Imagem = "minecraft.png",
+                        Imagem = "noproductstrans.png",
                         CategoriaId = catJogos.Id,
                         ModoEntregaId = modoEntrega.Id,
-                        FornecedorId = fornecedorInterno.Id
+                        FornecedorId = fornTeste.Id
                     },
                     
                     // ACESSÓRIOS
@@ -333,10 +431,10 @@ namespace GestaoLoja.Data
                         PrecoFinal = 73.49m,
                         Estado = "Ativo",
                         Stock = 60,
-                        Imagem = "dualsense.png",
+                        Imagem = "noproductstrans.png",
                         CategoriaId = catAcessorios.Id,
                         ModoEntregaId = modoEntrega.Id,
-                        FornecedorId = fornecedorInterno.Id
+                        FornecedorId = fornTeste.Id
                     },
                     new Produtos
                     {
@@ -346,10 +444,10 @@ namespace GestaoLoja.Data
                         PrecoFinal = 54.99m,
                         Estado = "Ativo",
                         Stock = 80,
-                        Imagem = "headset.png",
+                        Imagem = "noproductstrans.png",
                         CategoriaId = catAcessorios.Id,
                         ModoEntregaId = modoEntrega.Id,
-                        FornecedorId = fornecedorInterno.Id
+                        FornecedorId = fornTeste.Id
                     }
                 );
                 context.SaveChanges();

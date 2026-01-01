@@ -7,7 +7,6 @@ namespace RESTfulAPIPWeb.Dtos
         public string Nome { get; set; } = default!;
         public string Email { get; set; } = default!;
         public string NomeEmpresa { get; set; } = default!;
-        public string NIF { get; set; } = default!;
         public string Estado { get; set; } = default!;
     }
 

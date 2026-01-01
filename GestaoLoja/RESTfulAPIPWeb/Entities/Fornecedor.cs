@@ -8,7 +8,6 @@
         public ApplicationUser? ApplicationUser { get; set; }
 
         public string NomeEmpresa { get; set; } = "";
-        public string NIF { get; set; } = "";
 
         public string Estado { get; set; } = "Pendente";
 

@@ -39,7 +39,6 @@ namespace RESTfulAPIPWeb.Controllers
                 Nome = f.ApplicationUser?.NomeCompleto ?? "",
                 Email = f.ApplicationUser?.Email ?? "",
                 NomeEmpresa = f.NomeEmpresa,
-                NIF = f.NIF,
                 Estado = f.ApplicationUser?.Estado ?? f.Estado
             });
 
@@ -66,7 +65,6 @@ namespace RESTfulAPIPWeb.Controllers
                 Nome = fornecedor.ApplicationUser?.NomeCompleto ?? "",
                 Email = fornecedor.ApplicationUser?.Email ?? "",
                 NomeEmpresa = fornecedor.NomeEmpresa,
-                NIF = fornecedor.NIF,
                 Estado = fornecedor.ApplicationUser?.Estado ?? fornecedor.Estado
             });
         }

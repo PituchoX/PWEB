@@ -12,7 +12,6 @@ namespace GestaoLoja.Entities
 
         // Dados próprios do fornecedor
         public string NomeEmpresa { get; set; } = "";
-        public string NIF { get; set; } = "";
 
         // Estado do registo (Pendente / Aprovado)
         public string Estado { get; set; } = "Pendente";

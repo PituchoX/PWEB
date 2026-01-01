@@ -123,14 +123,10 @@ namespace RESTfulAPIPWeb.Controllers
 
             await _userManager.AddToRoleAsync(user, "Fornecedor");
 
-            // Gerar NIF aleatório
-            string nifFinal = "9" + new Random().Next(10000000, 99999999).ToString();
-
             var fornecedor = new Fornecedor
             {
                 ApplicationUserId = user.Id,
                 NomeEmpresa = dto.NomeEmpresa,
-                NIF = nifFinal,
                 Estado = "Pendente"
             };
 
@@ -234,7 +230,6 @@ namespace RESTfulAPIPWeb.Controllers
                     {
                         ApplicationUserId = user.Id,
                         NomeEmpresa = user.NomeCompleto + " (Empresa)",
-                        NIF = "9" + new Random().Next(10000000, 99999999).ToString(),
                         Estado = "Pendente"
                     };
                     _context.Fornecedores.Add(fornecedor);
@@ -302,7 +297,6 @@ namespace RESTfulAPIPWeb.Controllers
     {
         public string Nome { get; set; } = "";
         public string Email { get; set; } = "";
-        public string NIF { get; set; } = "";
         public string Password { get; set; } = "";
     }
 
@@ -310,7 +304,6 @@ namespace RESTfulAPIPWeb.Controllers
     {
         public string Nome { get; set; } = "";
         public string Email { get; set; } = "";
-        public string NIF { get; set; } = "";
         public string NomeEmpresa { get; set; } = "";
         public string Password { get; set; } = "";
     }
