@@ -19,11 +19,14 @@
         public int CategoriaId { get; set; }
         public Categorias? Categoria { get; set; }
 
+        // Subcategoria (opcional)
+        public int? SubcategoriaId { get; set; }
+        public Subcategoria? Subcategoria { get; set; }
+
         public int ModoEntregaId { get; set; }
         public ModoEntrega? ModoEntrega { get; set; }
 
         public int FornecedorId { get; set; }
         public Fornecedor? Fornecedor { get; set; }
-
     }
 }

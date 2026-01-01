@@ -113,10 +113,20 @@ h1:focus {
 }
 
 .categorias-scroll {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: -webkit-flex !important;
+    display: flex !important;
+    -webkit-box-orient: horizontal !important;
+    -webkit-box-direction: normal !important;
+    -ms-flex-direction: row !important;
+    -webkit-flex-direction: row !important;
+    flex-direction: row !important;
+    -ms-flex-wrap: nowrap !important;
+    -webkit-flex-wrap: nowrap !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
     scroll-behavior: smooth;
     padding: 8px 20px;
     gap: 20px;
@@ -139,10 +149,23 @@ h1:focus {
 
 /* Card de Categoria - Base (Desktop) */
 .categoria-item {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    -webkit-box-flex: 0 !important;
+    -ms-flex: 0 0 auto !important;
+    -webkit-flex: 0 0 auto !important;
+    flex: 0 0 auto !important;
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: -webkit-flex !important;
+    display: flex !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-box-direction: normal !important;
+    -ms-flex-direction: column !important;
+    -webkit-flex-direction: column !important;
+    flex-direction: column !important;
+    -webkit-box-align: center !important;
+    -ms-flex-align: center !important;
+    -webkit-align-items: center !important;
+    align-items: center !important;
     width: 160px;
     min-width: 160px;
     max-width: 160px;
@@ -196,6 +219,107 @@ h1:focus {
     background: transparent;
 }
 
+/* ==================== SLIDER DE SUBCATEGORIAS ==================== */
+.subcategorias-slider {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%) !important;
+    border-bottom: 2px solid #6c757d !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10px 0 !important;
+    display: block !important;
+}
+
+.subcategorias-scroll {
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: -webkit-flex !important;
+    display: flex !important;
+    -webkit-box-orient: horizontal !important;
+    -webkit-box-direction: normal !important;
+    -ms-flex-direction: row !important;
+    -webkit-flex-direction: row !important;
+    flex-direction: row !important;
+    -ms-flex-wrap: nowrap !important;
+    -webkit-flex-wrap: nowrap !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-behavior: smooth !important;
+    padding: 5px 20px !important;
+    gap: 12px !important;
+    -webkit-overflow-scrolling: touch !important;
+    -webkit-box-align: center !important;
+    -ms-flex-align: center !important;
+    -webkit-align-items: center !important;
+    align-items: center !important;
+}
+
+.subcategorias-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.subcategorias-scroll::-webkit-scrollbar-thumb {
+    background: #6c757d;
+    border-radius: 2px;
+}
+
+.subcategoria-item {
+    -webkit-box-flex: 0 !important;
+    -ms-flex: 0 0 auto !important;
+    -webkit-flex: 0 0 auto !important;
+    flex: 0 0 auto !important;
+    display: -webkit-inline-box !important;
+    display: -ms-inline-flexbox !important;
+    display: -webkit-inline-flex !important;
+    display: inline-flex !important;
+    -webkit-box-align: center !important;
+    -ms-flex-align: center !important;
+    -webkit-align-items: center !important;
+    align-items: center !important;
+    -webkit-box-pack: center !important;
+    -ms-flex-pack: center !important;
+    -webkit-justify-content: center !important;
+    justify-content: center !important;
+    padding: 8px 20px !important;
+    background: white !important;
+    border-radius: 25px !important;
+    cursor: pointer !important;
+    -webkit-transition: all 0.2s ease !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
+    border: 2px solid transparent !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+    float: none !important;
+}
+
+.subcategoria-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    border-color: #2a0a5e !important;
+}
+
+.subcategoria-item.active {
+    border-color: #2a0a5e !important;
+    background: linear-gradient(135deg, #2a0a5e 0%, #4a148c 100%) !important;
+    box-shadow: 0 4px 12px rgba(42,10,94,0.3) !important;
+}
+
+.subcategoria-item span {
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    color: #2a0a5e !important;
+    white-space: nowrap !important;
+    display: inline !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    float: none !important;
+}
+
+.subcategoria-item.active span {
+    color: white !important;
+}
+
 /* ==================== MAIN CONTENT ==================== */
 .main-content {
     min-height: calc(100vh - 130px);
@@ -208,7 +332,13 @@ h1:focus {
     color: #2a0a5e;
     padding-bottom: 10px;
     border-bottom: 2px solid #ffc107;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
     align-items: center;
 }
 
@@ -227,10 +357,12 @@ h1:focus {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     overflow: hidden;
     cursor: pointer;
+    -webkit-transition: transform 0.2s, box-shadow 0.2s;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .produto-card:hover {
+    -webkit-transform: translateY(-5px);
     transform: translateY(-5px);
     box-shadow: 0 5px 20px rgba(0,0,0,0.15);
 }
@@ -312,11 +444,13 @@ h1:focus {
     border-radius: 10px;
     margin-bottom: 15px;
     cursor: pointer;
+    -webkit-transition: transform 0.2s;
     transition: transform 0.2s;
     background: #f0f0f0;
 }
 
 .destaque-content img:hover {
+    -webkit-transform: scale(1.02);
     transform: scale(1.02);
 }
 
@@ -359,7 +493,13 @@ h1:focus {
 
 /* ==================== CARRINHO ==================== */
 .carrinho-item {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
     align-items: center;
     padding: 15px;
     background: white;
@@ -401,6 +541,19 @@ h1:focus {
     .categorias-scroll {
         gap: 15px;
         padding: 6px 15px;
+    }
+
+    .subcategorias-scroll {
+        gap: 10px !important;
+        padding: 5px 15px !important;
+    }
+
+    .subcategoria-item {
+        padding: 6px 16px !important;
+    }
+
+    .subcategoria-item span {
+        font-size: 0.8rem !important;
     }
 }
 
@@ -445,6 +598,23 @@ h1:focus {
         gap: 12px;
         padding: 5px 12px;
     }
+
+    .subcategorias-slider {
+        padding: 8px 0 !important;
+    }
+
+    .subcategorias-scroll {
+        gap: 8px !important;
+        padding: 4px 12px !important;
+    }
+
+    .subcategoria-item {
+        padding: 5px 12px !important;
+    }
+
+    .subcategoria-item span {
+        font-size: 0.75rem !important;
+    }
 }
 
 @media (max-width: 480px) {
@@ -470,5 +640,18 @@ h1:focus {
     .categorias-scroll {
         gap: 10px;
         padding: 5px 10px;
+    }
+
+    .subcategorias-scroll {
+        gap: 6px !important;
+        padding: 4px 10px !important;
+    }
+
+    .subcategoria-item {
+        padding: 4px 10px !important;
+    }
+
+    .subcategoria-item span {
+        font-size: 0.7rem !important;
     }
 }

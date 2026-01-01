@@ -46,15 +46,31 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label>Categoria</label>
-                <InputSelect class="form-select" @bind-Value="produto.CategoriaId">
-                    <option value="0">(Selecionar)</option>
-                    @foreach (var cat in categorias)
-                    {
-                        <option value="@cat.Id">@cat.Nome</option>
-                    }
-                </InputSelect>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label>Categoria</label>
+                        <select class="form-select" @onchange="OnCategoriaChanged">
+                            <option value="0">(Selecionar)</option>
+                            @foreach (var cat in categorias)
+                            {
+                                <option value="@cat.Id">@cat.Nome</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label>Subcategoria <small class="text-muted">(opcional)</small></label>
+                        <select class="form-select" @bind="subcategoriaIdSelecionada" disabled="@(produto.CategoriaId == 0)">
+                            <option value="">-- Nenhuma --</option>
+                            @foreach (var s in subcategoriasFiltradas)
+                            {
+                                <option value="@s.Id">@s.Nome</option>
+                            }
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <div class="mb-3">
@@ -125,23 +141,43 @@
     };
 
     List<Categorias> categorias = new();
+    List<Subcategoria> todasSubcategorias = new();
+    List<Subcategoria> subcategoriasFiltradas = new();
     List<ModoEntrega> modos = new();
     List<Fornecedor> fornecedores = new();
+    
+    string subcategoriaIdSelecionada = "";
     
     IBrowserFile? ficheiroImagem;
     string? previewImagem;
     string? mensagemErro;
     bool aGuardar = false;
-    
-    // Buffer para guardar os bytes da imagem
     byte[]? imagemBytes;
 
     protected override void OnInitialized()
     {
         categorias = db.Categorias.OrderBy(c => c.Nome).ToList();
+        todasSubcategorias = db.Subcategorias.OrderBy(s => s.Nome).ToList();
         modos = db.ModosEntrega.OrderBy(m => m.Tipo).ToList();
         fornecedores = db.Fornecedores
             .Where(f => f.Estado == "Aprovado")
+            .ToList();
+    }
+
+    void OnCategoriaChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int catId))
+        {
+            produto.CategoriaId = catId;
+            FiltrarSubcategorias();
+            subcategoriaIdSelecionada = "";
+        }
+    }
+
+    void FiltrarSubcategorias()
+    {
+        subcategoriasFiltradas = todasSubcategorias
+            .Where(s => s.CategoriaId == produto.CategoriaId)
             .ToList();
     }
 
@@ -211,6 +247,11 @@
 
         try
         {
+            // Atualizar subcategoria
+            produto.SubcategoriaId = string.IsNullOrEmpty(subcategoriaIdSelecionada) 
+                ? null 
+                : int.Parse(subcategoriaIdSelecionada);
+
             // Guardar imagem se foi selecionada
             if (imagemBytes != null && ficheiroImagem != null)
             {

@@ -1,0 +1,143 @@
+@page "/subcategorias"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrador,Funcionário")]
+@inject ApplicationDbContext db
+@inject NavigationManager nav
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
+
+<h3>Subcategorias</h3>
+
+<AuthorizeView Roles="Administrador,Funcionário">
+    <button class="btn btn-primary btn-sm mb-3" @onclick="Criar">
+        Nova Subcategoria
+    </button>
+</AuthorizeView>
+
+<!-- Filtro por Categoria -->
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <label class="form-label small mb-1">Filtrar por Categoria:</label>
+                <select class="form-select form-select-sm" @onchange="FiltrarPorCategoria">
+                    <option value="">Todas as categorias</option>
+                    @foreach (var cat in categorias)
+                    {
+                        <option value="@cat.Id">@cat.Nome</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (subcategorias is null)
+{
+    <p>A carregar...</p>
+}
+else if (!subcategorias.Any())
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        Nenhuma subcategoria encontrada. Clique em "Nova Subcategoria" para criar.
+    </div>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Imagem</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th style="width:180px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in subcategorias)
+            {
+                <tr>
+                    <td>@s.Id</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(s.Imagem))
+                        {
+                            <img src="img/@s.Imagem" width="50" height="50" style="object-fit:cover" />
+                        }
+                    </td>
+                    <td>@s.Nome</td>
+                    <td>
+                        <span class="badge bg-primary">@s.Categoria?.Nome</span>
+                    </td>
+                    <td>
+                        <AuthorizeView Roles="Administrador,Funcionário">
+                            <button class="btn btn-sm btn-warning me-1" @onclick="() => Editar(s.Id)">
+                                Editar
+                            </button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => Apagar(s)">
+                                Apagar
+                            </button>
+                        </AuthorizeView>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Subcategoria>? subcategorias;
+    List<Categorias> categorias = new();
+    int? filtroCategoria = null;
+
+    protected override void OnInitialized()
+    {
+        categorias = db.Categorias.OrderBy(c => c.Nome).ToList();
+        CarregarDados();
+    }
+
+    void CarregarDados()
+    {
+        var query = db.Subcategorias
+            .Include(s => s.Categoria)
+            .AsQueryable();
+
+        if (filtroCategoria.HasValue)
+        {
+            query = query.Where(s => s.CategoriaId == filtroCategoria.Value);
+        }
+
+        subcategorias = query.OrderBy(s => s.Categoria!.Nome).ThenBy(s => s.Nome).ToList();
+    }
+
+    void FiltrarPorCategoria(ChangeEventArgs e)
+    {
+        var valor = e.Value?.ToString();
+        filtroCategoria = string.IsNullOrEmpty(valor) ? null : int.Parse(valor);
+        CarregarDados();
+    }
+
+    void Criar() => nav.NavigateTo("/subcategorias/criar");
+
+    void Editar(int id) => nav.NavigateTo($"/subcategorias/editar/{id}");
+
+    private void Apagar(Subcategoria subcategoria)
+    {
+        // Verificar se existem produtos associados
+        var temProdutos = db.Produtos.Any(p => p.SubcategoriaId == subcategoria.Id);
+        if (temProdutos)
+        {
+            // Remover a associação dos produtos com esta subcategoria
+            var produtos = db.Produtos.Where(p => p.SubcategoriaId == subcategoria.Id).ToList();
+            foreach (var p in produtos)
+            {
+                p.SubcategoriaId = null;
+            }
+        }
+
+        db.Subcategorias.Remove(subcategoria);
+        db.SaveChanges();
+        CarregarDados();
+    }
+}

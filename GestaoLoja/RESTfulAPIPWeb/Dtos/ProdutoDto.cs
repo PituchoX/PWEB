@@ -12,6 +12,8 @@ namespace RESTfulAPIPWeb.Dtos
         public string Imagem { get; set; } = "semfoto.png";
         public int CategoriaId { get; set; }
         public string? CategoriaNome { get; set; }
+        public int? SubcategoriaId { get; set; }
+        public string? SubcategoriaNome { get; set; }
         public int ModoEntregaId { get; set; }
         public string? ModoEntregaNome { get; set; }
         public int FornecedorId { get; set; }
@@ -27,6 +29,7 @@ namespace RESTfulAPIPWeb.Dtos
         public int Stock { get; set; }
         public string Imagem { get; set; } = "semfoto.png";
         public int CategoriaId { get; set; }
+        public int? SubcategoriaId { get; set; }
         public int ModoEntregaId { get; set; }
         public int FornecedorId { get; set; }
     }
@@ -41,6 +44,7 @@ namespace RESTfulAPIPWeb.Dtos
         public int Stock { get; set; }
         public string Imagem { get; set; } = "semfoto.png";
         public int CategoriaId { get; set; }
+        public int? SubcategoriaId { get; set; }
         public int ModoEntregaId { get; set; }
         public int FornecedorId { get; set; }
     }

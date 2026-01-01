@@ -20,6 +20,10 @@
         public int CategoriaId { get; set; }
         public Categoria? Categoria { get; set; }
 
+        // Subcategoria (opcional)
+        public int? SubcategoriaId { get; set; }
+        public Subcategoria? Subcategoria { get; set; }
+
         // Relação com Modo de Entrega
         public int ModoEntregaId { get; set; }
         public ModoEntrega? ModoEntrega { get; set; }

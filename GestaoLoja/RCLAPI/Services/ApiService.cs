@@ -334,6 +334,45 @@ namespace RCLAPI.Services
             }
         }
 
+        // ==================== SUBCATEGORIAS ====================
+        public async Task<List<SubcategoriaDto>> GetSubcategoriasAsync()
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<SubcategoriaDto>>("api/subcategorias");
+                return result ?? new List<SubcategoriaDto>();
+            }
+            catch
+            {
+                return new List<SubcategoriaDto>();
+            }
+        }
+
+        public async Task<List<SubcategoriaDto>> GetSubcategoriasPorCategoriaAsync(int categoriaId)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<SubcategoriaDto>>($"api/subcategorias/categoria/{categoriaId}");
+                return result ?? new List<SubcategoriaDto>();
+            }
+            catch
+            {
+                return new List<SubcategoriaDto>();
+            }
+        }
+
+        public async Task<SubcategoriaDto?> GetSubcategoriaAsync(int id)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<SubcategoriaDto>($"api/subcategorias/{id}");
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         // ==================== PRODUTOS ====================
         public async Task<List<ProdutoDto>> GetProdutosAsync()
         {
@@ -366,6 +405,19 @@ namespace RCLAPI.Services
             try
             {
                 var result = await _httpClient.GetFromJsonAsync<List<ProdutoDto>>($"api/produtos/categoria/{categoriaId}");
+                return result ?? new List<ProdutoDto>();
+            }
+            catch
+            {
+                return new List<ProdutoDto>();
+            }
+        }
+
+        public async Task<List<ProdutoDto>> GetProdutosPorSubcategoriaAsync(int subcategoriaId)
+        {
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<ProdutoDto>>($"api/produtos/subcategoria/{subcategoriaId}");
                 return result ?? new List<ProdutoDto>();
             }
             catch

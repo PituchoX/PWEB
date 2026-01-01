@@ -22,14 +22,35 @@
             {
                 <div class="categoria-item @(categoriaSelecionada?.Id == cat.Id ? "active" : "")" 
                      @onclick="() => SelecionarCategoria(cat)">
-                    <img src="@GetImagemUrl(cat.Imagem)" alt="@cat.Nome" 
-                         onerror="this.src='img/noproductstrans.png'" />
+                    <img src="@GetImagemCategoriaUrl(cat.Imagem)" 
+                         alt="@cat.Nome"
+                         loading="lazy" />
                     <span>@cat.Nome</span>
                 </div>
             }
         }
     </div>
 </div>
+
+<!-- SLIDER DE SUBCATEGORIAS (aparece quando uma categoria está selecionada) -->
+@if (categoriaSelecionada != null && subcategorias != null && subcategorias.Any())
+{
+    <div class="subcategorias-slider">
+        <div class="subcategorias-scroll">
+            <div class="subcategoria-item @(subcategoriaSelecionada == null ? "active" : "")" 
+                 @onclick="LimparSubcategoria">
+                <span>Todas</span>
+            </div>
+            @foreach (var sub in subcategorias)
+            {
+                <div class="subcategoria-item @(subcategoriaSelecionada?.Id == sub.Id ? "active" : "")" 
+                     @onclick="() => SelecionarSubcategoria(sub)">
+                    <span>@sub.Nome</span>
+                </div>
+            }
+        </div>
+    </div>
+}
 
 <div class="container-fluid py-3">
     <!-- PRODUTO DESTAQUE MOBILE (só aparece em mobile) -->
@@ -44,11 +65,15 @@
                     <div class="d-flex align-items-center">
                         <img src="@GetImagemUrl(produtoDestaque.Imagem)" alt="@produtoDestaque.Nome" 
                              class="destaque-mobile-img me-3"
-                             onerror="this.src='img/noproductstrans.png'"
+                             loading="lazy"
                              @onclick="() => VerProduto(produtoDestaque.Id)" />
                         <div class="flex-grow-1">
                             <h6 class="mb-1 text-truncate" style="color: #2a0a5e;">@produtoDestaque.Nome</h6>
                             <small class="text-muted">@produtoDestaque.CategoriaNome</small>
+                            @if (!string.IsNullOrEmpty(produtoDestaque.SubcategoriaNome))
+                            {
+                                <small class="text-muted"> / @produtoDestaque.SubcategoriaNome</small>
+                            }
                             <div class="d-flex justify-content-between align-items-center mt-2">
                                 <strong class="text-primary">@produtoDestaque.PrecoFinal.ToString("0.00") €</strong>
                                 <button class="btn btn-warning btn-sm" @onclick="() => AdicionarAoCarrinho(produtoDestaque)">
@@ -70,7 +95,12 @@
                 @if (categoriaSelecionada != null)
                 {
                     <span>@categoriaSelecionada.Nome</span>
-                    <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="LimparCategoria">
+                    @if (subcategoriaSelecionada != null)
+                    {
+                        <span class="text-muted mx-1">/</span>
+                        <span>@subcategoriaSelecionada.Nome</span>
+                    }
+                    <button class="btn btn-sm btn-outline-secondary ms-2" @onclick="LimparFiltros">
                         <i class="bi bi-x"></i> Limpar filtro
                     </button>
                 }
@@ -98,11 +128,17 @@
                     {
                         <div class="produto-card">
                             <img src="@GetImagemUrl(prod.Imagem)" alt="@prod.Nome" 
-                                 onerror="this.src='img/noproductstrans.png'"
+                                 loading="lazy"
                                  @onclick="() => VerProduto(prod.Id)" />
                             <div class="info">
                                 <div class="nome" title="@prod.Nome">@prod.Nome</div>
-                                <div class="categoria">@prod.CategoriaNome</div>
+                                <div class="categoria">
+                                    @prod.CategoriaNome
+                                    @if (!string.IsNullOrEmpty(prod.SubcategoriaNome))
+                                    {
+                                        <span> / @prod.SubcategoriaNome</span>
+                                    }
+                                </div>
                                 <div class="preco">@prod.PrecoFinal.ToString("0.00") €</div>
                             </div>
                             @if (prod.Stock > 0)
@@ -131,10 +167,16 @@
                 {
                     <div class="destaque-content">
                         <img src="@GetImagemUrl(produtoDestaque.Imagem)" alt="@produtoDestaque.Nome" 
-                             onerror="this.src='img/noproductstrans.png'"
+                             loading="lazy"
                              @onclick="() => VerProduto(produtoDestaque.Id)" />
                         <h5>@produtoDestaque.Nome</h5>
-                        <p class="categoria">@produtoDestaque.CategoriaNome</p>
+                        <p class="categoria">
+                            @produtoDestaque.CategoriaNome
+                            @if (!string.IsNullOrEmpty(produtoDestaque.SubcategoriaNome))
+                            {
+                                <span> / @produtoDestaque.SubcategoriaNome</span>
+                            }
+                        </p>
                         <p class="preco">@produtoDestaque.PrecoFinal.ToString("0.00") €</p>
                         <button class="btn btn-warning w-100" @onclick="() => AdicionarAoCarrinho(produtoDestaque)">
                             <i class="bi bi-cart-plus me-1"></i> Adicionar ao Carrinho
@@ -155,10 +197,12 @@
 
 @code {
     private List<CategoriaDto>? categorias;
+    private List<SubcategoriaDto>? subcategorias;
     private List<ProdutoDto>? todosProdutos;
     private List<ProdutoDto>? produtosVisiveis;
     private ProdutoDto? produtoDestaque;
     private CategoriaDto? categoriaSelecionada;
+    private SubcategoriaDto? subcategoriaSelecionada;
 
     protected override async Task OnInitializedAsync()
     {
@@ -184,21 +228,65 @@
         return Api.GetImageUrl(imagem);
     }
 
+    private string GetImagemCategoriaUrl(string? imagem)
+    {
+        // Se não há imagem, usa placeholder local
+        if (string.IsNullOrEmpty(imagem))
+            return "img/noproductstrans.png";
+        
+        // Se já é URL completa
+        if (imagem.StartsWith("http"))
+            return imagem;
+        
+        // Tenta carregar da API
+        var url = Api.GetImageUrl(imagem);
+        return !string.IsNullOrEmpty(url) ? url : "img/noproductstrans.png";
+    }
+
     private async Task SelecionarCategoria(CategoriaDto categoria)
     {
         if (categoriaSelecionada?.Id == categoria.Id)
         {
-            LimparCategoria();
+            LimparFiltros();
             return;
         }
         
         categoriaSelecionada = categoria;
+        subcategoriaSelecionada = null;
+        
+        // Carregar subcategorias desta categoria
+        subcategorias = await Api.GetSubcategoriasPorCategoriaAsync(categoria.Id);
+        
+        // Filtrar produtos por categoria
         produtosVisiveis = await Api.GetProdutosPorCategoriaAsync(categoria.Id);
     }
 
-    private void LimparCategoria()
+    private async Task SelecionarSubcategoria(SubcategoriaDto subcategoria)
+    {
+        if (subcategoriaSelecionada?.Id == subcategoria.Id)
+        {
+            await LimparSubcategoria();
+            return;
+        }
+        
+        subcategoriaSelecionada = subcategoria;
+        produtosVisiveis = await Api.GetProdutosPorSubcategoriaAsync(subcategoria.Id);
+    }
+
+    private async Task LimparSubcategoria()
+    {
+        subcategoriaSelecionada = null;
+        if (categoriaSelecionada != null)
+        {
+            produtosVisiveis = await Api.GetProdutosPorCategoriaAsync(categoriaSelecionada.Id);
+        }
+    }
+
+    private void LimparFiltros()
     {
         categoriaSelecionada = null;
+        subcategoriaSelecionada = null;
+        subcategorias = null;
         produtosVisiveis = todosProdutos;
     }
 

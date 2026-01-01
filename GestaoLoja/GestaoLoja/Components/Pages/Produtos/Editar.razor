@@ -53,14 +53,30 @@ else
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label>Categoria</label>
-                    <InputSelect class="form-select" @bind-Value="produto.CategoriaId">
-                        @foreach (var c in categorias)
-                        {
-                            <option value="@c.Id">@c.Nome</option>
-                        }
-                    </InputSelect>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Categoria</label>
+                            <InputSelect class="form-select" @bind-Value="produto.CategoriaId" @oninput="OnCategoriaChanged">
+                                @foreach (var c in categorias)
+                                {
+                                    <option value="@c.Id">@c.Nome</option>
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Subcategoria <small class="text-muted">(opcional)</small></label>
+                            <select class="form-select" @bind="subcategoriaIdSelecionada">
+                                <option value="">-- Nenhuma --</option>
+                                @foreach (var s in subcategoriasFiltradas)
+                                {
+                                    <option value="@s.Id">@s.Nome</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -133,30 +149,63 @@ else
 
     Produtos? produto;
     List<Categorias> categorias = new();
+    List<Subcategoria> todasSubcategorias = new();
+    List<Subcategoria> subcategoriasFiltradas = new();
     List<ModoEntrega> modos = new();
     List<Fornecedor> fornecedores = new();
+    
+    string subcategoriaIdSelecionada = "";
     
     IBrowserFile? ficheiroImagem;
     string? previewImagem;
     string? mensagemErro;
     bool aGuardar = false;
-    
-    // Buffer para guardar os bytes da imagem
     byte[]? imagemBytes;
 
     protected override void OnInitialized()
     {
         produto = db.Produtos
             .Include(p => p.Categoria)
+            .Include(p => p.Subcategoria)
             .Include(p => p.ModoEntrega)
             .Include(p => p.Fornecedor)
             .FirstOrDefault(p => p.Id == id);
 
         categorias = db.Categorias.OrderBy(c => c.Nome).ToList();
+        todasSubcategorias = db.Subcategorias.OrderBy(s => s.Nome).ToList();
         modos = db.ModosEntrega.OrderBy(m => m.Tipo).ToList();
         fornecedores = db.Fornecedores
             .Where(f => f.Estado == "Aprovado")
             .ToList();
+
+        if (produto != null)
+        {
+            subcategoriaIdSelecionada = produto.SubcategoriaId?.ToString() ?? "";
+            FiltrarSubcategorias();
+        }
+    }
+
+    void OnCategoriaChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int catId))
+        {
+            if (produto != null)
+            {
+                produto.CategoriaId = catId;
+            }
+        }
+        FiltrarSubcategorias();
+        subcategoriaIdSelecionada = "";
+    }
+
+    void FiltrarSubcategorias()
+    {
+        if (produto != null)
+        {
+            subcategoriasFiltradas = todasSubcategorias
+                .Where(s => s.CategoriaId == produto.CategoriaId)
+                .ToList();
+        }
     }
 
     async Task OnImagemSelecionada(InputFileChangeEventArgs e)
@@ -215,6 +264,11 @@ else
 
         try
         {
+            // Atualizar subcategoria
+            produto.SubcategoriaId = string.IsNullOrEmpty(subcategoriaIdSelecionada) 
+                ? null 
+                : int.Parse(subcategoriaIdSelecionada);
+
             // Guardar nova imagem se foi selecionada
             if (imagemBytes != null && ficheiroImagem != null)
             {

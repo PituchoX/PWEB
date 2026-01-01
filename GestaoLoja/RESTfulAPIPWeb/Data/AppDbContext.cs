@@ -13,6 +13,7 @@ namespace RESTfulAPIPWeb.Data
 
         // DbSets - nomes das tabelas correspondem à BD do GestaoLoja
         public DbSet<Categoria> Categorias { get; set; } = default!;
+        public DbSet<Subcategoria> Subcategorias { get; set; } = default!;
         public DbSet<Produto> Produtos { get; set; } = default!;
         public DbSet<ModoEntrega> ModosEntrega { get; set; } = default!;
         public DbSet<Cliente> Clientes { get; set; } = default!;
@@ -39,6 +40,20 @@ namespace RESTfulAPIPWeb.Data
                 .HasOne(p => p.Categoria)
                 .WithMany(c => c.Produtos)
                 .HasForeignKey(p => p.CategoriaId);
+
+            // Configurar relação Subcategoria -> Categoria
+            builder.Entity<Subcategoria>()
+                .HasOne(s => s.Categoria)
+                .WithMany(c => c.Subcategorias)
+                .HasForeignKey(s => s.CategoriaId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Configurar relação Produto -> Subcategoria (opcional)
+            builder.Entity<Produto>()
+                .HasOne(p => p.Subcategoria)
+                .WithMany(s => s.Produtos)
+                .HasForeignKey(p => p.SubcategoriaId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.Entity<Produto>()
                 .HasOne(p => p.Fornecedor)

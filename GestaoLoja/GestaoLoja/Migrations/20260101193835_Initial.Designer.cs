@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestaoLoja.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260101172048_Initial")]
+    [Migration("20260101193835_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -273,6 +273,9 @@ namespace GestaoLoja.Migrations
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
+                    b.Property<int?>("SubcategoriaId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoriaId");
@@ -281,7 +284,34 @@ namespace GestaoLoja.Migrations
 
                     b.HasIndex("ModoEntregaId");
 
+                    b.HasIndex("SubcategoriaId");
+
                     b.ToTable("Produtos");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.Subcategoria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoriaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Imagem")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoriaId");
+
+                    b.ToTable("Subcategorias");
                 });
 
             modelBuilder.Entity("GestaoLoja.Entities.Vendas", b =>
@@ -485,26 +515,44 @@ namespace GestaoLoja.Migrations
                     b.HasOne("GestaoLoja.Entities.Categorias", "Categoria")
                         .WithMany("Produtos")
                         .HasForeignKey("CategoriaId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("GestaoLoja.Entities.Fornecedor", "Fornecedor")
                         .WithMany("Produtos")
                         .HasForeignKey("FornecedorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("GestaoLoja.Entities.ModoEntrega", "ModoEntrega")
                         .WithMany("Produtos")
                         .HasForeignKey("ModoEntregaId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("GestaoLoja.Entities.Subcategoria", "Subcategoria")
+                        .WithMany("Produtos")
+                        .HasForeignKey("SubcategoriaId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Categoria");
 
                     b.Navigation("Fornecedor");
 
                     b.Navigation("ModoEntrega");
+
+                    b.Navigation("Subcategoria");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.Subcategoria", b =>
+                {
+                    b.HasOne("GestaoLoja.Entities.Categorias", "Categoria")
+                        .WithMany("Subcategorias")
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Categoria");
                 });
 
             modelBuilder.Entity("GestaoLoja.Entities.Vendas", b =>
@@ -579,6 +627,8 @@ namespace GestaoLoja.Migrations
             modelBuilder.Entity("GestaoLoja.Entities.Categorias", b =>
                 {
                     b.Navigation("Produtos");
+
+                    b.Navigation("Subcategorias");
                 });
 
             modelBuilder.Entity("GestaoLoja.Entities.Cliente", b =>
@@ -592,6 +642,11 @@ namespace GestaoLoja.Migrations
                 });
 
             modelBuilder.Entity("GestaoLoja.Entities.ModoEntrega", b =>
+                {
+                    b.Navigation("Produtos");
+                });
+
+            modelBuilder.Entity("GestaoLoja.Entities.Subcategoria", b =>
                 {
                     b.Navigation("Produtos");
                 });

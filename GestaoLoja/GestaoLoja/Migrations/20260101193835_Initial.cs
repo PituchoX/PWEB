@@ -231,6 +231,27 @@ namespace GestaoLoja.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Subcategorias",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Imagem = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CategoriaId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subcategorias", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Subcategorias_Categorias_CategoriaId",
+                        column: x => x.CategoriaId,
+                        principalTable: "Categorias",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Vendas",
                 columns: table => new
                 {
@@ -265,6 +286,7 @@ namespace GestaoLoja.Migrations
                     Stock = table.Column<int>(type: "int", nullable: false),
                     Imagem = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CategoriaId = table.Column<int>(type: "int", nullable: false),
+                    SubcategoriaId = table.Column<int>(type: "int", nullable: true),
                     ModoEntregaId = table.Column<int>(type: "int", nullable: false),
                     FornecedorId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -276,19 +298,25 @@ namespace GestaoLoja.Migrations
                         column: x => x.CategoriaId,
                         principalTable: "Categorias",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Produtos_Fornecedores_FornecedorId",
                         column: x => x.FornecedorId,
                         principalTable: "Fornecedores",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Produtos_ModosEntrega_ModoEntregaId",
                         column: x => x.ModoEntregaId,
                         principalTable: "ModosEntrega",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Produtos_Subcategorias_SubcategoriaId",
+                        column: x => x.SubcategoriaId,
+                        principalTable: "Subcategorias",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -394,6 +422,16 @@ namespace GestaoLoja.Migrations
                 column: "ModoEntregaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Produtos_SubcategoriaId",
+                table: "Produtos",
+                column: "SubcategoriaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subcategorias_CategoriaId",
+                table: "Subcategorias",
+                column: "CategoriaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Vendas_ClienteId",
                 table: "Vendas",
                 column: "ClienteId");
@@ -430,16 +468,19 @@ namespace GestaoLoja.Migrations
                 name: "Vendas");
 
             migrationBuilder.DropTable(
-                name: "Categorias");
-
-            migrationBuilder.DropTable(
                 name: "Fornecedores");
 
             migrationBuilder.DropTable(
                 name: "ModosEntrega");
 
             migrationBuilder.DropTable(
+                name: "Subcategorias");
+
+            migrationBuilder.DropTable(
                 name: "Clientes");
+
+            migrationBuilder.DropTable(
+                name: "Categorias");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

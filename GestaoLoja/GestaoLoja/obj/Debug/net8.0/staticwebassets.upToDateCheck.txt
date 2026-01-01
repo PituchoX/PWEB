@@ -126,6 +126,7 @@ wwwroot\img\pngegg.png
 wwwroot\img\prod_050d4b04122e4a168048f6ae100e988e.png
 wwwroot\img\prod_549588eb3de6400e83f2fc4a0d5730b4.jpeg
 wwwroot\img\prod_5bc00ba6ae2b4dc5a22adbd85e54059c.png
+wwwroot\img\prod_608f3b83b6bd4fbeae7c7609452d479d.jpg
 wwwroot\img\prod_6c6b284624a8493fa9f7e973148e32f1.png
 wwwroot\img\prod_8fa9f231c7794b2e863da144c913d81c.jpeg
 wwwroot\img\prod_9249edbea4514ca9a581262509b1b18e.png

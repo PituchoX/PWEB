@@ -30,10 +30,15 @@ namespace RESTfulAPIPWeb.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetProdutos()
         {
-            var produtos = await _repo.GetAllAsync();
-            var produtosVisiveis = produtos.Where(p => p.Estado == "Ativo");
+            var produtos = await _context.Produtos
+                .Where(p => p.Estado == "Ativo")
+                .Include(p => p.Categoria)
+                .Include(p => p.Subcategoria)
+                .Include(p => p.ModoEntrega)
+                .Include(p => p.Fornecedor)
+                .ToListAsync();
 
-            var result = produtosVisiveis.Select(p => new ProdutoDto
+            var result = produtos.Select(p => new ProdutoDto
             {
                 Id = p.Id,
                 Nome = p.Nome,
@@ -45,6 +50,8 @@ namespace RESTfulAPIPWeb.Controllers
                 Imagem = p.Imagem,
                 CategoriaId = p.CategoriaId,
                 CategoriaNome = p.Categoria?.Nome,
+                SubcategoriaId = p.SubcategoriaId,
+                SubcategoriaNome = p.Subcategoria?.Nome,
                 ModoEntregaId = p.ModoEntregaId,
                 ModoEntregaNome = p.ModoEntrega?.Nome,
                 FornecedorId = p.FornecedorId,
@@ -69,8 +76,10 @@ namespace RESTfulAPIPWeb.Controllers
             var produtos = await _context.Produtos
                 .Where(p => p.Estado == "Ativo" && 
                     (p.Nome.ToLower().Contains(termoLower) || 
-                     (p.Categoria != null && p.Categoria.Nome.ToLower().Contains(termoLower))))
+                     (p.Categoria != null && p.Categoria.Nome.ToLower().Contains(termoLower)) ||
+                     (p.Subcategoria != null && p.Subcategoria.Nome.ToLower().Contains(termoLower))))
                 .Include(p => p.Categoria)
+                .Include(p => p.Subcategoria)
                 .Include(p => p.ModoEntrega)
                 .Include(p => p.Fornecedor)
                 .ToListAsync();
@@ -87,6 +96,8 @@ namespace RESTfulAPIPWeb.Controllers
                 Imagem = p.Imagem,
                 CategoriaId = p.CategoriaId,
                 CategoriaNome = p.Categoria?.Nome,
+                SubcategoriaId = p.SubcategoriaId,
+                SubcategoriaNome = p.Subcategoria?.Nome,
                 ModoEntregaId = p.ModoEntregaId,
                 ModoEntregaNome = p.ModoEntrega?.Nome,
                 FornecedorId = p.FornecedorId,
@@ -106,6 +117,7 @@ namespace RESTfulAPIPWeb.Controllers
             var produtos = await _context.Produtos
                 .Where(p => p.CategoriaId == categoriaId && p.Estado == "Ativo")
                 .Include(p => p.Categoria)
+                .Include(p => p.Subcategoria)
                 .Include(p => p.ModoEntrega)
                 .Include(p => p.Fornecedor)
                 .ToListAsync();
@@ -122,6 +134,46 @@ namespace RESTfulAPIPWeb.Controllers
                 Imagem = p.Imagem,
                 CategoriaId = p.CategoriaId,
                 CategoriaNome = p.Categoria?.Nome,
+                SubcategoriaId = p.SubcategoriaId,
+                SubcategoriaNome = p.Subcategoria?.Nome,
+                ModoEntregaId = p.ModoEntregaId,
+                ModoEntregaNome = p.ModoEntrega?.Nome,
+                FornecedorId = p.FornecedorId,
+                FornecedorNome = p.Fornecedor?.NomeEmpresa
+            });
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Lista produtos por subcategoria
+        /// </summary>
+        [HttpGet("subcategoria/{subcategoriaId}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetProdutosPorSubcategoria(int subcategoriaId)
+        {
+            var produtos = await _context.Produtos
+                .Where(p => p.SubcategoriaId == subcategoriaId && p.Estado == "Ativo")
+                .Include(p => p.Categoria)
+                .Include(p => p.Subcategoria)
+                .Include(p => p.ModoEntrega)
+                .Include(p => p.Fornecedor)
+                .ToListAsync();
+
+            var result = produtos.Select(p => new ProdutoDto
+            {
+                Id = p.Id,
+                Nome = p.Nome,
+                PrecoBase = p.PrecoBase,
+                Percentagem = p.Percentagem,
+                PrecoFinal = p.PrecoFinal,
+                Estado = p.Estado,
+                Stock = p.Stock,
+                Imagem = p.Imagem,
+                CategoriaId = p.CategoriaId,
+                CategoriaNome = p.Categoria?.Nome,
+                SubcategoriaId = p.SubcategoriaId,
+                SubcategoriaNome = p.Subcategoria?.Nome,
                 ModoEntregaId = p.ModoEntregaId,
                 ModoEntregaNome = p.ModoEntrega?.Nome,
                 FornecedorId = p.FornecedorId,
@@ -141,6 +193,7 @@ namespace RESTfulAPIPWeb.Controllers
             var produtos = await _context.Produtos
                 .Where(p => p.Estado == "Ativo" && p.Stock > 0)
                 .Include(p => p.Categoria)
+                .Include(p => p.Subcategoria)
                 .Include(p => p.ModoEntrega)
                 .Include(p => p.Fornecedor)
                 .ToListAsync();
@@ -163,6 +216,8 @@ namespace RESTfulAPIPWeb.Controllers
                 Imagem = p.Imagem,
                 CategoriaId = p.CategoriaId,
                 CategoriaNome = p.Categoria?.Nome,
+                SubcategoriaId = p.SubcategoriaId,
+                SubcategoriaNome = p.Subcategoria?.Nome,
                 ModoEntregaId = p.ModoEntregaId,
                 ModoEntregaNome = p.ModoEntrega?.Nome,
                 FornecedorId = p.FornecedorId,
@@ -177,7 +232,13 @@ namespace RESTfulAPIPWeb.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<ProdutoDto>> GetProduto(int id)
         {
-            var p = await _repo.GetByIdAsync(id);
+            var p = await _context.Produtos
+                .Include(p => p.Categoria)
+                .Include(p => p.Subcategoria)
+                .Include(p => p.ModoEntrega)
+                .Include(p => p.Fornecedor)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
             if (p == null) return NotFound();
 
             if (p.Estado != "Ativo")
@@ -195,6 +256,8 @@ namespace RESTfulAPIPWeb.Controllers
                 Imagem = p.Imagem,
                 CategoriaId = p.CategoriaId,
                 CategoriaNome = p.Categoria?.Nome,
+                SubcategoriaId = p.SubcategoriaId,
+                SubcategoriaNome = p.Subcategoria?.Nome,
                 ModoEntregaId = p.ModoEntregaId,
                 ModoEntregaNome = p.ModoEntrega?.Nome,
                 FornecedorId = p.FornecedorId,

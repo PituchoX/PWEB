@@ -26,7 +26,7 @@
     </div>
     <div class="card-body">
         <div class="row g-3">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Estado:</label>
                 <select class="form-select" @onchange="FiltrarEstado">
                     <option value="">Todos os estados</option>
@@ -35,7 +35,7 @@
                     <option value="Inativo">Inativo</option>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Categoria:</label>
                 <select class="form-select" @onchange="FiltrarCategoria">
                     <option value="">Todas as categorias</option>
@@ -48,18 +48,28 @@
                     }
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <label class="form-label">Subcategoria:</label>
+                <select class="form-select" @onchange="FiltrarSubcategoria" disabled="@(!filtroCategoria.HasValue)">
+                    <option value="">Todas</option>
+                    @foreach (var sub in subcategoriasFiltradas)
+                    {
+                        <option value="@sub.Id">@sub.Nome</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
                 <label class="form-label">Ordenar por:</label>
                 <select class="form-select" @onchange="OrdenarPor">
                     <option value="nome">Nome (A-Z)</option>
                     <option value="nome_desc">Nome (Z-A)</option>
-                    <option value="preco">Preco (menor)</option>
-                    <option value="preco_desc">Preco (maior)</option>
+                    <option value="preco">Preço (menor)</option>
+                    <option value="preco_desc">Preço (maior)</option>
                     <option value="stock">Stock (menor)</option>
                     <option value="stock_desc">Stock (maior)</option>
                 </select>
             </div>
-            <div class="col-md-3 d-flex align-items-end">
+            <div class="col-md-2 d-flex align-items-end">
                 <button class="btn btn-outline-secondary w-100" @onclick="LimparFiltros">
                     Limpar Filtros
                 </button>
@@ -82,110 +92,105 @@ else
         <small>A mostrar @produtosPaginados.Count de @produtos.Count produtos</small>
     </div>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Imagem</th>
-                <th>Nome</th>
-                <th>Categoria</th>
-                <th>Fornecedor</th>
-                <th>Preco Base</th>
-                <th>Percentagem</th>
-                <th>Preco Final</th>
-                <th>Stock</th>
-                <th>Estado</th>
-                <th>Modo de Entrega</th>
-                <th style="width: 220px;">Acoes</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var p in produtosPaginados)
-            {
+    <div class="table-responsive">
+        <table class="table table-striped table-sm">
+            <thead>
                 <tr>
-                    <td>@p.Id</td>
-                    <td><img src="img/@p.Imagem" width="60" class="img-thumbnail" /></td>
-                    <td>@p.Nome</td>
-                    <td>@p.Categoria?.Nome</td>
-                    <td>@p.Fornecedor?.NomeEmpresa</td>
-                    <td>@p.PrecoBase EUR</td>
-                    <td>@p.Percentagem %</td>
-                    <td>@p.PrecoFinal EUR</td>
-                    <td>
-                        @if (p.Stock <= 5)
-                        {
-                            <span class="badge bg-danger">@p.Stock</span>
-                        }
-                        else if (p.Stock <= 20)
-                        {
-                            <span class="badge bg-warning text-dark">@p.Stock</span>
-                        }
-                        else
-                        {
-                            <span>@p.Stock</span>
-                        }
-                    </td>
-
-                    <td>
-                        @if (p.Estado == "Ativo")
-                        {
-                            <span class="badge bg-success">Ativo</span>
-                        }
-                        else if (p.Estado == "Pendente")
-                        {
-                            <span class="badge bg-warning">Pendente</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">Inativo</span>
-                        }
-                    </td>
-
-                    <td>@p.ModoEntrega?.Tipo</td>
-
-                    <td>
-                        <AuthorizeView Roles="Administrador,Funcionário">
-                            @if (p.Estado == "Pendente")
+                    <th>Id</th>
+                    <th>Imagem</th>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Subcategoria</th>
+                    <th>Fornecedor</th>
+                    <th>Preço Base</th>
+                    <th>%</th>
+                    <th>Preço Final</th>
+                    <th>Stock</th>
+                    <th>Estado</th>
+                    <th style="width: 200px;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in produtosPaginados)
+                {
+                    <tr>
+                        <td>@p.Id</td>
+                        <td><img src="img/@p.Imagem" width="50" class="img-thumbnail" /></td>
+                        <td>@p.Nome</td>
+                        <td>@p.Categoria?.Nome</td>
+                        <td>
+                            @if (p.Subcategoria != null)
                             {
-                                <button class="btn btn-success btn-sm me-1"
-                                        @onclick="() => Aprovar(p)">
-                                    Aprovar
-                                </button>
+                                <span>@p.Subcategoria.Nome</span>
                             }
-
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>@p.Fornecedor?.NomeEmpresa</td>
+                        <td>@p.PrecoBase.ToString("0.00") €</td>
+                        <td>@p.Percentagem.ToString("0.00")%</td>
+                        <td><strong>@p.PrecoFinal.ToString("0.00") €</strong></td>
+                        <td>
+                            @if (p.Stock <= 5)
+                            {
+                                <span class="badge bg-danger">@p.Stock</span>
+                            }
+                            else
+                            {
+                                <span>@p.Stock</span>
+                            }
+                        </td>
+                        <td>
                             @if (p.Estado == "Ativo")
                             {
-                                <button class="btn btn-secondary btn-sm me-1"
-                                        @onclick="() => Inativar(p)">
-                                    Inativar
-                                </button>
+                                <span class="badge bg-success">Ativo</span>
                             }
-
-                            @if (p.Estado == "Inativo")
+                            else if (p.Estado == "Pendente")
                             {
-                                <button class="btn btn-success btn-sm me-1"
-                                        @onclick="() => Ativar(p)">
-                                    Ativar
-                                </button>
+                                <span class="badge bg-warning">Pendente</span>
                             }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inativo</span>
+                            }
+                        </td>
+                        <td>
+                            <AuthorizeView Roles="Administrador,Funcionário">
+                                @if (p.Estado == "Pendente")
+                                {
+                                    <button class="btn btn-success btn-sm me-1" @onclick="() => Aprovar(p)">
+                                        Aprovar
+                                    </button>
+                                }
+                                @if (p.Estado == "Ativo")
+                                {
+                                    <button class="btn btn-secondary btn-sm me-1" @onclick="() => Inativar(p)">
+                                        Inativar
+                                    </button>
+                                }
+                                @if (p.Estado == "Inativo")
+                                {
+                                    <button class="btn btn-success btn-sm me-1" @onclick="() => Ativar(p)">
+                                        Ativar
+                                    </button>
+                                }
+                                <button class="btn btn-warning btn-sm" @onclick="() => Editar(p.Id)">
+                                    Editar
+                                </button>
+                                <button class="btn btn-danger btn-sm ms-1" @onclick="() => Apagar(p)">
+                                    Apagar
+                                </button>
+                            </AuthorizeView>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-                            <button class="btn btn-warning btn-sm"
-                                    @onclick="() => Editar(p.Id)">
-                                Editar
-                            </button>
-
-                            <button class="btn btn-danger btn-sm ms-1"
-                                    @onclick="() => Apagar(p)">
-                                Apagar
-                            </button>
-                        </AuthorizeView>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <!-- PAGINACAO -->
+    <!-- PAGINAÇÃO -->
     <nav>
         <ul class="pagination justify-content-center">
             <li class="page-item @(!PodePaginaAnterior ? "disabled" : "")">
@@ -193,7 +198,6 @@ else
                     Anterior
                 </button>
             </li>
-
             @for (int i = 1; i <= totalPaginas; i++)
             {
                 var pagina = i;
@@ -203,10 +207,9 @@ else
                     </button>
                 </li>
             }
-
             <li class="page-item @(!PodeProximaPagina ? "disabled" : "")">
                 <button class="page-link" @onclick="ProximaPagina" disabled="@(!PodeProximaPagina)">
-                    Proxima
+                    Próxima
                 </button>
             </li>
         </ul>
@@ -216,8 +219,11 @@ else
 @code {
     List<Produtos>? produtos;
     List<Categorias>? categoriasDisponiveis;
+    List<Subcategoria> todasSubcategorias = new();
+    List<Subcategoria> subcategoriasFiltradas = new();
     string filtroEstado = "";
     int? filtroCategoria = null;
+    int? filtroSubcategoria = null;
     string ordenacao = "nome";
     string? mensagemErro = null;
 
@@ -233,6 +239,7 @@ else
     protected override void OnInitialized()
     {
         categoriasDisponiveis = db.Categorias.OrderBy(c => c.Nome).ToList();
+        todasSubcategorias = db.Subcategorias.OrderBy(s => s.Nome).ToList();
         CarregarProdutos();
     }
 
@@ -240,6 +247,7 @@ else
     {
         var query = db.Produtos
             .Include(p => p.Categoria)
+            .Include(p => p.Subcategoria)
             .Include(p => p.Fornecedor)
             .Include(p => p.ModoEntrega)
             .AsQueryable();
@@ -249,6 +257,9 @@ else
 
         if (filtroCategoria.HasValue)
             query = query.Where(p => p.CategoriaId == filtroCategoria.Value);
+
+        if (filtroSubcategoria.HasValue)
+            query = query.Where(p => p.SubcategoriaId == filtroSubcategoria.Value);
 
         query = ordenacao switch
         {
@@ -277,15 +288,13 @@ else
 
     void PaginaAnterior()
     {
-        if (paginaAtual > 1)
-            paginaAtual--;
+        if (paginaAtual > 1) paginaAtual--;
         CarregarProdutos();
     }
 
     void ProximaPagina()
     {
-        if (paginaAtual < totalPaginas)
-            paginaAtual++;
+        if (paginaAtual < totalPaginas) paginaAtual++;
         CarregarProdutos();
     }
 
@@ -306,6 +315,28 @@ else
     {
         var valor = e.Value?.ToString();
         filtroCategoria = string.IsNullOrEmpty(valor) ? null : int.Parse(valor);
+        filtroSubcategoria = null;
+        
+        // Filtrar subcategorias pela categoria selecionada
+        if (filtroCategoria.HasValue)
+        {
+            subcategoriasFiltradas = todasSubcategorias
+                .Where(s => s.CategoriaId == filtroCategoria.Value)
+                .ToList();
+        }
+        else
+        {
+            subcategoriasFiltradas = new();
+        }
+        
+        paginaAtual = 1;
+        CarregarProdutos();
+    }
+
+    void FiltrarSubcategoria(ChangeEventArgs e)
+    {
+        var valor = e.Value?.ToString();
+        filtroSubcategoria = string.IsNullOrEmpty(valor) ? null : int.Parse(valor);
         paginaAtual = 1;
         CarregarProdutos();
     }
@@ -321,13 +352,14 @@ else
     {
         filtroEstado = "";
         filtroCategoria = null;
+        filtroSubcategoria = null;
+        subcategoriasFiltradas = new();
         ordenacao = "nome";
         paginaAtual = 1;
         CarregarProdutos();
     }
 
     void Criar() => nav.NavigateTo("/produtos/criar");
-
     void Editar(int id) => nav.NavigateTo($"/produtos/editar/{id}");
 
     void Apagar(Produtos p)
@@ -336,7 +368,7 @@ else
 
         if (temVendas)
         {
-            mensagemErro = "Nao e possivel apagar este produto porque existem vendas associadas.";
+            mensagemErro = "Não é possível apagar este produto porque existem vendas associadas.";
             return;
         }
 
@@ -355,6 +387,6 @@ else
     }
 
     void Aprovar(Produtos p) => AlterarEstado(p, "Ativo");
-    void Ativar(Produtos p) => AlterarEstado(p, "Ativo");
     void Inativar(Produtos p) => AlterarEstado(p, "Inativo");
+    void Ativar(Produtos p) => AlterarEstado(p, "Ativo");
 }
