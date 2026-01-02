@@ -9,11 +9,12 @@
         <i class="bi bi-graph-up me-2"></i>Histórico de Vendas
     </h4>
 
-    @if (Api.GetUserInfo()?.Perfil != "Fornecedor")
+    @if (carregando)
     {
-        <div class="alert alert-warning">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            Esta página é apenas para fornecedores.
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">A carregar...</span>
+            </div>
         </div>
     }
     else if (!Api.IsAuthenticated)
@@ -23,11 +24,18 @@
             Precisa de <a href="/login?returnUrl=/minhas-vendas">entrar</a> para ver as suas vendas.
         </div>
     }
+    else if (Api.GetUserInfo()?.Perfil != "Fornecedor")
+    {
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Esta página é apenas para fornecedores.
+        </div>
+    }
     else if (vendas == null)
     {
         <div class="text-center py-5">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">A carregar...</span>
+                <span class="visually-hidden">A carregar vendas...</span>
             </div>
         </div>
     }
@@ -44,7 +52,7 @@
     }
     else
     {
-        <!-- Resumo - Responsivo -->
+        <!-- Resumo - Responsivo (apenas vendas confirmadas e expedidas) -->
         <div class="row g-2 mb-3">
             <div class="col-4">
                 <div class="card bg-primary text-white h-100">
@@ -57,7 +65,7 @@
             <div class="col-4">
                 <div class="card bg-success text-white h-100">
                     <div class="card-body text-center p-2">
-                        <h4 class="mb-0">@vendas.Sum(v => v.Quantidade)</h4>
+                        <h4 class="mb-0">@VendasValidas.Sum(v => v.Quantidade)</h4>
                         <small>Unidades</small>
                     </div>
                 </div>
@@ -65,7 +73,7 @@
             <div class="col-4">
                 <div class="card bg-warning text-dark h-100">
                     <div class="card-body text-center p-2">
-                        <h4 class="mb-0">@vendas.Sum(v => v.Total).ToString("0.00")€</h4>
+                        <h4 class="mb-0">@VendasValidas.Sum(v => v.Total).ToString("0.00")€</h4>
                         <small>Total</small>
                     </div>
                 </div>
@@ -145,11 +153,11 @@
                 </div>
             }
             
-            <!-- Total geral mobile -->
+            <!-- Total geral mobile (apenas vendas confirmadas e expedidas) -->
             <div class="card bg-light">
                 <div class="card-body p-2 d-flex justify-content-between align-items-center">
                     <strong>Total Geral:</strong>
-                    <span class="text-primary fs-4 fw-bold">@vendas.Sum(v => v.Total).ToString("0.00") €</span>
+                    <span class="text-primary fs-4 fw-bold">@VendasValidas.Sum(v => v.Total).ToString("0.00") €</span>
                 </div>
             </div>
         </div>
@@ -158,9 +166,19 @@
 
 @code {
     private List<VendaFornecedorDto>? vendas;
+    private bool carregando = true;
+
+    // Vendas válidas para cálculo de totais (exclui Rejeitadas e Canceladas)
+    private IEnumerable<VendaFornecedorDto> VendasValidas => 
+        vendas?.Where(v => v.Estado == "Confirmada" || v.Estado == "Expedida") 
+        ?? Enumerable.Empty<VendaFornecedorDto>();
 
     protected override async Task OnInitializedAsync()
     {
+        // Aguardar que a API inicialize (restaurar sessão do localStorage)
+        await Api.InitializeAsync();
+        carregando = false;
+        
         if (Api.IsAuthenticated && Api.GetUserInfo()?.Perfil == "Fornecedor")
         {
             vendas = await Api.GetMinhasVendasFornecedorAsync();

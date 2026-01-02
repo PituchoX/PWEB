@@ -10,12 +10,30 @@
         <h4 class="mb-0">
             <i class="bi bi-box me-2"></i>Meus Produtos
         </h4>
-        <button class="btn btn-primary btn-sm" @onclick="AbrirFormulario">
-            <i class="bi bi-plus-circle me-1"></i>Novo Produto
-        </button>
+        @if (Api.IsAuthenticated && Api.GetUserInfo()?.Perfil == "Fornecedor")
+        {
+            <button class="btn btn-primary btn-sm" @onclick="AbrirFormulario">
+                <i class="bi bi-plus-circle me-1"></i>Novo Produto
+            </button>
+        }
     </div>
 
-    @if (!Api.IsAuthenticated || Api.GetUserInfo()?.Perfil != "Fornecedor")
+    @if (carregando)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">A carregar...</span>
+            </div>
+        </div>
+    }
+    else if (!Api.IsAuthenticated)
+    {
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Precisa de <a href="/login?returnUrl=/meus-produtos">entrar</a> para ver os seus produtos.
+        </div>
+    }
+    else if (Api.GetUserInfo()?.Perfil != "Fornecedor")
     {
         <div class="alert alert-warning">
             <i class="bi bi-exclamation-triangle me-2"></i>
@@ -26,7 +44,7 @@
     {
         <div class="text-center py-5">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">A carregar...</span>
+                <span class="visually-hidden">A carregar produtos...</span>
             </div>
         </div>
     }
@@ -260,6 +278,7 @@
     private ProdutoDto? produtoEditar;
     private bool mostrarFormulario = false;
     private bool processando = false;
+    private bool carregando = true;
     private string? mensagemErro;
     
     private IBrowserFile? ficheiroImagem;
@@ -268,6 +287,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // Aguardar que a API inicialize (restaurar sessão do localStorage)
+        await Api.InitializeAsync();
+        carregando = false;
+        
         if (Api.IsAuthenticated && Api.GetUserInfo()?.Perfil == "Fornecedor")
         {
             await CarregarDados();

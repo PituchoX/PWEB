@@ -268,6 +268,7 @@ namespace RESTfulAPIPWeb.Controllers
 
         /// <summary>
         /// Consulta o histórico de vendas dos produtos deste fornecedor
+        /// Mostra o PrecoBase (valor que o fornecedor recebe), não o PrecoFinal
         /// </summary>
         [HttpGet("vendas")]
         public async Task<IActionResult> GetMinhasVendas()
@@ -285,6 +286,8 @@ namespace RESTfulAPIPWeb.Controllers
                 .OrderByDescending(l => l.Venda!.Data)
                 .ToListAsync();
 
+            // Para o fornecedor, mostramos o PrecoBase (o que ele recebe)
+            // não o PrecoFinal (que inclui a percentagem da empresa)
             var result = linhasVenda.Select(l => new
             {
                 VendaId = l.VendaId,
@@ -292,8 +295,8 @@ namespace RESTfulAPIPWeb.Controllers
                 Estado = l.Venda?.Estado,
                 ProdutoNome = l.Produto?.Nome,
                 Quantidade = l.Quantidade,
-                PrecoUnitario = l.Preco,
-                Total = l.Preco * l.Quantidade,
+                PrecoUnitario = l.Produto?.PrecoBase ?? 0, // Preço Base (valor do fornecedor)
+                Total = (l.Produto?.PrecoBase ?? 0) * l.Quantidade, // Total com Preço Base
                 ClienteNome = l.Venda?.Cliente?.ApplicationUser?.NomeCompleto ?? "N/A"
             });
 

@@ -172,10 +172,11 @@ else
         vendasConfirmadas = await _context.Vendas.CountAsync(v => v.Estado == "Confirmada");
         vendasExpedidas = await _context.Vendas.CountAsync(v => v.Estado == "Expedida");
 
-        // Total vendas do mês (últimos 30 dias)
+        // Total vendas do mês (últimos 30 dias) - APENAS Confirmadas e Expedidas
         var dataLimite = DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd");
         var vendasMes = await _context.Vendas
-            .Where(v => v.Estado != "Rejeitada" && string.Compare(v.Data, dataLimite) >= 0)
+            .Where(v => (v.Estado == "Confirmada" || v.Estado == "Expedida") 
+                        && string.Compare(v.Data, dataLimite) >= 0)
             .Include(v => v.LinhasVenda)
             .ToListAsync();
         totalVendasMes = vendasMes.Sum(v => v.LinhasVenda?.Sum(l => l.Preco * l.Quantidade) ?? 0);
