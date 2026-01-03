@@ -8,33 +8,87 @@ using System.Security.Claims;
 
 namespace RESTfulAPIPWeb.Controllers
 {
-    /// <summary>
-    /// Controller para Fornecedores gerirem os seus próprios produtos
-    /// Conforme enunciado: Fornecedores podem inserir, consultar, editar produtos seus
-    /// Produtos inseridos/editados ficam no estado Pendente até aprovação
-    /// </summary>
     [Route("api/fornecedor/produtos")]
     [ApiController]
     [Authorize(Roles = "Fornecedor")]
     public class FornecedorProdutosController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<FornecedorProdutosController> _logger;
 
-        public FornecedorProdutosController(AppDbContext context)
+        public FornecedorProdutosController(AppDbContext context, ILogger<FornecedorProdutosController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         /// <summary>
-        /// Obtém o ID do fornecedor do utilizador atual
+        /// Obtém o fornecedor do utilizador atual - BUSCA POR EMAIL para garantir consistência
         /// </summary>
         private async Task<Fornecedor?> GetFornecedorAtual()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId)) return null;
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value 
+                         ?? User.FindFirst("email")?.Value
+                         ?? User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Email)?.Value;
+            
+            _logger.LogInformation($"GetFornecedorAtual - UserId: {userId}, Email: {userEmail}");
+            
+            if (string.IsNullOrEmpty(userId) && string.IsNullOrEmpty(userEmail)) 
+                return null;
 
-            return await _context.Fornecedores
-                .FirstOrDefaultAsync(f => f.ApplicationUserId == userId);
+            Fornecedor? fornecedor = null;
+
+            // PRIORIDADE 1: Buscar pelo EMAIL (mais confiável entre diferentes sistemas)
+            if (!string.IsNullOrEmpty(userEmail))
+            {
+                fornecedor = await _context.Fornecedores
+                    .Include(f => f.ApplicationUser)
+                    .FirstOrDefaultAsync(f => f.ApplicationUser != null && 
+                                              f.ApplicationUser.Email == userEmail);
+                
+                if (fornecedor != null)
+                {
+                    _logger.LogInformation($"Fornecedor encontrado pelo email: Id={fornecedor.Id}, Nome={fornecedor.NomeEmpresa}");
+                    return fornecedor;
+                }
+            }
+
+            // PRIORIDADE 2: Buscar pelo ApplicationUserId
+            if (!string.IsNullOrEmpty(userId))
+            {
+                fornecedor = await _context.Fornecedores
+                    .FirstOrDefaultAsync(f => f.ApplicationUserId == userId);
+                
+                if (fornecedor != null)
+                {
+                    _logger.LogInformation($"Fornecedor encontrado pelo UserId: Id={fornecedor.Id}");
+                    return fornecedor;
+                }
+            }
+
+            // PRIORIDADE 3: Se não encontrou por nenhum, criar automaticamente
+            var user = await _context.Users.FirstOrDefaultAsync(u => 
+                u.Id == userId || u.Email == userEmail);
+            
+            if (user != null && user.Perfil == "Fornecedor")
+            {
+                _logger.LogInformation($"A criar fornecedor automaticamente para: {user.Email}");
+                
+                fornecedor = new Fornecedor
+                {
+                    ApplicationUserId = user.Id,
+                    NomeEmpresa = user.NomeCompleto + " (Empresa)",
+                    Estado = "Aprovado"
+                };
+                _context.Fornecedores.Add(fornecedor);
+                await _context.SaveChangesAsync();
+                
+                return fornecedor;
+            }
+
+            _logger.LogWarning($"Fornecedor NÃO encontrado para userId: {userId}, email: {userEmail}");
+            return null;
         }
 
         /// <summary>
@@ -45,7 +99,9 @@ namespace RESTfulAPIPWeb.Controllers
         {
             var fornecedor = await GetFornecedorAtual();
             if (fornecedor == null)
-                return Unauthorized(new { Message = "Fornecedor não encontrado." });
+                return Ok(new List<ProdutoDto>()); // Lista vazia em vez de erro
+
+            _logger.LogInformation($"A carregar produtos para FornecedorId={fornecedor.Id}");
 
             var produtos = await _context.Produtos
                 .Where(p => p.FornecedorId == fornecedor.Id)
@@ -53,6 +109,8 @@ namespace RESTfulAPIPWeb.Controllers
                 .Include(p => p.ModoEntrega)
                 .OrderByDescending(p => p.Id)
                 .ToListAsync();
+
+            _logger.LogInformation($"Encontrados {produtos.Count} produtos");
 
             var result = produtos.Select(p => new ProdutoDto
             {
@@ -75,9 +133,6 @@ namespace RESTfulAPIPWeb.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Obtém um produto do fornecedor pelo ID
-        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<ProdutoDto>> GetMeuProduto(int id)
         {
@@ -91,7 +146,7 @@ namespace RESTfulAPIPWeb.Controllers
                 .FirstOrDefaultAsync(p => p.Id == id && p.FornecedorId == fornecedor.Id);
 
             if (p == null)
-                return NotFound(new { Message = "Produto não encontrado ou não pertence a este fornecedor." });
+                return NotFound(new { Message = "Produto não encontrado." });
 
             return Ok(new ProdutoDto
             {
@@ -112,9 +167,6 @@ namespace RESTfulAPIPWeb.Controllers
             });
         }
 
-        /// <summary>
-        /// Cria um novo produto (estado inicial: Pendente)
-        /// </summary>
         [HttpPost]
         public async Task<ActionResult<ProdutoDto>> CriarProduto([FromBody] ProdutoCreateDto dto)
         {
@@ -122,17 +174,16 @@ namespace RESTfulAPIPWeb.Controllers
             if (fornecedor == null)
                 return Unauthorized(new { Message = "Fornecedor não encontrado." });
 
-            // Verificar se fornecedor está aprovado
             if (fornecedor.Estado != "Aprovado")
-                return BadRequest(new { Message = "O seu registo de fornecedor ainda não foi aprovado." });
+                return BadRequest(new { Message = "O seu registo ainda não foi aprovado." });
 
             var produto = new Produto
             {
                 Nome = dto.Nome,
                 PrecoBase = dto.PrecoBase,
-                Percentagem = 0, // Percentagem definida pelo Admin/Funcionário
-                PrecoFinal = dto.PrecoBase, // Será recalculado na aprovação
-                Estado = "Pendente", // Sempre pendente até aprovação
+                Percentagem = 0,
+                PrecoFinal = dto.PrecoBase,
+                Estado = "Pendente",
                 Stock = dto.Stock,
                 Imagem = string.IsNullOrEmpty(dto.Imagem) ? "semfoto.png" : dto.Imagem,
                 CategoriaId = dto.CategoriaId,
@@ -160,9 +211,6 @@ namespace RESTfulAPIPWeb.Controllers
             });
         }
 
-        /// <summary>
-        /// Atualiza um produto existente (volta ao estado Pendente)
-        /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> AtualizarProduto(int id, [FromBody] ProdutoUpdateDto dto)
         {
@@ -174,27 +222,20 @@ namespace RESTfulAPIPWeb.Controllers
                 .FirstOrDefaultAsync(p => p.Id == id && p.FornecedorId == fornecedor.Id);
 
             if (produto == null)
-                return NotFound(new { Message = "Produto não encontrado ou não pertence a este fornecedor." });
+                return NotFound(new { Message = "Produto não encontrado." });
 
-            // Atualizar campos permitidos
             produto.Nome = dto.Nome;
             produto.PrecoBase = dto.PrecoBase;
             produto.Stock = dto.Stock;
             produto.Imagem = string.IsNullOrEmpty(dto.Imagem) ? produto.Imagem : dto.Imagem;
             produto.CategoriaId = dto.CategoriaId;
             produto.ModoEntregaId = dto.ModoEntregaId;
-            
-            // Após edição, volta para Pendente (necessita nova aprovação)
             produto.Estado = "Pendente";
 
             await _context.SaveChangesAsync();
-
-            return Ok(new { Message = "Produto atualizado. Aguarda nova aprovação." });
+            return Ok(new { Message = "Produto atualizado. Aguarda aprovação." });
         }
 
-        /// <summary>
-        /// Suspende um produto (retira da listagem/venda)
-        /// </summary>
         [HttpPut("{id}/suspender")]
         public async Task<IActionResult> SuspenderProduto(int id)
         {
@@ -206,17 +247,13 @@ namespace RESTfulAPIPWeb.Controllers
                 .FirstOrDefaultAsync(p => p.Id == id && p.FornecedorId == fornecedor.Id);
 
             if (produto == null)
-                return NotFound(new { Message = "Produto não encontrado ou não pertence a este fornecedor." });
+                return NotFound(new { Message = "Produto não encontrado." });
 
             produto.Estado = "Inativo";
             await _context.SaveChangesAsync();
-
-            return Ok(new { Message = "Produto suspenso com sucesso." });
+            return Ok(new { Message = "Produto suspenso." });
         }
 
-        /// <summary>
-        /// Reativa um produto suspenso (volta para Pendente para nova aprovação)
-        /// </summary>
         [HttpPut("{id}/reativar")]
         public async Task<IActionResult> ReativarProduto(int id)
         {
@@ -228,20 +265,13 @@ namespace RESTfulAPIPWeb.Controllers
                 .FirstOrDefaultAsync(p => p.Id == id && p.FornecedorId == fornecedor.Id);
 
             if (produto == null)
-                return NotFound(new { Message = "Produto não encontrado ou não pertence a este fornecedor." });
-
-            if (produto.Estado == "Ativo")
-                return BadRequest(new { Message = "Produto já está ativo." });
+                return NotFound(new { Message = "Produto não encontrado." });
 
             produto.Estado = "Pendente";
             await _context.SaveChangesAsync();
-
             return Ok(new { Message = "Produto reativado. Aguarda aprovação." });
         }
 
-        /// <summary>
-        /// Apaga um produto (só se não tiver vendas associadas)
-        /// </summary>
         [HttpDelete("{id}")]
         public async Task<IActionResult> ApagarProduto(int id)
         {
@@ -253,29 +283,25 @@ namespace RESTfulAPIPWeb.Controllers
                 .FirstOrDefaultAsync(p => p.Id == id && p.FornecedorId == fornecedor.Id);
 
             if (produto == null)
-                return NotFound(new { Message = "Produto não encontrado ou não pertence a este fornecedor." });
+                return NotFound(new { Message = "Produto não encontrado." });
 
-            // Verificar se existem vendas associadas
             var temVendas = await _context.LinhasVenda.AnyAsync(l => l.ProdutoId == id);
             if (temVendas)
-                return BadRequest(new { Message = "Não é possível apagar este produto porque existem vendas associadas." });
+                return BadRequest(new { Message = "Existem vendas associadas." });
 
             _context.Produtos.Remove(produto);
             await _context.SaveChangesAsync();
-
-            return Ok(new { Message = "Produto apagado com sucesso." });
+            return Ok(new { Message = "Produto apagado." });
         }
 
-        /// <summary>
-        /// Consulta o histórico de vendas dos produtos deste fornecedor
-        /// Mostra o PrecoBase (valor que o fornecedor recebe), não o PrecoFinal
-        /// </summary>
         [HttpGet("vendas")]
         public async Task<IActionResult> GetMinhasVendas()
         {
             var fornecedor = await GetFornecedorAtual();
             if (fornecedor == null)
-                return Unauthorized(new { Message = "Fornecedor não encontrado." });
+                return Ok(new List<object>()); // Lista vazia
+
+            _logger.LogInformation($"A carregar vendas para FornecedorId={fornecedor.Id}");
 
             var linhasVenda = await _context.LinhasVenda
                 .Include(l => l.Venda)
@@ -286,21 +312,19 @@ namespace RESTfulAPIPWeb.Controllers
                 .OrderByDescending(l => l.Venda!.Data)
                 .ToListAsync();
 
-            // Para o fornecedor, mostramos o PrecoBase (o que ele recebe)
-            // não o PrecoFinal (que inclui a percentagem da empresa)
-            var result = linhasVenda.Select(l => new
+            _logger.LogInformation($"Encontradas {linhasVenda.Count} vendas para fornecedor {fornecedor.Id}");
+
+            return Ok(linhasVenda.Select(l => new
             {
                 VendaId = l.VendaId,
                 Data = l.Venda?.Data,
                 Estado = l.Venda?.Estado,
                 ProdutoNome = l.Produto?.Nome,
                 Quantidade = l.Quantidade,
-                PrecoUnitario = l.Produto?.PrecoBase ?? 0, // Preço Base (valor do fornecedor)
-                Total = (l.Produto?.PrecoBase ?? 0) * l.Quantidade, // Total com Preço Base
+                PrecoUnitario = l.Produto?.PrecoBase ?? 0,
+                Total = (l.Produto?.PrecoBase ?? 0) * l.Quantidade,
                 ClienteNome = l.Venda?.Cliente?.ApplicationUser?.NomeCompleto ?? "N/A"
-            });
-
-            return Ok(result);
+            }));
         }
     }
 }

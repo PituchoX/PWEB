@@ -258,6 +258,8 @@ namespace RESTfulAPIPWeb.Controllers
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
+                new Claim(ClaimTypes.Email, user.Email ?? ""), // Adicionar também como ClaimTypes.Email
+                new Claim(ClaimTypes.NameIdentifier, user.Id), // Adicionar também como ClaimTypes.NameIdentifier
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("nome", user.NomeCompleto),
                 new Claim("estado", user.Estado),

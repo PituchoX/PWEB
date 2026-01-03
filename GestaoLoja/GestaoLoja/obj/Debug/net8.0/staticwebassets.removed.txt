@@ -1,2 +1,0 @@
-C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\bootstrap\bootstrap.min.css
-C:\Users\joaop\source\repos\PituchoX\PWEB\GestaoLoja\GestaoLoja\wwwroot\bootstrap\bootstrap.min.css.map
