@@ -1,6 +1,4 @@
 wwwroot\app.css
-wwwroot\bootstrap\bootstrap.min.css
-wwwroot\bootstrap\bootstrap.min.css.map
 wwwroot\img\about.png
 wwwroot\img\semfoto.png
 wwwroot\img\noproductstrans.png
@@ -50,3 +48,4 @@ wwwroot\img\cat_00d5270b68b944b481f5048974e2c627.jpg
 wwwroot\img\cat_e9f24d0a9bfe418e81f1d939259dcbbe.jpg
 wwwroot\img\cat_eeae61b31b59497d8edfe95daf8a2afd.jpg
 wwwroot\img\prod_2bb88562c6fc42798a077df9dfaf51b9.png
+wwwroot\css\custom-framework.css
