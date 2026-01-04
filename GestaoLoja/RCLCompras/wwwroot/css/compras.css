@@ -1,0 +1,289 @@
+/* ============================================================
+   RCLCompras - CSS para componentes de Compras/Carrinho
+   Programação Web ISEC
+   ============================================================ */
+
+/* ==================== CARRINHO ==================== */
+.carrinho-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.carrinho-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.carrinho-item .info {
+    flex: 1;
+    margin-left: 15px;
+}
+
+.carrinho-item .nome {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.carrinho-item .preco {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2a0a5e;
+}
+
+.carrinho-item .quantidade {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.carrinho-item .quantidade button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carrinho-item .quantidade button:hover {
+    background: #f0f0f0;
+}
+
+.carrinho-item .quantidade span {
+    font-weight: 600;
+    min-width: 30px;
+    text-align: center;
+}
+
+/* ==================== RESUMO DO CARRINHO ==================== */
+.carrinho-resumo {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 100px;
+}
+
+.carrinho-resumo h5 {
+    color: #2a0a5e;
+    border-bottom: 2px solid #ffc107;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.carrinho-resumo .linha {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.carrinho-resumo .total {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2a0a5e;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+.carrinho-resumo .btn-checkout {
+    width: 100%;
+    margin-top: 15px;
+    background: linear-gradient(135deg, #2a0a5e 0%, #4a148c 100%);
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+}
+
+.carrinho-resumo .btn-checkout:hover {
+    background: linear-gradient(135deg, #3a1a6e 0%, #5a249c 100%);
+}
+
+/* ==================== CHECKOUT ==================== */
+.checkout-form {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.checkout-form h5 {
+    color: #2a0a5e;
+    border-bottom: 2px solid #ffc107;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.checkout-form .form-group {
+    margin-bottom: 15px;
+}
+
+.checkout-form label {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+/* ==================== MINHAS COMPRAS ==================== */
+.compra-item {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.compra-item .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.compra-item .pedido-num {
+    font-weight: 600;
+    color: #2a0a5e;
+}
+
+.compra-item .data {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.compra-item .estado {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.compra-item .estado.pendente {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.compra-item .estado.confirmada {
+    background: #d4edda;
+    color: #155724;
+}
+
+.compra-item .estado.expedida {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.compra-item .estado.entregue {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.compra-item .produtos {
+    margin-bottom: 15px;
+}
+
+.compra-item .produto-linha {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.compra-item .produto-linha:last-child {
+    border-bottom: none;
+}
+
+.compra-item .produto-linha img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 12px;
+}
+
+.compra-item .produto-linha .nome {
+    flex: 1;
+    font-size: 0.9rem;
+}
+
+.compra-item .produto-linha .quantidade {
+    color: #888;
+    font-size: 0.85rem;
+    margin-right: 15px;
+}
+
+.compra-item .produto-linha .preco {
+    font-weight: 600;
+    color: #2a0a5e;
+}
+
+.compra-item .total-compra {
+    text-align: right;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2a0a5e;
+    padding-top: 10px;
+    border-top: 2px solid #ffc107;
+}
+
+/* ==================== CARRINHO VAZIO ==================== */
+.carrinho-vazio {
+    text-align: center;
+    padding: 50px 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.carrinho-vazio i {
+    font-size: 4rem;
+    color: #ddd;
+    margin-bottom: 20px;
+}
+
+.carrinho-vazio h4 {
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.carrinho-vazio p {
+    color: #aaa;
+    margin-bottom: 20px;
+}
+
+/* ==================== RESPONSIVO ==================== */
+@media (max-width: 768px) {
+    .carrinho-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .carrinho-item .info {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    
+    .carrinho-resumo {
+        position: relative;
+        top: 0;
+        margin-top: 20px;
+    }
+    
+    .compra-item .header {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

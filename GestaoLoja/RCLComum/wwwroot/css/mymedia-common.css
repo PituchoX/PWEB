@@ -1,0 +1,173 @@
+/* ============================================================
+   RCLComum - CSS Base/Layout para MyMEDIA
+   Programação Web ISEC
+   
+   Este CSS contém estilos base partilhados (header, footer, etc.)
+   Os estilos específicos estão em:
+   - RCLProdutos/wwwroot/css/produtos.css
+   - RCLCompras/wwwroot/css/compras.css
+   ============================================================ */
+
+/* ==================== HEADER ==================== */
+.header-top {
+    background: linear-gradient(135deg, #2a0a5e 0%, #4a148c 100%);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.search-bar .form-control {
+    border-radius: 20px 0 0 20px;
+    border: none;
+}
+
+.search-bar .btn-warning {
+    border-radius: 0 20px 20px 0;
+    border: none;
+}
+
+/* ==================== DROPDOWN MENU - FIX BULLETS ==================== */
+.dropdown-menu,
+ul.dropdown-menu {
+    list-style: none !important;
+    list-style-type: none !important;
+    padding-left: 0 !important;
+    margin: 0;
+}
+
+.dropdown-menu li,
+ul.dropdown-menu li {
+    list-style: none !important;
+    list-style-type: none !important;
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown-menu li::before,
+ul.dropdown-menu li::before {
+    content: none !important;
+    display: none !important;
+}
+
+.dropdown-menu li::marker {
+    content: none !important;
+    display: none !important;
+}
+
+.dropdown-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    color: #212529;
+    text-decoration: none;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-menu .dropdown-item i {
+    width: 1.25rem;
+    flex-shrink: 0;
+}
+
+.dropdown-menu .dropdown-divider {
+    margin: 0.5rem 0;
+    border-top: 1px solid #e9ecef;
+}
+
+/* ==================== MENU DO UTILIZADOR ==================== */
+.user-menu-container {
+    position: relative;
+}
+
+.btn-user-toggle {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-user-toggle:hover,
+.btn-user-toggle:active {
+    background: rgba(255,255,255,0.25);
+    color: white;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    min-width: 200px;
+    z-index: 1001;
+    overflow: hidden;
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    z-index: 999;
+}
+
+/* ==================== MAIN CONTENT ==================== */
+.main-content {
+    min-height: calc(100vh - 130px);
+    padding-bottom: 20px;
+}
+
+/* ==================== FOOTER ==================== */
+.footer-bottom {
+    background: #2a0a5e;
+    color: white;
+    margin-top: auto;
+}
+
+/* ==================== BOTÕES CUSTOMIZADOS ==================== */
+.btn-primary {
+    background-color: #2a0a5e;
+    border-color: #2a0a5e;
+}
+
+.btn-primary:hover {
+    background-color: #4a148c;
+    border-color: #4a148c;
+}
+
+/* ==================== SAFE AREA (iOS) ==================== */
+.status-bar-safe-area {
+    display: none;
+}
+
+@supports (-webkit-touch-callout: none) {
+    .status-bar-safe-area {
+        display: flex;
+        position: sticky;
+        top: 0;
+        height: env(safe-area-inset-top);
+        background-color: #2a0a5e;
+        width: 100%;
+        z-index: 1;
+    }
+}
+
+/* ==================== RESPONSIVO ==================== */
+@media (max-width: 768px) {
+    .search-bar {
+        display: none !important;
+    }
+}

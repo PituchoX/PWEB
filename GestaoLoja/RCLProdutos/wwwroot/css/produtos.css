@@ -1,0 +1,464 @@
+/* ============================================================
+   RCLProdutos - CSS para componentes de Produtos
+   Programação Web ISEC
+   ============================================================ */
+
+/* ==================== GRID DE PRODUTOS ==================== */
+.produtos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+    padding: 15px 0;
+}
+
+/* ==================== CARDS DE PRODUTO ==================== */
+.produto-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.produto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.produto-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    background: #f0f0f0;
+}
+
+.produto-card .info {
+    padding: 10px;
+}
+
+.produto-card .nome {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.produto-card .categoria {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 2px;
+}
+
+.produto-card .preco {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2a0a5e;
+    margin-top: 5px;
+}
+
+.produto-card .btn-adicionar {
+    width: 100%;
+    border-radius: 0;
+    background: #ffc107;
+    border: none;
+    color: #333;
+    font-weight: 600;
+}
+
+.produto-card .btn-adicionar:hover {
+    background: #e0a800;
+}
+
+/* ==================== PRODUTO DESTAQUE (DESKTOP) ==================== */
+.destaque-lateral {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+    position: sticky;
+    top: 180px;
+    margin-top: 50px;
+}
+
+.destaque-header {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: #2a0a5e;
+    padding: 12px 15px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.destaque-content {
+    padding: 15px;
+    text-align: center;
+}
+
+.destaque-content img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    background: #f8f8f8;
+}
+
+.destaque-content img:hover {
+    transform: scale(1.02);
+}
+
+.destaque-content h5 {
+    color: #2a0a5e;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.destaque-content .categoria {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.destaque-content .preco {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2a0a5e;
+    margin-bottom: 15px;
+}
+
+/* ==================== PRODUTO DESTAQUE MOBILE ==================== */
+.destaque-mobile {
+    margin: 0 0 15px 0;
+}
+
+.destaque-mobile .card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.destaque-mobile .card-header {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+    color: #2a0a5e !important;
+    font-size: 0.9rem;
+    border: none;
+}
+
+.destaque-mobile .card-body {
+    padding: 12px !important;
+}
+
+.destaque-mobile-img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #f8f8f8;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.destaque-mobile h6 {
+    font-size: 0.95rem;
+    color: #2a0a5e;
+    margin-bottom: 4px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.destaque-mobile .text-muted {
+    font-size: 0.75rem;
+}
+
+.destaque-mobile .text-primary {
+    color: #2a0a5e !important;
+    font-size: 1.1rem;
+}
+
+/* ==================== SLIDER DE CATEGORIAS ==================== */
+.categorias-slider {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 3px solid #ffc107;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    padding: 15px 0;
+}
+
+.categorias-scroll {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-behavior: smooth;
+    padding: 8px 20px;
+    gap: 20px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.categorias-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+
+.categorias-scroll::-webkit-scrollbar-thumb {
+    background: #ffc107;
+    border-radius: 3px;
+}
+
+/* Card de Categoria */
+.categoria-item {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 160px;
+    min-width: 160px;
+    max-width: 160px;
+    background: white;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    overflow: hidden;
+    border: 3px solid transparent;
+    padding: 0;
+}
+
+.categoria-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+    border-color: #ffc107;
+}
+
+.categoria-item.active {
+    border-color: #ffc107;
+    background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+    box-shadow: 0 8px 25px rgba(255,193,7,0.4);
+    transform: translateY(-3px);
+}
+
+.categoria-item img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+    display: block;
+    background: #f0f0f0;
+}
+
+.categoria-item span {
+    display: block;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2a0a5e;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    background: white;
+}
+
+.categoria-item.active span {
+    background: transparent;
+}
+
+/* ==================== SLIDER DE SUBCATEGORIAS ==================== */
+.subcategorias-slider {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%) !important;
+    border-bottom: 2px solid #6c757d !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10px 0 !important;
+    display: block !important;
+}
+
+.subcategorias-scroll {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scroll-behavior: smooth !important;
+    padding: 5px 20px !important;
+    gap: 12px !important;
+    -webkit-overflow-scrolling: touch !important;
+    align-items: center !important;
+}
+
+.subcategorias-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.subcategorias-scroll::-webkit-scrollbar-thumb {
+    background: #6c757d;
+    border-radius: 2px;
+}
+
+.subcategoria-item {
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px 20px !important;
+    background: white !important;
+    border-radius: 25px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
+    border: 2px solid transparent !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+}
+
+.subcategoria-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    border-color: #2a0a5e !important;
+}
+
+.subcategoria-item.active {
+    border-color: #2a0a5e !important;
+    background: linear-gradient(135deg, #2a0a5e 0%, #4a148c 100%) !important;
+    box-shadow: 0 4px 12px rgba(42,10,94,0.3) !important;
+}
+
+.subcategoria-item span {
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    color: #2a0a5e !important;
+    white-space: nowrap !important;
+    display: inline !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.subcategoria-item.active span {
+    color: white !important;
+}
+
+/* ==================== SECAO TITULO ==================== */
+.secao-titulo {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2a0a5e;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ffc107;
+    display: flex;
+    align-items: center;
+}
+
+/* ==================== RESPONSIVO ==================== */
+@media (max-width: 991px) {
+    .destaque-lateral {
+        position: relative;
+        top: 0;
+        margin-top: 20px;
+    }
+    
+    .categoria-item {
+        width: 130px;
+        min-width: 130px;
+        max-width: 130px;
+    }
+    
+    .categoria-item img {
+        height: 80px;
+    }
+    
+    .categoria-item span {
+        font-size: 0.85rem;
+        padding: 10px 8px;
+    }
+    
+    .categorias-scroll {
+        gap: 15px;
+        padding: 6px 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .produtos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .produto-card .info {
+        padding: 8px;
+    }
+    
+    .produto-card img {
+        height: 120px;
+    }
+    
+    .categoria-item {
+        width: 110px;
+        min-width: 110px;
+        max-width: 110px;
+    }
+    
+    .categoria-item img {
+        height: 70px;
+    }
+    
+    .categoria-item span {
+        font-size: 0.8rem;
+        padding: 8px 6px;
+    }
+    
+    /* Destaque mobile */
+    .destaque-mobile-img {
+        width: 90px;
+        height: 90px;
+    }
+}
+
+@media (max-width: 480px) {
+    .categoria-item {
+        width: 95px;
+        min-width: 95px;
+        max-width: 95px;
+    }
+    
+    .categoria-item img {
+        height: 60px;
+    }
+    
+    .categoria-item span {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+    }
+    
+    .produto-card img {
+        height: 100px;
+    }
+    
+    .produto-card .nome {
+        font-size: 0.75rem;
+    }
+    
+    .produto-card .preco {
+        font-size: 0.9rem;
+    }
+    
+    /* Destaque mobile - ajustes */
+    .destaque-mobile-img {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .destaque-mobile h6 {
+        font-size: 0.85rem;
+    }
+    
+    .destaque-mobile .text-primary {
+        font-size: 1rem;
+    }
+}
